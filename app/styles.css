@@ -21,13 +21,13 @@ body { background: #fafaf9; }
 /* ── Sidebar ── */
 
 .sidebar {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   width: 220px;
   height: 100vh;
   padding: 28px 20px 24px;
-  border-right: 1px solid #e7e5e4;
+  border-right: none;
   background: #fafaf9;
   display: flex;
   flex-direction: column;
@@ -117,8 +117,8 @@ body { background: #fafaf9; }
 
 .content {
   width: auto;
-  max-width: 680px;
-  justify-self: stretch;
+  max-width: 720px;
+  flex: 1;
   padding: 0 48px 64px;
 }
 
@@ -151,9 +151,9 @@ body { background: #fafaf9; }
 }
 
 .section-heading {
-  font-size: 30px;
-  font-weight: 650;
-  letter-spacing: -0.025em;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.003em;
   color: #1c1917;
   margin: 0 0 12px;
   line-height: 1.2;
@@ -262,9 +262,10 @@ body { background: #fafaf9; }
   border-top: none;
   border-radius: 0 0 12px 12px;
   display: grid;
-  grid-template-columns: 48px 1fr 140px;
-  min-height: 220px;
+  grid-template-columns: 48px 1fr;
+  height: 360px;
   overflow: hidden;
+  position: relative;
 }
 
 /* Mock sidebar */
@@ -358,94 +359,470 @@ body { background: #fafaf9; }
   background: #d6d3d1;
 }
 
-/* Mock panel (Retune inspector) */
-.mock-panel {
+/* ── Animated Retune demo ── */
+/*
+   Scale: 0.6× of real Retune (44px → 26px)
+   ┌─────────────────┬────────┬────────┐
+   │ Property        │ Real   │ Mock   │
+   ├─────────────────┼────────┼────────┤
+   │ toolbar height  │ 44px   │ 26px   │
+   │ toolbar padding │ 6px    │ 4px    │
+   │ toolbar gap     │ 6px    │ 4px    │
+   │ collapse btn    │ 44×44  │ 26×26  │
+   │ collapse icon   │ 20px   │ 12px   │
+   │ button size     │ 32×32  │ 20×20  │
+   │ button icon     │ 20px   │ 12px   │
+   │ badge min-width │ 32px   │ 20px   │
+   │ badge height    │ 32px   │ 20px   │
+   │ badge font      │ 13px   │ 8px    │
+   │ badge padding   │ 0 10px │ 0 6px  │
+   │ shadow blur     │ 12px   │ 8px    │
+   │ shadow y        │ 2px    │ 1px    │
+   │ btn color       │ #1c1917│ #1c1917│
+   │ disabled opacity│ 0.2    │ 0.2    │
+   └─────────────────┴────────┴────────┘
+   Easing: ease-out-cubic (softer than real ease-out-quint at small scale)
+   Transition durations: 0.15s (real 0.2s), icon-in 0.1s (real 0.15s)
+   At 7s loop: 0.15s ≈ 2%, 0.1s ≈ 1.5%, 15ms stagger ≈ 0.2%
+
+   Timeline (7s):
+   0-20%   collapsed 26px circle, cursor approaches
+   21%     click → collapse btn shrinks, expanded grows (2% window)
+   23-38%  expanded toolbar, cursor moves to card
+   40%     card selected, ring appears
+   48%     panel slides up
+   60%     change → badge grows in, buttons enable (2% window)
+   95-97%  everything collapses back (2% window)
+*/
+
+/* Single toolbar — morphs between 26px collapsed circle and expanded pill
+   Collapse btn is position:absolute so width is driven by padding + expanded content */
+.mock-toolbar {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
   background: #fff;
-  border-left: 1px solid #e7e5e4;
-  padding: 12px;
+  border-radius: 999px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  height: 26px;
+  min-width: 26px;
+  z-index: 3;
+  overflow: hidden;
+  animation: mock-toolbar-morph 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes mock-toolbar-morph {
+  0%, 20% { padding: 0; }
+  22%     { padding: 3px; }
+  95%     { padding: 3px; }
+  97%     { padding: 0; }
+  100%    { padding: 0; }
 }
 
-.mock-panel-title {
-  width: 60%;
-  height: 7px;
-  background: #1c1917;
-  border-radius: 3px;
-  margin-bottom: 14px;
+/* Collapse button: 26×26 circle with 12px icon
+   Uses position:absolute so it doesn't affect layout when hidden (like real Retune) */
+.mock-collapse-btn {
+  position: absolute;
+  inset: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1c1917;
+  flex-shrink: 0;
+  animation: mock-collapse-shrink 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes mock-collapse-shrink {
+  0%, 20% { opacity: 1; transform: scale(1); filter: blur(0); }
+  22%     { opacity: 0; transform: scale(0.85); filter: blur(4px); }
+  95%     { opacity: 0; transform: scale(0.85); filter: blur(4px); }
+  100%    { opacity: 1; transform: scale(1); filter: blur(0); }
 }
 
-.mock-panel-section {
-  margin-bottom: 12px;
+/* Expanded container: gap 4px (real: 6px), max-width 0→200px */
+.mock-toolbar-expanded {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  animation: mock-expanded-grow 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes mock-expanded-grow {
+  0%, 20% { max-width: 0; opacity: 0; gap: 0; }
+  22%     { max-width: 200px; opacity: 1; gap: 4px; }
+  95%     { max-width: 200px; opacity: 1; gap: 4px; }
+  97%     { max-width: 0; opacity: 0; gap: 0; }
+  100%    { max-width: 0; opacity: 0; gap: 0; }
 }
 
-.mock-panel-label {
-  width: 50%;
-  height: 5px;
-  background: #a8a29e;
-  border-radius: 2px;
-  margin-bottom: 6px;
-}
-
-.mock-panel-slider {
-  width: 100%;
-  height: 6px;
-  background: #e7e5e4;
-  border-radius: 3px;
-  margin-bottom: 10px;
+/* Buttons: 20×20 (real: 32×32), color matches real #1c1917 */
+.mock-toolbar-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1c1917;
+  flex-shrink: 0;
   position: relative;
 }
 
-.mock-panel-slider::after {
-  content: "";
-  position: absolute;
-  left: 60%;
-  top: -3px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #1c1917;
+/* Staggered icon pop-in: scale(0.95)+blur(1px) → normal
+   15ms stagger ≈ 0.2% of 7s, transition 0.1s ≈ 1.5% */
+.mock-toolbar-expanded > :nth-child(2) { animation-name: mock-icon-pop-0; }
+.mock-toolbar-expanded > :nth-child(3) { animation-name: mock-icon-pop-1; }
+.mock-toolbar-expanded > :nth-child(4) { animation-name: mock-icon-pop-2; }
+.mock-toolbar-expanded > :nth-child(5) { animation-name: mock-icon-pop-3; }
+.mock-toolbar-expanded > :nth-child(6) { animation-name: mock-icon-pop-4; }
+.mock-toolbar-expanded > :nth-child(7) { animation-name: mock-icon-pop-5; }
+
+.mock-toolbar-expanded > :nth-child(n+2) {
+  animation-duration: 7s;
+  animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  animation-iteration-count: infinite;
 }
 
-.mock-panel-color-row {
+@keyframes mock-icon-pop-0 {
+  0%, 21.0% { transform: scale(0.95); filter: blur(1px); }
+  22.5% { transform: scale(1); filter: blur(0); }
+  95% { transform: scale(1); filter: blur(0); }
+  97% { transform: scale(0.95); filter: blur(1px); }
+  100% { transform: scale(0.95); filter: blur(1px); }
+}
+@keyframes mock-icon-pop-1 {
+  0%, 21.2% { transform: scale(0.95); filter: blur(1px); }
+  22.7% { transform: scale(1); filter: blur(0); }
+  95% { transform: scale(1); filter: blur(0); }
+  97% { transform: scale(0.95); filter: blur(1px); }
+  100% { transform: scale(0.95); filter: blur(1px); }
+}
+@keyframes mock-icon-pop-2 {
+  0%, 21.4% { transform: scale(0.95); filter: blur(1px); }
+  22.9% { transform: scale(1); filter: blur(0); }
+  95% { transform: scale(1); filter: blur(0); }
+  97% { transform: scale(0.95); filter: blur(1px); }
+  100% { transform: scale(0.95); filter: blur(1px); }
+}
+@keyframes mock-icon-pop-3 {
+  0%, 21.6% { transform: scale(0.95); filter: blur(1px); }
+  23.1% { transform: scale(1); filter: blur(0); }
+  95% { transform: scale(1); filter: blur(0); }
+  97% { transform: scale(0.95); filter: blur(1px); }
+  100% { transform: scale(0.95); filter: blur(1px); }
+}
+@keyframes mock-icon-pop-4 {
+  0%, 21.8% { transform: scale(0.95); filter: blur(1px); }
+  23.3% { transform: scale(1); filter: blur(0); }
+  95% { transform: scale(1); filter: blur(0); }
+  97% { transform: scale(0.95); filter: blur(1px); }
+  100% { transform: scale(0.95); filter: blur(1px); }
+}
+@keyframes mock-icon-pop-5 {
+  0%, 22.0% { transform: scale(0.95); filter: blur(1px); }
+  23.5% { transform: scale(1); filter: blur(0); }
+  95% { transform: scale(1); filter: blur(0); }
+  97% { transform: scale(0.95); filter: blur(1px); }
+  100% { transform: scale(0.95); filter: blur(1px); }
+}
+
+/* enables-on-change: staggers in disabled (0.2), enables at 60% */
+.mock-toolbar-btn.enables-on-change {
+  animation: mock-btn-enable 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes mock-btn-enable {
+  0%, 21.0% { transform: scale(0.95); filter: blur(1px); opacity: 0.2; }
+  22.5%     { transform: scale(1); filter: blur(0); opacity: 0.2; }
+  58%       { opacity: 0.2; }
+  62%       { opacity: 1; }
+  95%       { opacity: 1; transform: scale(1); filter: blur(0); }
+  97%       { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
+  100%      { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
+}
+
+/* Always-disabled (redo) — staggers in, stays at opacity 0.2 */
+.mock-toolbar-btn.always-disabled {
+  animation: mock-btn-always-disabled 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes mock-btn-always-disabled {
+  0%, 21.4% { transform: scale(0.95); filter: blur(1px); opacity: 0.2; }
+  22.9%     { transform: scale(1); filter: blur(0); opacity: 0.2; }
+  95%       { opacity: 0.2; transform: scale(1); filter: blur(0); }
+  97%       { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
+  100%      { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
+}
+
+/* Edit count badge: 20×20 (real: 32×32), font 8px (real: 13px)
+   Collapses width to 0 when hidden, pops with scale+blur when visible */
+.mock-edit-count-wrap { display: contents; }
+.mock-edit-count {
+  height: 20px;
+  border-radius: 999px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  will-change: transform, opacity;
+  animation: mock-badge-pop 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes mock-badge-pop {
+  0%, 59% { width: 0; min-width: 0; padding: 0; opacity: 0; }
+  62%     { width: 20px; min-width: 20px; padding: 0 6px; opacity: 1; }
+  95%     { width: 20px; min-width: 20px; padding: 0 6px; opacity: 1; }
+  97%     { width: 0; min-width: 0; padding: 0; opacity: 0; }
+  100%    { width: 0; min-width: 0; padding: 0; opacity: 0; }
 }
 
-.mock-color-swatch {
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
-  background: #3b82f6;
-  border: 1px solid #e7e5e4;
+/* Selection ring on target card */
+.mock-card-target .mock-selection-ring {
+  opacity: 0;
+  animation: mock-ring-toggle 7s ease infinite;
+}
+@keyframes mock-ring-toggle {
+  0%, 38% { opacity: 0; }
+  40% { opacity: 1; }
+  95% { opacity: 1; }
+  97% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
-.mock-color-value {
-  width: 50px;
-  height: 6px;
-  background: #d6d3d1;
-  border-radius: 3px;
+/* Card padding change */
+.mock-card-target {
+  animation: mock-card-pad 7s ease infinite;
+}
+@keyframes mock-card-pad {
+  0%, 58% { padding: 10px; }
+  62% { padding: 14px; }
+  95% { padding: 14px; }
+  100% { padding: 10px; }
 }
 
-/* Callouts */
-.callout {
+/* Panel appears after selection */
+.mock-panel {
   position: absolute;
-  font-size: 11px;
-  font-weight: 600;
-  color: #fff;
-  background: #1c1917;
-  padding: 4px 10px;
+  bottom: 50px;
+  right: 12px;
+  width: 180px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  z-index: 2;
+  animation: mock-panel-toggle 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes mock-panel-toggle {
+  0%, 45% { opacity: 0; transform: translateY(8px); }
+  48% { opacity: 1; transform: translateY(0); }
+  95% { opacity: 1; transform: translateY(0); }
+  97% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 0; transform: translateY(8px); }
+}
+
+/* Tab bar with sliding pill */
+.mock-panel-tabs {
+  display: flex;
+  position: relative;
+  padding: 6px;
+  gap: 2px;
+  border-bottom: 1px solid #e7e5e4;
+}
+.mock-panel-tab-pill {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: calc(50% - 8px);
+  height: calc(100% - 12px);
   border-radius: 6px;
-  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.05);
+}
+.mock-panel-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 4px 0;
+  border-radius: 6px;
+  color: #a8a29e;
+  position: relative;
+  z-index: 1;
+}
+.mock-panel-tab.active {
+  color: #1c1917;
 }
 
-.callout-select {
-  top: 48%;
-  left: 28%;
+/* Panel header — tag + component */
+.mock-panel-header {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e7e5e4;
+}
+.mock-el-tag {
+  font-size: 10px;
+  font-weight: 600;
+  color: #1c1917;
+}
+.mock-el-component {
+  font-size: 8px;
+  font-weight: 450;
+  color: #3b82f6;
+  margin-top: 1px;
 }
 
-.callout-panel {
-  top: 30%;
-  right: -4px;
+.mock-panel-scroll { padding: 0; }
+
+/* Sections */
+.mock-section {
+  border-bottom: 1px solid #e7e5e4;
+}
+.mock-section:last-child { border-bottom: none; }
+
+.mock-section-header {
+  font-size: 9px;
+  font-weight: 500;
+  color: #1c1917;
+  padding: 0 10px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+
+.mock-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 10px 8px;
+}
+
+/* Input rows — match retune-row */
+.mock-input-row {
+  display: flex;
+  gap: 4px;
+}
+
+.mock-input {
+  flex: 1;
+  height: 20px;
+  background: #f5f5f4;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  gap: 0;
+  position: relative;
+  min-width: 0;
+}
+.mock-input.narrow { flex: 0 0 44px; }
+.mock-input.color { padding-left: 2px; }
+
+.mock-input-label {
+  font-size: 7px;
+  font-weight: 450;
+  color: rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+}
+
+.mock-input-value {
+  font-size: 8px;
+  font-weight: 450;
+  color: #1c1917;
+}
+
+/* Color swatch */
+.mock-color-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+/* Value flash on change */
+.mock-value-animate {
+  animation: mock-val-flash 7s ease infinite;
+}
+@keyframes mock-val-flash {
+  0%, 58% { background: transparent; }
+  60% { background: #dbeafe; border-radius: 3px; }
+  68% { background: transparent; }
+  100% { background: transparent; }
+}
+
+/* Animated cursor */
+.mock-cursor {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  left: 60%;
+  top: 70%;
+  animation: mock-cursor-move 7s ease infinite;
+}
+
+@keyframes mock-cursor-move {
+  /* Hidden initially */
+  0%, 8% { opacity: 0; left: 60%; top: 70%; transform: scale(1); }
+  /* Appear */
+  12% { opacity: 1; left: 60%; top: 70%; transform: scale(1); }
+  /* Move to collapsed toolbar (bottom-right) */
+  20% { opacity: 1; left: 90%; top: 88%; transform: scale(1); }
+  /* Click toolbar */
+  21% { left: 90%; top: 88%; transform: scale(0.8); }
+  22% { left: 90%; top: 88%; transform: scale(1); }
+  /* Move to middle card */
+  32% { left: 42%; top: 34%; transform: scale(1); }
+  /* Click card */
+  39% { left: 42%; top: 34%; transform: scale(0.8); }
+  40% { left: 42%; top: 34%; transform: scale(1); }
+  /* Move to panel spacing field area */
+  55% { left: 75%; top: 58%; transform: scale(1); }
+  /* Click/tweak */
+  59% { left: 75%; top: 58%; transform: scale(0.8); }
+  61% { left: 75%; top: 58%; transform: scale(1); }
+  /* Hold */
+  88% { opacity: 1; left: 75%; top: 58%; transform: scale(1); }
+  /* Fade out */
+  94% { opacity: 0; left: 75%; top: 58%; transform: scale(1); }
+  100% { opacity: 0; left: 60%; top: 70%; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mock-toolbar,
+  .mock-collapse-btn,
+  .mock-toolbar-expanded,
+  .mock-toolbar-expanded > *,
+  .mock-toolbar-btn.enables-on-change,
+  .mock-toolbar-btn.always-disabled,
+  .mock-panel,
+  .mock-card-target,
+  .mock-card-target .mock-selection-ring,
+  .mock-value-animate,
+  .mock-edit-count-wrap,
+  .mock-edit-count,
+  .mock-cursor {
+    animation: none;
+  }
+  /* Show expanded state */
+  .mock-toolbar { padding: 4px; gap: 4px; }
+  .mock-collapse-btn { opacity: 0; }
+  .mock-toolbar-expanded { max-width: 200px; opacity: 1; gap: 4px; }
+  .mock-toolbar-expanded > * { transform: none; filter: none; }
+  .mock-panel { opacity: 1; transform: none; }
+  .mock-card-target .mock-selection-ring { opacity: 1; }
+  .mock-edit-count { width: 20px; min-width: 20px; padding: 0 6px; opacity: 1; transform: none; filter: none; }
+  .mock-toolbar-btn.enables-on-change { opacity: 1; }
+  .mock-toolbar-btn.always-disabled { opacity: 0.2; }
+  .mock-cursor { display: none; }
 }
 
 /* ── Steps Grid ── */
