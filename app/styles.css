@@ -125,7 +125,7 @@ body { background: #fafaf9; }
 /* ── Typography ── */
 
 .hero-heading {
-  font-size: 48px;
+  font-size: 32px;
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.035em;
