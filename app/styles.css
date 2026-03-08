@@ -593,28 +593,33 @@ body { background: #fafaf9; }
   100% { opacity: 0; }
 }
 
-/* Card padding change */
+/* Card padding + radius change */
 .mock-card-target {
-  animation: mock-card-pad 7s ease infinite;
+  animation: mock-card-changes 7s ease infinite;
 }
-@keyframes mock-card-pad {
-  0%, 58% { padding: 10px; }
-  62% { padding: 14px; }
-  95% { padding: 14px; }
-  100% { padding: 10px; }
+@keyframes mock-card-changes {
+  0%, 58% { padding: 10px; border-radius: 6px; }
+  62%     { padding: 14px; border-radius: 6px; }
+  66%     { padding: 14px; border-radius: 6px; }
+  70%     { padding: 14px; border-radius: 10px; }
+  95%     { padding: 14px; border-radius: 10px; }
+  100%    { padding: 10px; border-radius: 6px; }
 }
 
 /* Panel appears after selection */
 .mock-panel {
   position: absolute;
-  bottom: 50px;
-  right: 12px;
+  top: 8px;
+  bottom: 46px;
+  right: 8px;
   width: 180px;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
   animation: mock-panel-toggle 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 
@@ -668,14 +673,50 @@ body { background: #fafaf9; }
   font-weight: 600;
   color: #1c1917;
 }
-.mock-el-component {
-  font-size: 8px;
-  font-weight: 450;
-  color: #3b82f6;
-  margin-top: 1px;
+/* Scope switch row */
+.mock-scope-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 3px;
+}
+.mock-scope-label {
+  font-size: 7px;
+  font-weight: 400;
+  color: #78716c;
+  letter-spacing: -0.25px;
+}
+.mock-switch-track {
+  width: 17px;
+  height: 10px;
+  border-radius: 5px;
+  background: #d6d3d1;
+  position: relative;
+}
+.mock-switch-track.on {
+  background: #3b82f6;
+}
+.mock-switch-thumb {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  position: absolute;
+  top: 1.5px;
+  left: 1.5px;
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.1);
+}
+.mock-switch-track.on .mock-switch-thumb {
+  left: auto;
+  right: 1.5px;
 }
 
-.mock-panel-scroll { padding: 0; }
+.mock-panel-scroll {
+  padding: 0;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
 
 /* Sections */
 .mock-section {
@@ -687,23 +728,41 @@ body { background: #fafaf9; }
   font-size: 9px;
   font-weight: 500;
   color: #1c1917;
-  padding: 0 10px;
+  padding: 0 5px 0 10px;
   height: 28px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+/* Section action button (+) */
+.mock-section-action {
+  font-size: 10px;
+  font-weight: 400;
+  color: #a8a29e;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
 }
 
 .mock-section-body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 0 10px 8px;
+  padding: 0 5px 8px 10px;
 }
 
 /* Input rows — match retune-row */
 .mock-input-row {
   display: flex;
   gap: 4px;
+  padding-right: 18px;
+}
+.mock-input-row:has(.mock-split-btn) {
+  padding-right: 0;
 }
 
 .mock-input {
@@ -719,21 +778,114 @@ body { background: #fafaf9; }
   min-width: 0;
 }
 .mock-input.narrow { flex: 0 0 44px; }
-.mock-input.color { padding-left: 2px; }
+.mock-input.color { padding-left: 3px; }
+.mock-input:has(.mock-input-label svg) { padding-left: 3px; }
 
 .mock-input-label {
   font-size: 7px;
   font-weight: 450;
-  color: rgba(0, 0, 0, 0.3);
+  color: rgba(0, 0, 0, 0.9);
   flex-shrink: 0;
   width: 14px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mock-input-value {
   font-size: 8px;
   font-weight: 450;
   color: #1c1917;
+}
+
+/* Field with label above input */
+.mock-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.mock-field .mock-input {
+  flex: none;
+}
+.mock-field-label {
+  font-size: 7px;
+  font-weight: 400;
+  color: #78716c;
+}
+
+/* Split button (corner radius expand) */
+.mock-split-btn {
+  width: 14px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #a8a29e;
+}
+
+/* Select input with chevron */
+.mock-select {
+  justify-content: space-between;
+}
+.mock-chevron {
+  color: #a8a29e;
+  flex-shrink: 0;
+}
+
+/* Alignment row (Position section) */
+.mock-align-row {
+  display: flex;
+  gap: 4px;
+  padding-right: 18px;
+}
+.mock-btn-group {
+  flex: 1;
+  display: flex;
+  background: #f5f5f4;
+  border-radius: 5px;
+  height: 20px;
+  overflow: hidden;
+}
+.mock-btn-group.disabled {
+  opacity: 0.3;
+}
+.mock-align-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1c1917;
+}
+
+/* Segmented control */
+.mock-segmented {
+  display: flex;
+  background: #f5f5f4;
+  border-radius: 5px;
+  height: 20px;
+  overflow: hidden;
+}
+.mock-seg-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.4);
+}
+.mock-seg-btn.active {
+  color: rgba(0, 0, 0, 0.9);
+  background: #fff;
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+}
+.mock-seg-btn.disabled {
+  opacity: 0.3;
 }
 
 /* Color swatch */
@@ -747,14 +899,33 @@ body { background: #fafaf9; }
   margin-right: 4px;
 }
 
-/* Value flash on change */
-.mock-value-animate {
-  animation: mock-val-flash 7s ease infinite;
+/* Group label (e.g. "Padding", "Margin" inside Layout section) */
+.mock-group-label {
+  font-size: 7px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  padding-left: 0;
 }
-@keyframes mock-val-flash {
+
+/* Value flash on padding change (first change at 60%) */
+.mock-val-pad {
+  animation: mock-val-flash-1 7s ease infinite;
+}
+@keyframes mock-val-flash-1 {
   0%, 58% { background: transparent; }
   60% { background: #dbeafe; border-radius: 3px; }
   68% { background: transparent; }
+  100% { background: transparent; }
+}
+
+/* Value flash on radius change (second change at 68%) */
+.mock-val-radius {
+  animation: mock-val-flash-2 7s ease infinite;
+}
+@keyframes mock-val-flash-2 {
+  0%, 66% { background: transparent; }
+  68% { background: #dbeafe; border-radius: 3px; }
+  76% { background: transparent; }
   100% { background: transparent; }
 }
 
@@ -784,16 +955,61 @@ body { background: #fafaf9; }
   /* Click card */
   39% { left: 42%; top: 34%; transform: scale(0.8); }
   40% { left: 42%; top: 34%; transform: scale(1); }
-  /* Move to panel spacing field area */
-  55% { left: 75%; top: 58%; transform: scale(1); }
-  /* Click/tweak */
-  59% { left: 75%; top: 58%; transform: scale(0.8); }
-  61% { left: 75%; top: 58%; transform: scale(1); }
+  /* Move to panel padding field */
+  55% { left: 78%; top: 55%; transform: scale(1); }
+  /* Click/tweak padding */
+  59% { left: 78%; top: 55%; transform: scale(0.8); }
+  61% { left: 78%; top: 55%; transform: scale(1); }
+  /* Move to radius field (Appearance section) */
+  64% { left: 78%; top: 67%; transform: scale(1); }
+  /* Click/tweak radius */
+  67% { left: 78%; top: 67%; transform: scale(0.8); }
+  69% { left: 78%; top: 67%; transform: scale(1); }
   /* Hold */
-  88% { opacity: 1; left: 75%; top: 58%; transform: scale(1); }
+  88% { opacity: 1; left: 78%; top: 67%; transform: scale(1); }
   /* Fade out */
-  94% { opacity: 0; left: 75%; top: 58%; transform: scale(1); }
+  94% { opacity: 0; left: 78%; top: 67%; transform: scale(1); }
   100% { opacity: 0; left: 60%; top: 70%; transform: scale(1); }
+}
+
+/* Pause/resume button */
+.animation-pause-btn {
+  position: absolute;
+  bottom: -36px;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #a8a29e;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+  padding: 0;
+}
+.animation-pause-btn:hover {
+  color: #1c1917;
+  background: #f5f5f4;
+}
+
+/* Paused state — freeze all animations */
+.hero-visual.animation-paused .mock-toolbar,
+.hero-visual.animation-paused .mock-collapse-btn,
+.hero-visual.animation-paused .mock-toolbar-expanded,
+.hero-visual.animation-paused .mock-toolbar-expanded > *,
+.hero-visual.animation-paused .mock-toolbar-btn.enables-on-change,
+.hero-visual.animation-paused .mock-toolbar-btn.always-disabled,
+.hero-visual.animation-paused .mock-panel,
+.hero-visual.animation-paused .mock-card-target,
+.hero-visual.animation-paused .mock-card-target .mock-selection-ring,
+.hero-visual.animation-paused .mock-edit-count,
+.hero-visual.animation-paused .mock-cursor,
+.hero-visual.animation-paused .mock-val-pad,
+.hero-visual.animation-paused .mock-val-radius {
+  animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -812,6 +1028,7 @@ body { background: #fafaf9; }
   .mock-cursor {
     animation: none;
   }
+  .animation-pause-btn { display: none; }
   /* Show expanded state */
   .mock-toolbar { padding: 4px; gap: 4px; }
   .mock-collapse-btn { opacity: 0; }
@@ -823,6 +1040,8 @@ body { background: #fafaf9; }
   .mock-toolbar-btn.enables-on-change { opacity: 1; }
   .mock-toolbar-btn.always-disabled { opacity: 0.2; }
   .mock-cursor { display: none; }
+  .mock-val-pad,
+  .mock-val-radius { animation: none; }
 }
 
 /* ── Steps Grid ── */

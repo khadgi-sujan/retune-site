@@ -24,6 +24,7 @@ function CopyButton({ text }: { text: string }) {
 }
 
 export default function Home() {
+  const [paused, setPaused] = useState(false);
   return (
     <div className="layout">
       {/* ── Sidebar TOC ── */}
@@ -95,7 +96,7 @@ export default function Home() {
             </a>
           </div>
 
-          <div className="hero-visual">
+          <div className={`hero-visual${paused ? " animation-paused" : ""}`}>
             <div className="browser-chrome">
               <div className="browser-dots">
                 <span className="dot dot-red" />
@@ -145,7 +146,7 @@ export default function Home() {
                 <div className="mock-toolbar-expanded">
                   {/* Edit count badge wrap — grows when change happens */}
                   <div className="mock-edit-count-wrap">
-                    <div className="mock-edit-count">1</div>
+                    <div className="mock-edit-count">2</div>
                   </div>
                   {/* Copy */}
                   <div className="mock-toolbar-btn enables-on-change">
@@ -180,22 +181,116 @@ export default function Home() {
                   <div className="mock-panel-tab">Elements</div>
                   <div className="mock-panel-tab active">Design</div>
                 </div>
+                <div className="mock-panel-scroll">
                 <div className="mock-panel-header">
                   <div className="mock-el-tag">div</div>
-                  <div className="mock-el-component">Card</div>
+                  <div className="mock-scope-row">
+                    <span className="mock-scope-label">Apply to all instances</span>
+                    <div className="mock-switch-track on">
+                      <div className="mock-switch-thumb" />
+                    </div>
+                  </div>
                 </div>
-                <div className="mock-panel-scroll">
+                  {/* Position — alignment + type */}
                   <div className="mock-section">
-                    <div className="mock-section-header">Spacing</div>
+                    <div className="mock-section-header">Position</div>
                     <div className="mock-section-body">
+                      <div className="mock-field">
+                        <span className="mock-field-label">Alignment</span>
+                        <div className="mock-align-row">
+                          <div className="mock-btn-group disabled">
+                            <div className="mock-align-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M17.25 10C17.6642 10 18 9.66421 18 9.25V8.75C18 8.33579 17.6642 8 17.25 8H8.75C8.33579 8 8 8.33579 8 8.75V9.25C8 9.66421 8.33579 10 8.75 10H17.25ZM13.25 15C13.6642 15 14 14.6642 14 14.25V13.75C14 13.3358 13.6642 13 13.25 13H8.75C8.33579 13 8 13.3358 8 13.75V14.25C8 14.6642 8.33579 15 8.75 15H13.25Z" fillOpacity="0.9"/><path d="M6 17.5C6 17.7761 5.77614 18 5.5 18C5.22386 18 5 17.7761 5 17.5V5.5C5 5.22386 5.22386 5 5.5 5C5.77614 5 6 5.22386 6 5.5V17.5Z" fillOpacity="0.3"/></svg></div>
+                            <div className="mock-align-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M17.25 10C17.6642 10 18 9.66421 18 9.25V8.75C18 8.33579 17.6642 8 17.25 8H7.75C7.33579 8 7 8.33579 7 8.75V9.25C7 9.66421 7.33579 10 7.75 10H17.25ZM15.25 15C15.6642 15 16 14.6642 16 14.25V13.75C16 13.3358 15.6642 13 15.25 13H9.75C9.33579 13 9 13.3358 9 13.75V14.25C9 14.6642 9.33579 15 9.75 15H15.25Z" fillOpacity="0.9"/><path fillRule="evenodd" clipRule="evenodd" d="M13 17.5C13 17.7761 12.7761 18 12.5 18C12.2239 18 12 17.7761 12 17.5V15H13V17.5ZM13 13V10H12V13H13ZM13 5.5V8H12V5.5C12 5.22386 12.2239 5 12.5 5C12.7761 5 13 5.22386 13 5.5Z" fillOpacity="0.3"/></svg></div>
+                            <div className="mock-align-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M6.75 10C6.33579 10 6 9.66421 6 9.25V8.75C6 8.33579 6.33579 8 6.75 8H15.25C15.6642 8 16 8.33579 16 8.75V9.25C16 9.66421 15.6642 10 15.25 10H6.75ZM10.75 15C10.3358 15 10 14.6642 10 14.25V13.75C10 13.3358 10.3358 13 10.75 13H15.25C15.6642 13 16 13.3358 16 13.75V14.25C16 14.6642 15.6642 15 15.25 15H10.75Z" fillOpacity="0.9"/><path d="M18 17.5C18 17.7761 18.2239 18 18.5 18C18.7761 18 19 17.7761 19 17.5V5.5C19 5.22386 18.7761 5 18.5 5C18.2239 5 18 5.22386 18 5.5V17.5Z" fillOpacity="0.3"/></svg></div>
+                          </div>
+                          <div className="mock-btn-group disabled">
+                            <div className="mock-align-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M10 17.25C10 17.6642 9.66421 18 9.25 18H8.75C8.33579 18 8 17.6642 8 17.25L8 8.75C8 8.33579 8.33579 8 8.75 8H9.25C9.66421 8 10 8.33579 10 8.75V17.25ZM15 13.25C15 13.6642 14.6642 14 14.25 14H13.75C13.3358 14 13 13.6642 13 13.25V8.75C13 8.33579 13.3358 8 13.75 8H14.25C14.6642 8 15 8.33579 15 8.75V13.25Z" fillOpacity="0.9"/><path d="M17.5 6C17.7761 6 18 5.77614 18 5.5C18 5.22386 17.7761 5 17.5 5L5.5 5C5.22386 5 5 5.22386 5 5.5C5 5.77614 5.22386 6 5.5 6L17.5 6Z" fillOpacity="0.3"/></svg></div>
+                            <div className="mock-align-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M10 6.75C10 6.33579 9.66421 6 9.25 6H8.75C8.33579 6 8 6.33579 8 6.75V16.25C8 16.6642 8.33579 17 8.75 17H9.25C9.66421 17 10 16.6642 10 16.25V6.75ZM15 8.75C15 8.33579 14.6642 8 14.25 8H13.75C13.3358 8 13 8.33579 13 8.75V14.25C13 14.6642 13.3358 15 13.75 15H14.25C14.6642 15 15 14.6642 15 14.25V8.75Z" fillOpacity="0.9"/><path fillRule="evenodd" clipRule="evenodd" d="M17.5 11C17.7761 11 18 11.2239 18 11.5C18 11.7761 17.7761 12 17.5 12H15V11H17.5ZM13 11H10V12H13V11ZM5.5 11H8V12H5.5C5.22386 12 5 11.7761 5 11.5C5 11.2239 5.22386 11 5.5 11Z" fillOpacity="0.3"/></svg></div>
+                            <div className="mock-align-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M10 6.75C10 6.33579 9.66421 6 9.25 6H8.75C8.33579 6 8 6.33579 8 6.75L8 15.25C8 15.6642 8.33579 16 8.75 16H9.25C9.66421 16 10 15.6642 10 15.25V6.75ZM15 10.75C15 10.3358 14.6642 10 14.25 10H13.75C13.3358 10 13 10.3358 13 10.75V15.25C13 15.6642 13.3358 16 13.75 16H14.25C14.6642 16 15 15.6642 15 15.25V10.75Z" fillOpacity="0.9"/><path d="M17.5 18C17.7761 18 18 18.2239 18 18.5C18 18.7761 17.7761 19 17.5 19H5.5C5.22386 19 5 18.7761 5 18.5C5 18.2239 5.22386 18 5.5 18H17.5Z" fillOpacity="0.3"/></svg></div>
+                          </div>
+                        </div>
+                      </div>
                       <div className="mock-input-row">
-                        <div className="mock-input"><span className="mock-input-label">↕</span><span className="mock-input-value mock-value-animate">24px</span></div>
-                        <div className="mock-input"><span className="mock-input-label">↔</span><span className="mock-input-value">20px</span></div>
+                        <div className="mock-field">
+                          <span className="mock-field-label">Type</span>
+                          <div className="mock-input mock-select"><span className="mock-input-value">static</span><svg className="mock-chevron" width="6" height="6" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M2.5 4L5 6.5L7.5 4"/></svg></div>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  {/* Layout — Display + Padding + Margin */}
+                  <div className="mock-section">
+                    <div className="mock-section-header">Layout</div>
+                    <div className="mock-section-body">
+                      <div className="mock-input-row">
+                        <div className="mock-field">
+                          <span className="mock-field-label">Display</span>
+                          <div className="mock-segmented">
+                            <div className="mock-seg-btn active"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M16.5 7H7.5C7.22386 7 7 7.22386 7 7.5V16.5C7 16.7761 7.22386 17 7.5 17H16.5C16.7761 17 17 16.7761 17 16.5V7.5C17 7.22386 16.7761 7 16.5 7ZM7.5 6C6.67157 6 6 6.67157 6 7.5V16.5C6 17.3284 6.67157 18 7.5 18H16.5C17.3284 18 18 17.3284 18 16.5V7.5C18 6.67157 17.3284 6 16.5 6H7.5Z"/></svg></div>
+                            <div className="mock-seg-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M9.5 7H7.5C7.22386 7 7 7.22386 7 7.5V16.5C7 16.7761 7.22386 17 7.5 17H9.5C9.77614 17 10 16.7761 10 16.5V7.5C10 7.22386 9.77614 7 9.5 7ZM7.5 6C6.67157 6 6 6.67157 6 7.5V16.5C6 17.3284 6.67157 18 7.5 18H9.5C10.3284 18 11 17.3284 11 16.5V7.5C11 6.67157 10.3284 6 9.5 6H7.5ZM16.5 7H14.5C14.2239 7 14 7.22386 14 7.5V9.5C14 9.77614 14.2239 10 14.5 10H16.5C16.7761 10 17 9.77614 17 9.5V7.5C17 7.22386 16.7761 7 16.5 7ZM14.5 6C13.6716 6 13 6.67157 13 7.5V9.5C13 10.3284 13.6716 11 14.5 11H16.5C17.3284 11 18 10.3284 18 9.5V7.5C18 6.67157 17.3284 6 16.5 6H14.5ZM16 13.5C16 13.2239 15.7761 13 15.5 13C15.2239 13 15 13.2239 15 13.5V15H13.5C13.2239 15 13 15.2239 13 15.5C13 15.7761 13.2239 16 13.5 16H15V17.5C15 17.7761 15.2239 18 15.5 18C15.7761 18 16 17.7761 16 17.5V16H17.5C17.7761 16 18 15.7761 18 15.5C18 15.2239 17.7761 15 17.5 15H16V13.5Z"/></svg></div>
+                            <div className="mock-seg-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M7 9.5L7 7.5C7 7.22386 7.22386 7 7.5 7L16.5 7C16.7761 7 17 7.22386 17 7.5L17 9.5C17 9.77614 16.7761 10 16.5 10L7.5 10C7.22386 10 7 9.77614 7 9.5ZM6 7.5C6 6.67157 6.67157 6 7.5 6L16.5 6C17.3284 6 18 6.67157 18 7.5L18 9.5C18 10.3284 17.3284 11 16.5 11L7.5 11C6.67157 11 6 10.3284 6 9.5L6 7.5ZM7 16.5L7 14.5C7 14.2239 7.22386 14 7.5 14L9.5 14C9.77614 14 10 14.2239 10 14.5L10 16.5C10 16.7761 9.77614 17 9.5 17L7.5 17C7.22386 17 7 16.7761 7 16.5ZM6 14.5C6 13.6716 6.67157 13 7.5 13L9.5 13C10.3284 13 11 13.6716 11 14.5L11 16.5C11 17.3284 10.3284 18 9.5 18L7.5 18C6.67157 18 6 17.3284 6 16.5L6 14.5ZM13.5 16C13.2239 16 13 15.7761 13 15.5C13 15.2239 13.2239 15 13.5 15L15 15L15 13.5C15 13.2239 15.2239 13 15.5 13C15.7761 13 16 13.2239 16 13.5L16 15L17.5 15C17.7761 15 18 15.2239 18 15.5C18 15.7761 17.7761 16 17.5 16L16 16L16 17.5C16 17.7761 15.7761 18 15.5 18C15.2239 18 15 17.7761 15 17.5L15 16L13.5 16Z"/></svg></div>
+                            <div className="mock-seg-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M7 7H10V10H7V7ZM6 7C6 6.44771 6.44771 6 7 6H10C10.5523 6 11 6.44771 11 7V10C11 10.5523 10.5523 11 10 11H7C6.44771 11 6 10.5523 6 10V7ZM7 14H10V17H7V14ZM6 14C6 13.4477 6.44771 13 7 13H10C10.5523 13 11 13.4477 11 14V17C11 17.5523 10.5523 18 10 18H7C6.44771 18 6 17.5523 6 17V14ZM17 7H14V10H17V7ZM14 6C13.4477 6 13 6.44771 13 7V10C13 10.5523 13.4477 11 14 11H17C17.5523 11 18 10.5523 18 10V7C18 6.44771 17.5523 6 17 6H14ZM14 14H17V17H14V14ZM13 14C13 13.4477 13.4477 13 14 13H17C17.5523 13 18 13.4477 18 14V17C18 17.5523 17.5523 18 17 18H14C13.4477 18 13 17.5523 13 17V14Z"/></svg></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mock-group-label">Padding</div>
+                      <div className="mock-input-row">
+                        <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M7.5 16a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zM7 7.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM13 11h-2v2h2v-2zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2z"/></svg></span><span className="mock-input-value mock-val-pad">12px</span></div>
+                        <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 7.5a.5.5 0 0 0-1 0v9a.5.5 0 0 0 1 0v-9zM16.5 7a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0v-9a.5.5 0 0 1 .5-.5zM13 13v-2h-2v2h2zm1-2a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2z"/></svg></span><span className="mock-input-value">16px</span></div>
+                        <div className="mock-split-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM17 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM9.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM9 16.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/></svg></div>
+                      </div>
+                      <div className="mock-group-label">Margin</div>
+                      <div className="mock-input-row">
+                        <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M7.5 16a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zM7 7.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM13 11h-2v2h2v-2zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2z"/></svg></span><span className="mock-input-value">0px</span></div>
+                        <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 7.5a.5.5 0 0 0-1 0v9a.5.5 0 0 0 1 0v-9zM16.5 7a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0v-9a.5.5 0 0 1 .5-.5zM13 13v-2h-2v2h2zm1-2a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2z"/></svg></span><span className="mock-input-value">0px</span></div>
+                        <div className="mock-split-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM17 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM9.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM9 16.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/></svg></div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Size — width + height */}
+                  <div className="mock-section">
+                    <div className="mock-section-header"><span>Size</span><div className="mock-section-action"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M12 6C12.2761 6 12.5 6.22386 12.5 6.5V11.5H17.5C17.7761 11.5 18 11.7239 18 12C18 12.2761 17.7761 12.5 17.5 12.5H12.5V17.5C12.5 17.7761 12.2761 18 12 18C11.7239 18 11.5 17.7761 11.5 17.5V12.5H6.5C6.22386 12.5 6 12.2761 6 12C6 11.7239 6.22386 11.5 6.5 11.5H11.5V6.5C11.5 6.22386 11.7239 6 12 6Z" fillOpacity="0.9"/></svg></div></div>
+                    <div className="mock-section-body">
+                      <div className="mock-input-row">
+                        <div className="mock-field">
+                          <span className="mock-field-label">Width</span>
+                          <div className="mock-input"><span className="mock-input-value">auto</span></div>
+                        </div>
+                        <div className="mock-field">
+                          <span className="mock-field-label">Height</span>
+                          <div className="mock-input"><span className="mock-input-value">auto</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Appearance — opacity + z-index, corner radius, overflow */}
                   <div className="mock-section">
                     <div className="mock-section-header">Appearance</div>
+                    <div className="mock-section-body">
+                      <div className="mock-input-row">
+                        <div className="mock-field">
+                          <span className="mock-field-label">Opacity</span>
+                          <div className="mock-input"><span className="mock-input-value">1</span></div>
+                        </div>
+                        <div className="mock-field">
+                          <span className="mock-field-label">Z index</span>
+                          <div className="mock-input"><span className="mock-input-value">auto</span></div>
+                        </div>
+                      </div>
+                      <div className="mock-group-label">Corner radius</div>
+                      <div className="mock-input-row">
+                        <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M12.478 8H12.5h3a.5.5 0 0 1 0 1h-3c-.708 0-1.21 0-1.6.032-.488.032-.724.124-.908.218a2.25 2.25 0 0 0-.874.874c-.094.184-.186.42-.218.908C9 11.291 9 11.792 9 12.5v3a.5.5 0 0 1-1 0v-3.022c0-.7 0-1.245.036-1.66.035-.449.077-.831.149-1.183a3.25 3.25 0 0 1 1.64-1.64c.352-.148.734-.19 1.183-.225C11.233 8 11.778 8 12.478 8Z"/></svg></span><span className="mock-input-value mock-val-radius">8px</span></div>
+                        <div className="mock-split-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM17 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM9.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM9 16.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/></svg></div>
+                      </div>
+                      <div className="mock-group-label">Overflow</div>
+                      <div className="mock-input-row">
+                        <div className="mock-input mock-select"><span className="mock-input-value">Visible</span><svg className="mock-chevron" width="6" height="6" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M2.5 4L5 6.5L7.5 4"/></svg></div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Fill — color + opacity */}
+                  <div className="mock-section">
+                    <div className="mock-section-header"><span>Fill</span><div className="mock-section-action"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M12 6C12.2761 6 12.5 6.22386 12.5 6.5V11.5H17.5C17.7761 11.5 18 11.7239 18 12C18 12.2761 17.7761 12.5 17.5 12.5H12.5V17.5C12.5 17.7761 12.2761 18 12 18C11.7239 18 11.5 17.7761 11.5 17.5V12.5H6.5C6.22386 12.5 6 12.2761 6 12C6 11.7239 6.22386 11.5 6.5 11.5H11.5V6.5C11.5 6.22386 11.7239 6 12 6Z" fillOpacity="0.9"/></svg></div></div>
                     <div className="mock-section-body">
                       <div className="mock-input-row">
                         <div className="mock-input color">
@@ -206,14 +301,17 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
+                  {/* Border */}
                   <div className="mock-section">
-                    <div className="mock-section-header">Border</div>
-                    <div className="mock-section-body">
-                      <div className="mock-input-row">
-                        <div className="mock-input"><span className="mock-input-label">W</span><span className="mock-input-value">1px</span></div>
-                        <div className="mock-input"><span className="mock-input-label">R</span><span className="mock-input-value">8px</span></div>
-                      </div>
-                    </div>
+                    <div className="mock-section-header"><span>Border</span><div className="mock-section-action"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M12 6C12.2761 6 12.5 6.22386 12.5 6.5V11.5H17.5C17.7761 11.5 18 11.7239 18 12C18 12.2761 17.7761 12.5 17.5 12.5H12.5V17.5C12.5 17.7761 12.2761 18 12 18C11.7239 18 11.5 17.7761 11.5 17.5V12.5H6.5C6.22386 12.5 6 12.2761 6 12C6 11.7239 6.22386 11.5 6.5 11.5H11.5V6.5C11.5 6.22386 11.7239 6 12 6Z" fillOpacity="0.9"/></svg></div></div>
+                  </div>
+                  {/* Shadow */}
+                  <div className="mock-section">
+                    <div className="mock-section-header"><span>Shadow</span><div className="mock-section-action"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M12 6C12.2761 6 12.5 6.22386 12.5 6.5V11.5H17.5C17.7761 11.5 18 11.7239 18 12C18 12.2761 17.7761 12.5 17.5 12.5H12.5V17.5C12.5 17.7761 12.2761 18 12 18C11.7239 18 11.5 17.7761 11.5 17.5V12.5H6.5C6.22386 12.5 6 12.2761 6 12C6 11.7239 6.22386 11.5 6.5 11.5H11.5V6.5C11.5 6.22386 11.7239 6 12 6Z" fillOpacity="0.9"/></svg></div></div>
+                  </div>
+                  {/* Filters */}
+                  <div className="mock-section">
+                    <div className="mock-section-header"><span>Filters</span><div className="mock-section-action"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M12 6C12.2761 6 12.5 6.22386 12.5 6.5V11.5H17.5C17.7761 11.5 18 11.7239 18 12C18 12.2761 17.7761 12.5 17.5 12.5H12.5V17.5C12.5 17.7761 12.2761 18 12 18C11.7239 18 11.5 17.7761 11.5 17.5V12.5H6.5C6.22386 12.5 6 12.2761 6 12C6 11.7239 6.22386 11.5 6.5 11.5H11.5V6.5C11.5 6.22386 11.7239 6 12 6Z" fillOpacity="0.9"/></svg></div></div>
                   </div>
                 </div>
               </div>
@@ -222,6 +320,17 @@ export default function Home() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
               </div>
             </div>
+            <button
+              className="animation-pause-btn"
+              onClick={() => setPaused(p => !p)}
+              aria-label={paused ? "Resume animation" : "Pause animation"}
+            >
+              {paused ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+              )}
+            </button>
           </div>
         </section>
 
