@@ -521,62 +521,107 @@ body { background: #fafaf9; }
   margin-top: 32px;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #292524;
+  border: 1px solid #e7e5e4;
 }
 
 .output-chrome {
-  background: #292524;
+  background: #f5f5f4;
   padding: 10px 16px;
   font-size: 11px;
   font-weight: 600;
-  color: #78716c;
+  color: #a8a29e;
   letter-spacing: 0.02em;
 }
 
 .output-body {
-  background: #1c1917;
+  background: #fafaf9;
   padding: 20px 24px;
   font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
   font-size: 12.5px;
   line-height: 1.8;
-  color: #a8a29e;
+  color: #78716c;
   white-space: pre;
   overflow-x: auto;
 }
 
-.output-h1 { color: #e7e5e4; font-weight: 700; }
-.output-h2 { color: #e7e5e4; font-weight: 600; }
-.output-h3 { color: #d6d3d1; font-weight: 600; }
-.output-key { color: #a8a29e; }
-.output-prop { color: #67e8f9; }
-.output-old { color: #f87171; }
-.output-new { color: #4ade80; }
-.output-table-hdr { color: #78716c; }
-.output-table-sep { color: #44403c; }
-.output-hint { color: #86efac; font-style: italic; }
+.output-h1 { color: #1c1917; font-weight: 700; }
+.output-h2 { color: #1c1917; font-weight: 600; }
+.output-h3 { color: #292524; font-weight: 600; }
+.output-key { color: #78716c; }
+.output-prop { color: #0891b2; }
+.output-old { color: #dc2626; }
+.output-new { color: #059669; }
+.output-table-hdr { color: #a8a29e; }
+.output-table-sep { color: #d6d3d1; }
+.output-hint { color: #059669; font-style: italic; }
 
 /* ── Code Block ── */
 
 .code-block {
-  background: #1c1917;
+  position: relative;
+  background: #fafaf9;
+  border: 1px solid #e7e5e4;
   border-radius: 12px;
   padding: 20px 24px;
   overflow-x: auto;
   margin-top: 16px;
 }
 
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #a8a29e;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.code-block:hover .copy-btn { opacity: 1; }
+.copy-btn:hover { background: #e7e5e4; color: #44403c; }
+
+.copy-icon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
+}
+.copy-icon-in {
+  opacity: 1;
+  transform: scale(1);
+}
+.copy-icon-out {
+  opacity: 0;
+  transform: scale(0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-icon { transition: none; }
+  .copy-btn { transition: none; }
+}
+
 .code-line {
   font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
   font-size: 13px;
   line-height: 1.8;
-  color: #e7e5e4;
+  color: #44403c;
   white-space: pre;
 }
 
-.code-comment { color: #78716c; }
-.code-keyword { color: #c084fc; }
-.code-string { color: #86efac; }
-.code-component { color: #67e8f9; }
+.code-comment { color: #a8a29e; }
+.code-keyword { color: #7c3aed; }
+.code-string { color: #059669; }
+.code-component { color: #0891b2; }
 
 /* ── Install Steps ── */
 

@@ -1,6 +1,27 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import "./styles.css";
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [text]);
+  return (
+    <button className="copy-btn" onClick={handleCopy} aria-label="Copy to clipboard">
+      <span className={`copy-icon ${copied ? "copy-icon-out" : "copy-icon-in"}`}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
+      </span>
+      <span className={`copy-icon ${copied ? "copy-icon-in" : "copy-icon-out"}`}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+      </span>
+    </button>
+  );
+}
 
 export default function Home() {
   return (
@@ -250,6 +271,7 @@ export default function Home() {
               <div className="install-step-content">
                 <p className="install-step-title">Install the package</p>
                 <div className="code-block">
+                  <CopyButton text="npm install retune" />
                   <div className="code-line"><span className="code-comment">$</span> npm install retune</div>
                 </div>
               </div>
@@ -260,6 +282,7 @@ export default function Home() {
               <div className="install-step-content">
                 <p className="install-step-title">Add to your layout</p>
                 <div className="code-block">
+                  <CopyButton text={`import { Retune } from "retune"\n\n// Add anywhere in your component tree\n<Retune />`} />
                   <div className="code-line"><span className="code-keyword">import</span> {"{"} Retune {"}"} <span className="code-keyword">from</span> <span className="code-string">"retune"</span></div>
                   <div className="code-line" style={{ height: 8 }} />
                   <div className="code-line"><span className="code-comment">{"// Add anywhere in your component tree"}</span></div>
@@ -275,6 +298,7 @@ export default function Home() {
                 <p className="install-step-title">Connect your AI tool</p>
                 <p className="install-step-desc">Add to <code>.mcp.json</code> (Claude Code) or MCP settings (Cursor):</p>
                 <div className="code-block">
+                  <CopyButton text={`{\n  "mcpServers": {\n    "retune": {\n      "command": "npx",\n      "args": ["-y", "retune"]\n    }\n  }\n}`} />
                   <div className="code-line">{"{"}</div>
                   <div className="code-line">{"  "}<span className="code-string">"mcpServers"</span>: {"{"}</div>
                   <div className="code-line">{"    "}<span className="code-string">"retune"</span>: {"{"}</div>
