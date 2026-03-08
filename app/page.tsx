@@ -4,58 +4,74 @@ import "./styles.css";
 
 export default function Home() {
   return (
-    <>
-      {/* ── Nav ── */}
-      <nav className="nav">
-        <div className="nav-inner">
-          <a href="#" className="nav-logo">
-            <div className="logo-mark" />
-            <span className="logo-name">Retune</span>
-          </a>
-          <div className="nav-links">
-            <a href="#how-it-works" className="nav-link">How It Works</a>
-            <a href="#controls" className="nav-link">Controls</a>
-            <a href="#output" className="nav-link">Output</a>
-            <a href="#install" className="nav-link">Install</a>
-            <a href="https://github.com/khadgi-sujan/retune" className="nav-link nav-github" target="_blank" rel="noopener">
-              GitHub
-            </a>
-          </div>
-        </div>
-      </nav>
+    <div className="layout">
+      {/* ── Sidebar TOC ── */}
+      <aside className="sidebar">
+        <a href="#" className="sidebar-logo">
+          <div className="logo-mark" />
+          <span className="logo-name">Retune</span>
+        </a>
 
-      <main className="page">
+        <nav className="toc">
+          <a href="#" className="toc-link active">Overview</a>
+          <a href="#how-it-works" className="toc-link">How It Works</a>
+          <a href="#controls" className="toc-link">Controls</a>
+          <a href="#output" className="toc-link">Output</a>
+          <a href="#install" className="toc-link">Install</a>
+          <a href="#works-with" className="toc-link">Compatibility</a>
+        </nav>
+
+        <div className="sidebar-footer">
+          <a
+            href="https://github.com/khadgi-sujan/retune"
+            className="sidebar-ext-link"
+            target="_blank"
+            rel="noopener"
+          >
+            GitHub
+          </a>
+          <a
+            href="https://www.npmjs.com/package/retune"
+            className="sidebar-ext-link"
+            target="_blank"
+            rel="noopener"
+          >
+            npm
+          </a>
+        </div>
+      </aside>
+
+      {/* ── Main Content ── */}
+      <main className="content">
         {/* ── Hero ── */}
         <section className="hero">
-          <div className="hero-text">
-            <h1 className="hero-heading">
-              Stop prompting<br />for pixels.
-            </h1>
-            <p className="hero-sub">
-              Select any element in your running React app, tweak it visually,
-              and let your AI coding tool write the CSS. No more describing
-              layouts in words.
-            </p>
-            <div className="cta-row">
-              <button
-                className="cta-primary"
-                onClick={() => {
-                  const host = document.querySelector("[data-retune-host]") as HTMLElement;
-                  const btn = host?.shadowRoot?.querySelector(".retune-toolbar-collapse-btn") as HTMLElement;
-                  btn?.click();
-                }}
-              >
-                Try it on this page
-              </button>
-              <a
-                href="https://github.com/khadgi-sujan/retune"
-                className="cta-secondary"
-                target="_blank"
-                rel="noopener"
-              >
-                View on GitHub &rarr;
-              </a>
-            </div>
+          <h1 className="hero-heading">
+            Stop prompting<br />for pixels.
+          </h1>
+          <p className="hero-sub">
+            Select any element in your running React app, tweak it visually,
+            and let your AI coding tool write the CSS. No more describing
+            layouts in words.
+          </p>
+          <div className="cta-row">
+            <button
+              className="cta-primary"
+              onClick={() => {
+                const host = document.querySelector("[data-retune-host]") as HTMLElement;
+                const btn = host?.shadowRoot?.querySelector(".retune-toolbar-collapse-btn") as HTMLElement;
+                btn?.click();
+              }}
+            >
+              Try it on this page
+            </button>
+            <a
+              href="https://github.com/khadgi-sujan/retune"
+              className="cta-secondary"
+              target="_blank"
+              rel="noopener"
+            >
+              View on GitHub &rarr;
+            </a>
           </div>
 
           <div className="hero-visual">
@@ -300,12 +316,8 @@ export default function Home() {
         {/* ── Footer ── */}
         <footer className="footer">
           <p className="footer-text">Retune — visual CSS editing for AI-assisted development.</p>
-          <div className="footer-links">
-            <a href="https://github.com/khadgi-sujan/retune" className="footer-link" target="_blank" rel="noopener">GitHub</a>
-            <a href="https://www.npmjs.com/package/retune" className="footer-link" target="_blank" rel="noopener">npm</a>
-          </div>
         </footer>
       </main>
-    </>
+    </div>
   );
 }
