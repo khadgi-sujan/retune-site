@@ -8,12 +8,13 @@
     "start": "next start -p 3001"
   },
   "dependencies": {
-    "retune": "github:khadgi-sujan/retune",
     "next": "^15.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "retune": "file:../retune/packages/overlay"
   },
   "devDependencies": {
+    "@types/node": "25.3.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "typescript": "^5.5.0"
