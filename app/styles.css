@@ -558,8 +558,20 @@ body { background: #fafaf9; }
 
 /* Edit count badge: 20×20 (real: 32×32), font 8px (real: 13px)
    Enters with scale+blur+opacity (GPU-only, no layout thrash) */
-.mock-edit-count-wrap { display: contents; }
+.mock-edit-count-wrap {
+  overflow: hidden;
+  flex-shrink: 0;
+  animation: mock-badge-space 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes mock-badge-space {
+  0%, 58% { width: 0; }
+  60%     { width: 20px; }
+  90%     { width: 20px; }
+  94%     { width: 0; }
+  100%    { width: 0; }
+}
 .mock-edit-count {
+  position: relative;
   width: 20px;
   height: 20px;
   padding: 0 6px;
@@ -578,10 +590,30 @@ body { background: #fafaf9; }
 }
 @keyframes mock-badge-pop {
   0%, 58% { transform: scale(0); opacity: 0; filter: blur(4px); }
-  61%     { transform: scale(1); opacity: 1; filter: blur(0); }
-  93%     { transform: scale(1); opacity: 1; filter: blur(0); }
-  96%     { transform: scale(0); opacity: 0; filter: blur(4px); }
+  60%     { transform: scale(1); opacity: 1; filter: blur(0); }
+  90%     { transform: scale(1); opacity: 1; filter: blur(0); }
+  94%     { transform: scale(0); opacity: 0; filter: blur(4px); }
   100%    { transform: scale(0); opacity: 0; filter: blur(4px); }
+}
+/* Count text swap: "1" shows first, "2" replaces after radius change */
+.mock-count-1, .mock-count-2 {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mock-count-1 { animation: mock-count-1-swap 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+.mock-count-2 { animation: mock-count-2-swap 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+@keyframes mock-count-1-swap {
+  0%, 77% { opacity: 1; }
+  79%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+@keyframes mock-count-2-swap {
+  0%, 77% { opacity: 0; }
+  79%     { opacity: 1; }
+  100%    { opacity: 1; }
 }
 
 /* Selection ring on target card */
@@ -728,28 +760,17 @@ body { background: #fafaf9; }
   animation: mock-panel-scroll-sim 7s ease infinite;
 }
 @keyframes mock-panel-scroll-sim {
-  /* No scroll until after padding tweak */
-  0%, 61% { transform: translateY(0); }
+  /* No scroll until after padding tweak + cursor interaction */
+  0%, 64% { transform: translateY(0); }
   /* Scroll up to reveal corner radius field */
-  66% { transform: translateY(-190px); }
+  69% { transform: translateY(-190px); }
   /* Hold */
-  93% { transform: translateY(-190px); }
+  90% { transform: translateY(-190px); }
   /* Reset */
-  96% { transform: translateY(0); }
+  94% { transform: translateY(0); }
   100% { transform: translateY(0); }
 }
 
-/* Measuring mode — disable animations to get accurate positions */
-.hero-visual.measuring .mock-toolbar,
-.hero-visual.measuring .mock-panel {
-  animation: none !important;
-  opacity: 1 !important;
-  transform: none !important;
-}
-.hero-visual.measuring .mock-panel-inner {
-  animation: none !important;
-  transform: none !important;
-}
 
 /* Sections */
 .mock-section {
@@ -987,14 +1008,20 @@ body { background: #fafaf9; }
 @keyframes cursor-icon-pointer {
   0%, 20% { opacity: 1; }
   22% { opacity: 0; }
-  95% { opacity: 0; }
+  /* Switch back to pointer when cursor enters panel */
+  50% { opacity: 0; }
+  52% { opacity: 1; }
+  95% { opacity: 1; }
   97% { opacity: 1; }
   100% { opacity: 1; }
 }
 @keyframes cursor-icon-crosshair {
   0%, 20% { opacity: 0; }
   22% { opacity: 1; }
-  95% { opacity: 1; }
+  /* Switch to pointer when cursor enters panel */
+  50% { opacity: 1; }
+  52% { opacity: 0; }
+  95% { opacity: 0; }
   97% { opacity: 0; }
   100% { opacity: 0; }
 }
@@ -1019,13 +1046,13 @@ body { background: #fafaf9; }
   /* Click/tweak padding */
   58% { left: var(--pad-x); top: var(--pad-y); transform: scale(0.8); }
   60% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
-  /* Hold at padding while panel scrolls (61-66%) */
-  65% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
-  /* Move to radius field after scroll completes at 66% */
-  68% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  /* Hold at padding while panel scrolls (64-69%) */
+  70% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
+  /* Move to radius field after scroll completes */
+  75% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   /* Click/tweak radius */
-  70% { left: var(--rad-x); top: var(--rad-y); transform: scale(0.8); }
-  72% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  77% { left: var(--rad-x); top: var(--rad-y); transform: scale(0.8); }
+  79% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   /* Hold */
   88% { opacity: 1; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   /* Fade out */
@@ -1066,7 +1093,10 @@ body { background: #fafaf9; }
 .hero-visual.animation-paused .mock-panel,
 .hero-visual.animation-paused .mock-card-target,
 .hero-visual.animation-paused .mock-card-target .mock-selection-ring,
+.hero-visual.animation-paused .mock-edit-count-wrap,
 .hero-visual.animation-paused .mock-edit-count,
+.hero-visual.animation-paused .mock-count-1,
+.hero-visual.animation-paused .mock-count-2,
 .hero-visual.animation-paused .mock-cursor,
 .hero-visual.animation-paused .cursor-pointer,
 .hero-visual.animation-paused .cursor-crosshair,
@@ -1089,6 +1119,8 @@ body { background: #fafaf9; }
   .mock-value-animate,
   .mock-edit-count-wrap,
   .mock-edit-count,
+  .mock-count-1,
+  .mock-count-2,
   .mock-cursor,
   .cursor-pointer,
   .cursor-crosshair,
@@ -1103,6 +1135,7 @@ body { background: #fafaf9; }
   .mock-toolbar-expanded > * { transform: none; filter: none; }
   .mock-panel { opacity: 1; transform: none; }
   .mock-card-target .mock-selection-ring { opacity: 1; }
+  .mock-edit-count-wrap { width: 20px; }
   .mock-edit-count { opacity: 1; transform: scale(1); filter: none; }
   .mock-toolbar-btn.enables-on-change { opacity: 1; }
   .mock-toolbar-btn.always-disabled { opacity: 0.2; }

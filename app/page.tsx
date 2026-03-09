@@ -27,64 +27,80 @@ export default function Home() {
   const [paused, setPaused] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
+  // Compute cursor target positions from known CSS layout — no animation manipulation needed.
+  // All positions are percentages of .browser-content (the cursor's containing block).
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
     const update = () => {
-      // Cursor is position:absolute inside .browser-content (position:relative)
-      // so left/top % are relative to browser-content
       const container = hero.querySelector(".browser-content") as HTMLElement | null;
-      const inner = hero.querySelector(".mock-panel-inner") as HTMLElement | null;
-      if (!container || !inner) return;
+      if (!container) return;
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
 
-      const targets = {
-        toolbar: hero.querySelector("[data-cursor-target='toolbar']"),
-        card: hero.querySelector("[data-cursor-target='card']"),
-        padding: hero.querySelector("[data-cursor-target='padding']"),
-        radius: hero.querySelector("[data-cursor-target='radius']"),
-      };
-      if (!targets.toolbar || !targets.card || !targets.padding || !targets.radius) return;
+      // Toolbar: position: absolute; bottom: 12px; right: 12px; height: 26px; min-width: 26px
+      // Center of collapsed toolbar circle
+      const tbX = ((cw - 12 - 13) / cw) * 100;
+      const tbY = ((ch - 12 - 13) / ch) * 100;
+      hero.style.setProperty("--tb-x", `${tbX}%`);
+      hero.style.setProperty("--tb-y", `${tbY}%`);
 
-      // Pause animations to measure accurately
-      hero.classList.add("measuring");
-      hero.offsetHeight;
+      // Card: inside .mock-main which is the 2nd grid column (after 48px sidebar)
+      // Measure card position directly — cards are static, no animation affects them
+      const cardEl = hero.querySelector("[data-cursor-target='card']");
+      if (cardEl) {
+        const cr = container.getBoundingClientRect();
+        const cardRect = cardEl.getBoundingClientRect();
+        const cardX = ((cardRect.left + cardRect.width / 2 - cr.left) / cw) * 100;
+        const cardY = ((cardRect.top + cardRect.height / 2 - cr.top) / ch) * 100;
+        hero.style.setProperty("--card-x", `${cardX}%`);
+        hero.style.setProperty("--card-y", `${cardY}%`);
+      }
 
-      const cr = container.getBoundingClientRect();
-      const pos = (el: Element) => {
-        const r = el.getBoundingClientRect();
-        return {
-          x: ((r.left + r.width / 2 - cr.left) / cr.width) * 100,
-          y: ((r.top + r.height / 2 - cr.top) / cr.height) * 100,
-        };
-      };
+      // Panel: position: absolute; top: 8px; right: 8px; width: 180px; bottom: 46px
+      // Panel scroll area starts below the tabs header
+      // Measure padding & radius inputs using a hidden clone to avoid animation interference
+      const panel = hero.querySelector(".mock-panel") as HTMLElement | null;
+      if (panel) {
+        const cr = container.getBoundingClientRect();
+        const panelLeft = cw - 8 - 180; // right: 8px, width: 180px
 
-      // Toolbar (collapsed = small circle at bottom-right)
-      const tb = pos(targets.toolbar);
-      hero.style.setProperty("--tb-x", `${tb.x}%`);
-      hero.style.setProperty("--tb-y", `${tb.y}%`);
+        // Create an offscreen clone of the panel to measure input positions
+        const clone = panel.cloneNode(true) as HTMLElement;
+        clone.style.cssText = "position:absolute;top:8px;right:8px;width:180px;bottom:46px;opacity:0;pointer-events:none;animation:none;transform:none;z-index:-1;";
+        // Remove animations from all children
+        clone.querySelectorAll("*").forEach((el) => {
+          (el as HTMLElement).style.animation = "none";
+          (el as HTMLElement).style.transform = "none";
+        });
+        container.appendChild(clone);
+        container.offsetHeight;
 
-      // Card (middle card)
-      const card = pos(targets.card);
-      hero.style.setProperty("--card-x", `${card.x}%`);
-      hero.style.setProperty("--card-y", `${card.y}%`);
+        const padEl = clone.querySelector("[data-cursor-target='padding']");
+        const radEl = clone.querySelector("[data-cursor-target='radius']");
 
-      // Padding input (scroll at 0)
-      const pad = pos(targets.padding);
-      hero.style.setProperty("--pad-x", `${pad.x}%`);
-      hero.style.setProperty("--pad-y", `${pad.y}%`);
+        if (padEl) {
+          const padRect = padEl.getBoundingClientRect();
+          const padX = ((padRect.left + padRect.width / 2 - cr.left) / cw) * 100;
+          const padY = ((padRect.top + padRect.height / 2 - cr.top) / ch) * 100;
+          hero.style.setProperty("--pad-x", `${padX}%`);
+          hero.style.setProperty("--pad-y", `${padY}%`);
+        }
 
-      // Radius input (after simulated scroll)
-      inner.style.transform = "translateY(-190px)";
-      inner.offsetHeight;
-      const rad = pos(targets.radius);
-      hero.style.setProperty("--rad-x", `${rad.x}%`);
-      hero.style.setProperty("--rad-y", `${rad.y}%`);
+        if (radEl) {
+          // Get radius position in unscrolled clone
+          const radRect = radEl.getBoundingClientRect();
+          const scrollPx = 190;
+          const radX = ((radRect.left + radRect.width / 2 - cr.left) / cw) * 100;
+          const radY = ((radRect.top + radRect.height / 2 - scrollPx - cr.top) / ch) * 100;
+          hero.style.setProperty("--rad-x", `${radX}%`);
+          hero.style.setProperty("--rad-y", `${radY}%`);
+        }
 
-      // Restore
-      inner.style.transform = "";
-      hero.classList.remove("measuring");
+        clone.remove();
+      }
     };
-    const t = setTimeout(update, 300);
+    const t = setTimeout(update, 100);
     window.addEventListener("resize", update);
     return () => { clearTimeout(t); window.removeEventListener("resize", update); };
   }, []);
@@ -210,7 +226,10 @@ export default function Home() {
                 <div className="mock-toolbar-expanded">
                   {/* Edit count badge wrap — grows when change happens */}
                   <div className="mock-edit-count-wrap">
-                    <div className="mock-edit-count">2</div>
+                    <div className="mock-edit-count">
+                      <span className="mock-count-1">1</span>
+                      <span className="mock-count-2">2</span>
+                    </div>
                   </div>
                   {/* Copy */}
                   <div className="mock-toolbar-btn enables-on-change">
