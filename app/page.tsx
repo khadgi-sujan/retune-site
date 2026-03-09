@@ -71,15 +71,15 @@ export default function Home() {
 
   // Measure cursor targets. useLayoutEffect runs before paint so animations
   // haven't started — elements are at base CSS positions. On resize, we
-  // recompute X positions from stored pixel offsets (Y is constant since
-  // browser-content height is fixed at 360px).
+  // recompute X positions from stored pixel offsets (Y is stable since
+  // browser-content height scales with aspect-ratio).
   useLayoutEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
     const container = hero.querySelector(".browser-content") as HTMLElement | null;
     if (!container) return;
 
-    const ch = container.clientHeight; // fixed 360px
+    const ch = container.clientHeight;
     const panelOffsetPx = 8; // panel animation starts at translateY(8px)
 
     // Measure once at mount — get pixel offsets from right edge and Y positions
@@ -123,7 +123,8 @@ export default function Home() {
 
     const padMeasure = measurePanelItem(".mock-val-pad");
     const radMeasure = measurePanelItem(".mock-val-radius");
-    const scrollPct = (190 / ch) * 100;
+    const padScrollPct = (80 / ch) * 100;  // first scroll to show padding
+    const radScrollPct = (250 / ch) * 100;  // second scroll to show radius
 
     // Apply positions for a given container width
     const apply = (cw: number) => {
@@ -136,14 +137,14 @@ export default function Home() {
       hero.style.setProperty("--card-x", `${cardX}%`);
       hero.style.setProperty("--card-y", `${cardY}%`);
 
-      // Panel items — fixed px from right edge
+      // Panel items — fixed px from right edge, offset by scroll at time of interaction
       if (padMeasure) {
         hero.style.setProperty("--pad-x", `${((cw - padMeasure.fromRight) / cw) * 100}%`);
-        hero.style.setProperty("--pad-y", `${padMeasure.y}%`);
+        hero.style.setProperty("--pad-y", `${padMeasure.y - padScrollPct}%`);
       }
       if (radMeasure) {
         hero.style.setProperty("--rad-x", `${((cw - radMeasure.fromRight) / cw) * 100}%`);
-        hero.style.setProperty("--rad-y", `${radMeasure.y - scrollPct}%`);
+        hero.style.setProperty("--rad-y", `${radMeasure.y - radScrollPct}%`);
       }
     };
 
@@ -479,12 +480,12 @@ export default function Home() {
                 </div>
                 </div>
               </div>
-            </div>
               {/* Animated cursor */}
               <div className="mock-cursor">
                 <svg className="cursor-pointer" width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
                 <svg className="cursor-crosshair" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1917" strokeWidth="1.5" strokeLinecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
               </div>
+            </div>
             </div>
             <button
               className="animation-pause-btn"
