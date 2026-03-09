@@ -66,6 +66,7 @@ function FaqItem({ question, children }: { question: string; children: React.Rea
 export default function Home() {
   const [paused, setPaused] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
   // Track which section is in view for sidebar active state
@@ -177,26 +178,34 @@ export default function Home() {
   return (
     <div className="layout">
       {/* ── Sidebar TOC ── */}
-      <aside className="sidebar">
+      <aside className={`sidebar${menuOpen ? " menu-open" : ""}`}>
         <a href="#" className="sidebar-logo">
           <div className="logo-mark" />
           <span className="logo-name">Retune</span>
         </a>
 
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
+        </button>
+
         <nav className="toc">
-          <a href="#" className={`toc-link${activeSection === "" ? " active" : ""}`}>Overview</a>
-          <a href="#how-it-works" className={`toc-link${activeSection === "how-it-works" ? " active" : ""}`}>How It Works</a>
-          <a href="#output" className={`toc-link${activeSection === "output" ? " active" : ""}`}>Agent Output</a>
-          <a href="#install" className={`toc-link${activeSection === "install" ? " active" : ""}`}>Install</a>
-          <a href="#faq" className={`toc-link${activeSection === "faq" ? " active" : ""}`}>FAQ</a>
-          <a
-            href="https://github.com/khadgi-sujan/retune"
-            className="toc-link"
-            target="_blank"
-            rel="noopener"
-          >
-            GitHub
-          </a>
+          <div className="toc-inner">
+            <a href="#" className={`toc-link${activeSection === "" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>Overview</a>
+            <a href="#how-it-works" className={`toc-link${activeSection === "how-it-works" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>How It Works</a>
+            <a href="#output" className={`toc-link${activeSection === "output" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>Agent Output</a>
+            <a href="#install" className={`toc-link${activeSection === "install" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>Install</a>
+            <a href="#faq" className={`toc-link${activeSection === "faq" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>FAQ</a>
+            <a
+              href="https://github.com/khadgi-sujan/retune"
+              className="toc-link"
+              target="_blank"
+              rel="noopener"
+              onClick={() => setMenuOpen(false)}
+            >
+              GitHub
+            </a>
+          </div>
         </nav>
       </aside>
 
@@ -214,7 +223,7 @@ export default function Home() {
           </p>
           <div className="cta-row">
             <button
-              className="cta-primary"
+              className="cta-primary desktop-only"
               onClick={() => {
                 const host = document.querySelector("[data-retune-host]") as HTMLElement;
                 const btn = host?.shadowRoot?.querySelector(".retune-toolbar-collapse-btn") as HTMLElement;
@@ -225,6 +234,7 @@ export default function Home() {
             </button>
             <HeroInstallCopy />
           </div>
+          <p className="mobile-callout">Retune is a desktop tool — try it on a larger screen to see the live demo.</p>
 
           <div ref={heroRef} className={`hero-visual${paused ? " animation-paused" : ""}`}>
             <div className="desktop-bg">
