@@ -38,21 +38,25 @@ body { background: #fafaf9; }
 .sidebar-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   text-decoration: none;
   margin-bottom: 36px;
+  margin-left: 12px;
+  margin-right: 12px;
+  width: 100%;
+  align-self: stretch;
 }
 
 .logo-mark {
   width: 22px;
   height: 22px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #1c1917, #44403c);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.10);
 }
 
 .logo-name {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.01em;
   color: #1c1917;
 }
@@ -70,9 +74,9 @@ body { background: #fafaf9; }
   display: block;
   padding: 7px 12px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
-  line-height: 22px;
+  line-height: 16px;
   color: #78716c;
   text-decoration: none;
   transition: color 0.15s;
@@ -101,17 +105,10 @@ body { background: #fafaf9; }
 
 /* ── Typography ── */
 
-.hero-top-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-}
-
 .hero-heading {
-  font-size: 32px;
+  font-size: 40px;
   font-weight: 500;
-  line-height: 40px;
+  line-height: 52px;
   letter-spacing: 0;
   color: #1c1917;
   margin: 0 0 20px;
@@ -120,15 +117,39 @@ body { background: #fafaf9; }
 .hero-install {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  margin-top: 8px;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .hero-install-cmd {
   font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
-  font-size: 13px;
-  color: #78716c;
+  font-size: 11px;
+  line-height: 18px;
+  color: #a8a29e;
+  transition: color 150ms ease;
+}
+
+.hero-install:hover .hero-install-cmd {
+  color: #1c1917;
+}
+
+.hero-install-icon {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  color: #a8a29e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 150ms ease;
+}
+
+.hero-install:hover .hero-install-icon {
+  color: #1c1917;
 }
 
 .hero-sub {
@@ -136,33 +157,24 @@ body { background: #fafaf9; }
   line-height: 22px;
   color: #78716c;
   margin: 0 0 32px;
-  max-width: 520px;
-}
-
-.section-label {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #a8a29e;
-  margin: 0 0 12px;
+  max-width: none;
 }
 
 .section-heading {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 500;
   letter-spacing: 0.003em;
   color: #1c1917;
-  margin: 0 0 4px;
-  line-height: 22px;
+  margin: 0 0 0;
+  line-height: 28px;
 }
 
 .section-desc {
   font-size: 14px;
   line-height: 22px;
   color: #78716c;
-  margin: 0;
-  max-width: 520px;
+  margin: 8px 0 0;
+  max-width: none;
 }
 
 /* ── Sections ── */
@@ -174,7 +186,8 @@ body { background: #fafaf9; }
 /* ── Hero ── */
 
 .hero {
-  padding: 72px 0 40px;
+  padding: 72px 0 0;
+  flex-shrink: 0;
 }
 
 /* ── CTA ── */
@@ -205,6 +218,20 @@ body { background: #fafaf9; }
 
 /* ── Hero Visual (Browser Mockup) ── */
 
+.desktop-bg {
+  border-radius: 24px;
+  padding: 16px;
+  aspect-ratio: 16 / 10;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(168, 130, 255, 0.2) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(100, 180, 255, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, rgba(255, 140, 180, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, #e8e0f0 0%, #dde8f4 40%, #e8e4f0 70%, #f0e4e8 100%);
+  overflow: hidden;
+}
+
 .hero-visual {
   position: relative;
   margin-top: 40px;
@@ -221,7 +248,7 @@ body { background: #fafaf9; }
 
 .browser-chrome {
   background: #292524;
-  border-radius: 12px 12px 0 0;
+  border-radius: 8px 8px 0 0;
   padding: 12px 16px;
   display: flex;
   align-items: center;
@@ -255,10 +282,9 @@ body { background: #fafaf9; }
 
 .browser-content {
   background: #fafaf9;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-  height: 360px;
+  border: none;
+  border-radius: 0 0 8px 8px;
+  flex: 1;
   overflow: hidden;
   position: relative;
 }
@@ -1192,7 +1218,8 @@ body { background: #fafaf9; }
 .animation-pause-btn {
   position: absolute;
   bottom: -36px;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 28px;
   height: 28px;
   display: flex;
@@ -1203,12 +1230,29 @@ body { background: #fafaf9; }
   border-radius: 8px;
   color: #a8a29e;
   cursor: pointer;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition: color 150ms ease, background 150ms ease, transform 150ms ease;
   padding: 0;
 }
 .animation-pause-btn:hover {
   color: #1c1917;
   background: #f5f5f4;
+}
+.animation-pause-btn:active {
+  transform: translateX(-50%) scale(0.9);
+}
+
+.animation-pause-btn svg {
+  transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.animation-pause-btn:active svg {
+  transform: scale(0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animation-pause-btn,
+  .animation-pause-btn svg {
+    transition: none;
+  }
 }
 
 /* Paused state — freeze all animations */
@@ -1293,26 +1337,19 @@ body { background: #fafaf9; }
   padding: 24px 0;
 }
 
-.step-number {
-  font-size: 13px;
-  font-weight: 400;
-  color: #a8a29e;
-  margin-bottom: 16px;
-}
-
 .step-title {
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
   color: #1c1917;
-  margin: 0 0 4px;
+  margin: 0 0 0;
 }
 
 .step-card-desc {
   font-size: 14px;
   line-height: 1.6;
   color: #78716c;
-  margin: 0;
+  margin: 4px 0 0;
 }
 
 /* ── Controls Grid ── */
@@ -1320,7 +1357,7 @@ body { background: #fafaf9; }
 /* ── Output Block ── */
 
 .output-block {
-  margin-top: 32px;
+  margin-top: 16px;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -1366,13 +1403,11 @@ body { background: #fafaf9; }
   border-radius: 12px;
   padding: 20px 24px;
   overflow-x: auto;
-  margin-top: 0;
+  margin-top: 16px;
 }
 
 .copy-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  position: relative;
   width: 32px;
   height: 32px;
   display: flex;
@@ -1383,6 +1418,13 @@ body { background: #fafaf9; }
   border-radius: 6px;
   color: #a8a29e;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+.code-block .copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   opacity: 0;
   transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
@@ -1444,13 +1486,13 @@ body { background: #fafaf9; }
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
 }
 
 .install-step-title {
   font-size: 14px;
   font-weight: 400;
-  color: #78716c;
+  color: #1C1917;
   line-height: 22px;
   margin: 0;
 }
@@ -1474,42 +1516,17 @@ body { background: #fafaf9; }
 .install-note {
   font-size: 13px;
   color: #a8a29e;
-  margin: 10px 0 0;
+  margin: 8px 0 0;
 }
 
 /* ── Tags / Compat ── */
 
 .install-compat {
-  margin-top: 48px;
-  padding-top: 32px;
-  border-top: 1px solid #e7e5e4;
-}
-
-.install-compat-label {
+  margin: 32px 0 0;
+  padding-top: 0;
   font-size: 13px;
-  font-weight: 600;
   color: #a8a29e;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 0 0 12px;
-}
-
-.tag-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 14px;
-  border-radius: 7px;
-  font-size: 13px;
-  font-weight: 500;
-  background: #fff;
-  color: #57534e;
-  border: 1px solid #ffffff;
+  line-height: 22px;
 }
 
 /* ── Footer ── */
@@ -1524,6 +1541,16 @@ body { background: #fafaf9; }
   font-size: 13px;
   color: #a8a29e;
   margin: 0;
+}
+
+.footer-link {
+  color: #78716c;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.footer-link:hover {
+  color: #1c1917;
 }
 
 /* ── Responsive ── */

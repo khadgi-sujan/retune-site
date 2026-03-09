@@ -23,6 +23,29 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
+function HeroInstallCopy() {
+  const [copied, setCopied] = useState(false);
+  const handleClick = useCallback(() => {
+    navigator.clipboard.writeText("npm install retune").then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, []);
+  return (
+    <button className="hero-install" onClick={handleClick}>
+      <code className="hero-install-cmd">npm install retune</code>
+      <span className="hero-install-icon">
+        <span className={`copy-icon ${copied ? "copy-icon-out" : "copy-icon-in"}`}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
+        </span>
+        <span className={`copy-icon ${copied ? "copy-icon-in" : "copy-icon-out"}`}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+        </span>
+      </span>
+    </button>
+  );
+}
+
 export default function Home() {
   const [paused, setPaused] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -162,15 +185,9 @@ export default function Home() {
       <main className="content">
         {/* ── Hero ── */}
         <section className="hero">
-          <div className="hero-top-row">
-            <h1 className="hero-heading">
-              Stop prompting for pixels.
-            </h1>
-            <div className="hero-install">
-              <code className="hero-install-cmd">npm install retune</code>
-              <CopyButton text="npm install retune" />
-            </div>
-          </div>
+          <h1 className="hero-heading">
+            Stop prompting for pixels.
+          </h1>
           <p className="hero-sub">
             Select any element in your running React app, tweak it visually,
             and let your AI coding tool write the CSS. No more describing
@@ -187,9 +204,11 @@ export default function Home() {
             >
               Try it on this page
             </button>
+            <HeroInstallCopy />
           </div>
 
           <div ref={heroRef} className={`hero-visual${paused ? " animation-paused" : ""}`}>
+            <div className="desktop-bg">
             <div className="browser-chrome">
               <div className="browser-dots">
                 <span className="dot dot-red" />
@@ -460,6 +479,7 @@ export default function Home() {
                 </div>
                 </div>
               </div>
+            </div>
               {/* Animated cursor */}
               <div className="mock-cursor">
                 <svg className="cursor-pointer" width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
@@ -482,28 +502,24 @@ export default function Home() {
 
         {/* ── How It Works ── */}
         <section className="section" id="how-it-works">
-          <p className="section-label">How it works</p>
-          <h2 className="section-heading">Select. Tweak. Apply.</h2>
+          <h2 className="section-heading">How it works</h2>
           <p className="section-desc">
             Three steps from visual change to committed code.
           </p>
           <div className="steps-grid">
             <div className="step-card">
-              <div className="step-number">01</div>
               <p className="step-title">Select an element</p>
               <p className="step-card-desc">
                 Click anything on your page — Retune identifies the element, its component, and styles.
               </p>
             </div>
             <div className="step-card">
-              <div className="step-number">02</div>
               <p className="step-title">Tweak visually</p>
               <p className="step-card-desc">
                 Adjust spacing, colors, typography, and layout with live preview in the browser.
               </p>
             </div>
             <div className="step-card">
-              <div className="step-number">03</div>
               <p className="step-title">Apply via AI</p>
               <p className="step-card-desc">
                 Your MCP-connected agent reads the structured diff and applies changes to source code.
@@ -514,8 +530,7 @@ export default function Home() {
 
         {/* ── What Your Agent Sees ── */}
         <section className="section" id="output">
-          <p className="section-label">Output</p>
-          <h2 className="section-heading">Your agent gets the full picture</h2>
+          <h2 className="section-heading">What your agent sees</h2>
           <p className="section-desc">
             Not just what changed — exactly where to find it and how to apply it.
             Source files, styling approach, and exact before/after values.
@@ -542,8 +557,7 @@ export default function Home() {
 
         {/* ── Install ── */}
         <section className="section" id="install">
-          <p className="section-label">Get started</p>
-          <h2 className="section-heading">Three steps to visual editing</h2>
+          <h2 className="section-heading">Get started</h2>
 
           <div className="install-steps">
             <div className="install-step">
@@ -589,24 +603,14 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="install-compat">
-            <p className="install-compat-label">Works with</p>
-            <div className="tag-row">
-              <span className="tag">Next.js</span>
-              <span className="tag">Vite</span>
-              <span className="tag">Remix</span>
-              <span className="tag">Tailwind CSS</span>
-              <span className="tag">CSS Modules</span>
-              <span className="tag">Plain CSS</span>
-              <span className="tag">Claude Code</span>
-              <span className="tag">Cursor</span>
-            </div>
-          </div>
+          <p className="install-compat">
+            Works with Next.js, Vite, Remix, Tailwind CSS, CSS Modules, Plain CSS, Claude Code, and Cursor.
+          </p>
         </section>
 
         {/* ── Footer ── */}
         <footer className="footer">
-          <p className="footer-text">Retune — visual CSS editing for AI-assisted development.</p>
+          <p className="footer-text">MIT License. Created by <a href="https://x.com/___sujan" className="footer-link" target="_blank" rel="noopener">Sujan Khadgi</a>.</p>
         </footer>
       </main>
     </div>
