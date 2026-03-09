@@ -168,7 +168,7 @@ export default function Home() {
         <nav className="toc">
           <a href="#" className={`toc-link${activeSection === "" ? " active" : ""}`}>Overview</a>
           <a href="#how-it-works" className={`toc-link${activeSection === "how-it-works" ? " active" : ""}`}>How It Works</a>
-          <a href="#output" className={`toc-link${activeSection === "output" ? " active" : ""}`}>Output</a>
+          <a href="#output" className={`toc-link${activeSection === "output" ? " active" : ""}`}>Agent Output</a>
           <a href="#install" className={`toc-link${activeSection === "install" ? " active" : ""}`}>Install</a>
           <a
             href="https://github.com/khadgi-sujan/retune"
@@ -189,9 +189,9 @@ export default function Home() {
             Stop prompting for pixels.
           </h1>
           <p className="hero-sub">
-            Select any element in your running React app, tweak it visually,
-            and let your AI coding tool write the CSS. No more describing
-            layouts in words.
+            Select any element in your running app, tweak it visually, and
+            your AI coding tool writes the change to source. Like DevTools,
+            but the changes stick.
           </p>
           <div className="cta-row">
             <button
@@ -510,19 +510,19 @@ export default function Home() {
             <div className="step-card">
               <p className="step-title">Select an element</p>
               <p className="step-card-desc">
-                Click anything on your page — Retune identifies the element, its component, and styles.
+                Click anything on your page — Retune identifies the component, its styles, and where it lives in code.
               </p>
             </div>
             <div className="step-card">
               <p className="step-title">Tweak visually</p>
               <p className="step-card-desc">
-                Adjust spacing, colors, typography, and layout with live preview in the browser.
+                Adjust spacing, colors, typography, and layout. Changes preview instantly in the browser.
               </p>
             </div>
             <div className="step-card">
               <p className="step-title">Apply via AI</p>
               <p className="step-card-desc">
-                Your MCP-connected agent reads the structured diff and applies changes to source code.
+                Your AI tool (Claude Code, Cursor) picks up exact before/after values and applies them to your source files.
               </p>
             </div>
           </div>
@@ -532,8 +532,9 @@ export default function Home() {
         <section className="section" id="output">
           <h2 className="section-heading">What your agent sees</h2>
           <p className="section-desc">
-            Not just what changed — exactly where to find it and how to apply it.
-            Source files, styling approach, and exact before/after values.
+            Not just what changed — exactly where to find it. Component names,
+            selector paths, styling approach (Tailwind, CSS Modules, plain CSS),
+            and exact values.
           </p>
           <div className="output-block">
             <div className="output-chrome">retune output</div>
@@ -580,7 +581,7 @@ export default function Home() {
                   <div className="code-line"><span className="code-comment">{"// Add anywhere in your component tree"}</span></div>
                   <div className="code-line">&lt;<span className="code-component">Retune</span> /&gt;</div>
                 </div>
-                <p className="install-note">Only renders in development. Use <code>&lt;Retune force /&gt;</code> for production demos.</p>
+                <p className="install-note">Automatically hidden in production. Use <code>&lt;Retune force /&gt;</code> for live demos.</p>
               </div>
             </div>
 
@@ -604,7 +605,7 @@ export default function Home() {
           </div>
 
           <p className="install-compat">
-            Works with Next.js, Vite, Remix, Tailwind CSS, CSS Modules, Plain CSS, Claude Code, and Cursor.
+            Next.js, Vite, and Remix. Tailwind, CSS Modules, and plain CSS. Claude Code and Cursor via MCP.
           </p>
         </section>
 
