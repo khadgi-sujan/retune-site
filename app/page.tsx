@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useRef, useLayoutEffect } from "react";
 import "./styles.css";
 
 function CopyButton({ text }: { text: string }) {
@@ -27,82 +27,92 @@ export default function Home() {
   const [paused, setPaused] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  // Compute cursor target positions from known CSS layout — no animation manipulation needed.
-  // All positions are percentages of .browser-content (the cursor's containing block).
-  useEffect(() => {
+  // Measure cursor targets. useLayoutEffect runs before paint so animations
+  // haven't started — elements are at base CSS positions. On resize, we
+  // recompute X positions from stored pixel offsets (Y is constant since
+  // browser-content height is fixed at 360px).
+  useLayoutEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
-    const update = () => {
-      const container = hero.querySelector(".browser-content") as HTMLElement | null;
-      if (!container) return;
-      const cw = container.clientWidth;
-      const ch = container.clientHeight;
+    const container = hero.querySelector(".browser-content") as HTMLElement | null;
+    if (!container) return;
 
-      // Toolbar: position: absolute; bottom: 12px; right: 12px; height: 26px; min-width: 26px
-      // Center of collapsed toolbar circle
-      const tbX = ((cw - 12 - 13) / cw) * 100;
-      const tbY = ((ch - 12 - 13) / ch) * 100;
-      hero.style.setProperty("--tb-x", `${tbX}%`);
+    const ch = container.clientHeight; // fixed 360px
+    const panelOffsetPx = 8; // panel animation starts at translateY(8px)
+
+    // Measure once at mount — get pixel offsets from right edge and Y positions
+    const cw0 = container.clientWidth;
+    const cr0 = container.getBoundingClientRect();
+    const borderL = parseFloat(getComputedStyle(container).borderLeftWidth) || 0;
+    const borderT = parseFloat(getComputedStyle(container).borderTopWidth) || 0;
+    const ox0 = cr0.left + borderL;
+    const oy0 = cr0.top + borderT;
+
+    // Toolbar: bottom: 12px, right: 12px, 26×26
+    const tbFromRight = 12 + 13; // px from right edge to center
+    const tbY = ((ch - 12 - 13) / ch) * 100;
+
+    // Card: in the 1fr grid column (after 48px sidebar)
+    const cardEl = container.querySelector(".mock-card-target");
+    const cardRatio = cardEl
+      ? (() => {
+          const r = cardEl.getBoundingClientRect();
+          const cx = r.left + r.width / 2 - ox0;
+          // Store as ratio within the 1fr column (after 48px sidebar)
+          return (cx - 48) / (cw0 - 48);
+        })()
+      : 0.35;
+    const cardY = cardEl
+      ? ((cardEl.getBoundingClientRect().top + cardEl.getBoundingClientRect().height / 2 - oy0) / ch) * 100
+      : 25;
+
+    // Panel items: right-aligned (panel: right: 8px, width: 180px)
+    const measurePanelItem = (selector: string) => {
+      const val = container.querySelector(selector);
+      const input = val?.closest(".mock-input");
+      if (!input) return null;
+      const r = input.getBoundingClientRect();
+      const centerX = r.left + r.width / 2 - ox0;
+      const centerY = r.top + r.height / 2 - oy0;
+      return {
+        fromRight: cw0 - centerX, // px from right edge
+        y: ((centerY - panelOffsetPx) / ch) * 100, // compensate for panel translateY(8px)
+      };
+    };
+
+    const padMeasure = measurePanelItem(".mock-val-pad");
+    const radMeasure = measurePanelItem(".mock-val-radius");
+    const scrollPct = (190 / ch) * 100;
+
+    // Apply positions for a given container width
+    const apply = (cw: number) => {
+      // Toolbar
+      hero.style.setProperty("--tb-x", `${((cw - tbFromRight) / cw) * 100}%`);
       hero.style.setProperty("--tb-y", `${tbY}%`);
 
-      // Card: inside .mock-main which is the 2nd grid column (after 48px sidebar)
-      // Measure card position directly — cards are static, no animation affects them
-      const cardEl = hero.querySelector("[data-cursor-target='card']");
-      if (cardEl) {
-        const cr = container.getBoundingClientRect();
-        const cardRect = cardEl.getBoundingClientRect();
-        const cardX = ((cardRect.left + cardRect.width / 2 - cr.left) / cw) * 100;
-        const cardY = ((cardRect.top + cardRect.height / 2 - cr.top) / ch) * 100;
-        hero.style.setProperty("--card-x", `${cardX}%`);
-        hero.style.setProperty("--card-y", `${cardY}%`);
+      // Card — proportional within the 1fr column
+      const cardX = ((48 + cardRatio * (cw - 48)) / cw) * 100;
+      hero.style.setProperty("--card-x", `${cardX}%`);
+      hero.style.setProperty("--card-y", `${cardY}%`);
+
+      // Panel items — fixed px from right edge
+      if (padMeasure) {
+        hero.style.setProperty("--pad-x", `${((cw - padMeasure.fromRight) / cw) * 100}%`);
+        hero.style.setProperty("--pad-y", `${padMeasure.y}%`);
       }
-
-      // Panel: position: absolute; top: 8px; right: 8px; width: 180px; bottom: 46px
-      // Panel scroll area starts below the tabs header
-      // Measure padding & radius inputs using a hidden clone to avoid animation interference
-      const panel = hero.querySelector(".mock-panel") as HTMLElement | null;
-      if (panel) {
-        const cr = container.getBoundingClientRect();
-        const panelLeft = cw - 8 - 180; // right: 8px, width: 180px
-
-        // Create an offscreen clone of the panel to measure input positions
-        const clone = panel.cloneNode(true) as HTMLElement;
-        clone.style.cssText = "position:absolute;top:8px;right:8px;width:180px;bottom:46px;opacity:0;pointer-events:none;animation:none;transform:none;z-index:-1;";
-        // Remove animations from all children
-        clone.querySelectorAll("*").forEach((el) => {
-          (el as HTMLElement).style.animation = "none";
-          (el as HTMLElement).style.transform = "none";
-        });
-        container.appendChild(clone);
-        container.offsetHeight;
-
-        const padEl = clone.querySelector("[data-cursor-target='padding']");
-        const radEl = clone.querySelector("[data-cursor-target='radius']");
-
-        if (padEl) {
-          const padRect = padEl.getBoundingClientRect();
-          const padX = ((padRect.left + padRect.width / 2 - cr.left) / cw) * 100;
-          const padY = ((padRect.top + padRect.height / 2 - cr.top) / ch) * 100;
-          hero.style.setProperty("--pad-x", `${padX}%`);
-          hero.style.setProperty("--pad-y", `${padY}%`);
-        }
-
-        if (radEl) {
-          // Get radius position in unscrolled clone
-          const radRect = radEl.getBoundingClientRect();
-          const scrollPx = 190;
-          const radX = ((radRect.left + radRect.width / 2 - cr.left) / cw) * 100;
-          const radY = ((radRect.top + radRect.height / 2 - scrollPx - cr.top) / ch) * 100;
-          hero.style.setProperty("--rad-x", `${radX}%`);
-          hero.style.setProperty("--rad-y", `${radY}%`);
-        }
-
-        clone.remove();
+      if (radMeasure) {
+        hero.style.setProperty("--rad-x", `${((cw - radMeasure.fromRight) / cw) * 100}%`);
+        hero.style.setProperty("--rad-y", `${radMeasure.y - scrollPct}%`);
       }
     };
-    const t = setTimeout(update, 100);
-    window.addEventListener("resize", update);
-    return () => { clearTimeout(t); window.removeEventListener("resize", update); };
+
+    // Initial apply
+    apply(cw0);
+
+    // Recompute on resize — only X positions change
+    const onResize = () => apply(container.clientWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   return (
@@ -199,7 +209,7 @@ export default function Home() {
                     <div className="mock-card-label" />
                     <div className="mock-card-value" />
                   </div>
-                  <div className="mock-card mock-card-target" data-cursor-target="card">
+                  <div className="mock-card mock-card-target">
                     <div className="mock-card-label" />
                     <div className="mock-card-value" />
                     <div className="mock-selection-ring" />
@@ -217,7 +227,7 @@ export default function Home() {
                 </div>
               </div>
               {/* Retune toolbar — single element that morphs from circle to pill */}
-              <div className="mock-toolbar" data-cursor-target="toolbar">
+              <div className="mock-toolbar">
                 {/* Collapse button — visible when collapsed, shrinks away when expanded */}
                 <div className="mock-collapse-btn">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 2.75V4.5M16.9069 5.09326L15.5962 6.40392M6.40381 15.5962L5.09315 16.9069M4.5 11H2.75M6.40381 6.40381L5.09315 5.09315M14.1323 20.999L10.3851 10.7984C10.2362 10.3929 10.6368 10.0021 11.0385 10.1611L21.0397 14.1199C21.4283 14.2737 21.4679 14.8081 21.1062 15.0175L17.3654 17.1832C17.2898 17.227 17.227 17.2898 17.1832 17.3654L15.0343 21.0771C14.822 21.4438 14.2784 21.3967 14.1323 20.999Z"/></svg>
@@ -319,7 +329,7 @@ export default function Home() {
                       </div>
                       <div className="mock-group-label">Padding</div>
                       <div className="mock-input-row">
-                        <div className="mock-input" data-cursor-target="padding"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M7.5 16a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zM7 7.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM13 11h-2v2h2v-2zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2z"/></svg></span><span className="mock-input-value mock-val-pad">12px</span></div>
+                        <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M7.5 16a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zM7 7.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM13 11h-2v2h2v-2zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2z"/></svg></span><span className="mock-input-value mock-val-pad"><span className="mock-val-before">12px</span><span className="mock-val-after">16px</span></span></div>
                         <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 7.5a.5.5 0 0 0-1 0v9a.5.5 0 0 0 1 0v-9zM16.5 7a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0v-9a.5.5 0 0 1 .5-.5zM13 13v-2h-2v2h2zm1-2a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2z"/></svg></span><span className="mock-input-value">16px</span></div>
                         <div className="mock-split-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM17 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM9.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM9 16.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/></svg></div>
                       </div>
@@ -363,7 +373,7 @@ export default function Home() {
                       </div>
                       <div className="mock-group-label">Corner radius</div>
                       <div className="mock-input-row">
-                        <div className="mock-input" data-cursor-target="radius"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M12.478 8H12.5h3a.5.5 0 0 1 0 1h-3c-.708 0-1.21 0-1.6.032-.488.032-.724.124-.908.218a2.25 2.25 0 0 0-.874.874c-.094.184-.186.42-.218.908C9 11.291 9 11.792 9 12.5v3a.5.5 0 0 1-1 0v-3.022c0-.7 0-1.245.036-1.66.035-.449.077-.831.149-1.183a3.25 3.25 0 0 1 1.64-1.64c.352-.148.734-.19 1.183-.225C11.233 8 11.778 8 12.478 8Z"/></svg></span><span className="mock-input-value mock-val-radius">8px</span></div>
+                        <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M12.478 8H12.5h3a.5.5 0 0 1 0 1h-3c-.708 0-1.21 0-1.6.032-.488.032-.724.124-.908.218a2.25 2.25 0 0 0-.874.874c-.094.184-.186.42-.218.908C9 11.291 9 11.792 9 12.5v3a.5.5 0 0 1-1 0v-3.022c0-.7 0-1.245.036-1.66.035-.449.077-.831.149-1.183a3.25 3.25 0 0 1 1.64-1.64c.352-.148.734-.19 1.183-.225C11.233 8 11.778 8 12.478 8Z"/></svg></span><span className="mock-input-value mock-val-radius"><span className="mock-val-before">8px</span><span className="mock-val-after">12px</span></span></div>
                         <div className="mock-split-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM17 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM9.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM9 16.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/></svg></div>
                       </div>
                       <div className="mock-group-label">Overflow</div>

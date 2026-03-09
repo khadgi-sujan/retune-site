@@ -220,7 +220,7 @@ body { background: #fafaf9; }
 .hero-visual {
   position: relative;
   margin-top: 40px;
-  /* Cursor target positions — computed by JS from actual DOM, fallbacks here */
+  /* Cursor target positions (% of .browser-content padding box) */
   --tb-x: 96%;
   --tb-y: 93%;
   --card-x: 38%;
@@ -961,8 +961,9 @@ body { background: #fafaf9; }
   padding-left: 0;
 }
 
-/* Value flash on padding change (cursor clicks at ~59%) */
+/* Value flash on padding change (cursor clicks at 58%) */
 .mock-val-pad {
+  position: relative;
   animation: mock-val-flash-1 7s ease infinite;
 }
 @keyframes mock-val-flash-1 {
@@ -972,15 +973,60 @@ body { background: #fafaf9; }
   100% { background: transparent; }
 }
 
-/* Value flash on radius change (cursor clicks at ~69%) */
+/* Value flash on radius change (cursor clicks at 77%) */
 .mock-val-radius {
+  position: relative;
   animation: mock-val-flash-2 7s ease infinite;
 }
 @keyframes mock-val-flash-2 {
-  0%, 69% { background: transparent; }
-  71% { background: #dbeafe; border-radius: 3px; }
-  79% { background: transparent; }
+  0%, 76% { background: transparent; }
+  78% { background: #dbeafe; border-radius: 3px; }
+  86% { background: transparent; }
   100% { background: transparent; }
+}
+
+/* Value text swap — before/after values stacked, swap on change */
+.mock-val-before, .mock-val-after {
+  display: block;
+}
+.mock-val-after {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mock-val-pad .mock-val-before { animation: mock-val-pad-before 7s ease infinite; }
+.mock-val-pad .mock-val-after  { animation: mock-val-pad-after 7s ease infinite; }
+@keyframes mock-val-pad-before {
+  0%, 58% { opacity: 1; }
+  59%     { opacity: 0; }
+  93%     { opacity: 0; }
+  96%     { opacity: 1; }
+  100%    { opacity: 1; }
+}
+@keyframes mock-val-pad-after {
+  0%, 58% { opacity: 0; }
+  59%     { opacity: 1; }
+  93%     { opacity: 1; }
+  96%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+.mock-val-radius .mock-val-before { animation: mock-val-rad-before 7s ease infinite; }
+.mock-val-radius .mock-val-after  { animation: mock-val-rad-after 7s ease infinite; }
+@keyframes mock-val-rad-before {
+  0%, 77% { opacity: 1; }
+  78%     { opacity: 0; }
+  93%     { opacity: 0; }
+  96%     { opacity: 1; }
+  100%    { opacity: 1; }
+}
+@keyframes mock-val-rad-after {
+  0%, 77% { opacity: 0; }
+  78%     { opacity: 1; }
+  93%     { opacity: 1; }
+  96%     { opacity: 0; }
+  100%    { opacity: 0; }
 }
 
 /* Animated cursor */
@@ -1102,7 +1148,9 @@ body { background: #fafaf9; }
 .hero-visual.animation-paused .cursor-crosshair,
 .hero-visual.animation-paused .mock-panel-inner,
 .hero-visual.animation-paused .mock-val-pad,
-.hero-visual.animation-paused .mock-val-radius {
+.hero-visual.animation-paused .mock-val-radius,
+.hero-visual.animation-paused .mock-val-before,
+.hero-visual.animation-paused .mock-val-after {
   animation-play-state: paused;
 }
 
@@ -1141,7 +1189,9 @@ body { background: #fafaf9; }
   .mock-toolbar-btn.always-disabled { opacity: 0.2; }
   .mock-cursor { display: none; }
   .mock-val-pad,
-  .mock-val-radius { animation: none; }
+  .mock-val-radius,
+  .mock-val-before,
+  .mock-val-after { animation: none; }
 }
 
 /* ── Steps Grid ── */
