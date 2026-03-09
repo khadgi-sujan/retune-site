@@ -1,9 +1,13 @@
 /** @type {import('next').NextConfig} */
 const path = require("path");
 const fs = require("fs");
-const { version } = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "node_modules", "retune", "package.json"), "utf8")
-);
+let version = "0.4.0";
+try {
+  const pkg = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "node_modules", "retune", "package.json"), "utf8")
+  );
+  version = pkg.version;
+} catch {}
 
 const nextConfig = {
   transpilePackages: ["retune"],
