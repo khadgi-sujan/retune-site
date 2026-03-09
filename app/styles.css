@@ -132,6 +132,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   display: flex;
   flex-direction: column;
   gap: 64px;
+  min-width: 0;
 }
 
 /* ── Typography ── */
@@ -284,6 +285,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   --pad-y: 65%;
   --rad-x: 82%;
   --rad-y: 75%;
+  /* Panel scroll distances */
+  --scroll-pad: -80px;
+  --scroll-rad: -250px;
 }
 
 .browser-chrome {
@@ -928,13 +932,13 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   /* No scroll until cursor is over the panel */
   0%, 49% { transform: translateY(0); }
   /* Scroll to show padding field (cursor is on panel, moving toward padding) */
-  53% { transform: translateY(-80px); }
+  53% { transform: translateY(var(--scroll-pad, -80px)); }
   /* Hold while cursor interacts with padding */
-  64% { transform: translateY(-80px); }
+  64% { transform: translateY(var(--scroll-pad, -80px)); }
   /* Scroll more to reveal corner radius field (cursor still on panel) */
-  69% { transform: translateY(-250px); }
+  69% { transform: translateY(var(--scroll-rad, -250px)); }
   /* Hold */
-  90% { transform: translateY(-250px); }
+  90% { transform: translateY(var(--scroll-rad, -250px)); }
   /* Reset */
   94% { transform: translateY(0); }
   100% { transform: translateY(0); }
@@ -1210,7 +1214,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   font-size: 9.5px;
   line-height: 1.7;
   color: #d6d3d1;
-  z-index: 2;
+  z-index: 10;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08);
   opacity: 0;
   transform: translateY(6px);
@@ -1381,6 +1385,27 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   88% { opacity: 1; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   /* Fade out */
   94% { opacity: 0; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  100% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
+}
+
+@keyframes mock-cursor-move-mobile {
+  0%, 8% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
+  12% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
+  20% { opacity: 1; left: 94%; top: 92%; transform: scale(1); }
+  21% { left: 94%; top: 92%; transform: scale(0.8); }
+  22% { left: 94%; top: 92%; transform: scale(1); }
+  32% { left: 38%; top: 45%; transform: scale(1); }
+  39% { left: 38%; top: 45%; transform: scale(0.8); }
+  40% { left: 38%; top: 45%; transform: scale(1); }
+  55% { left: 62%; top: 52%; transform: scale(1); }
+  58% { left: 62%; top: 52%; transform: scale(0.8); }
+  60% { left: 62%; top: 52%; transform: scale(1); }
+  70% { left: 62%; top: 52%; transform: scale(1); }
+  75% { left: 61%; top: 48%; transform: scale(1); }
+  77% { left: 61%; top: 48%; transform: scale(0.8); }
+  79% { left: 61%; top: 48%; transform: scale(1); }
+  88% { opacity: 1; left: 61%; top: 48%; transform: scale(1); }
+  94% { opacity: 0; left: 61%; top: 48%; transform: scale(1); }
   100% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
 }
 
@@ -1875,6 +1900,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   }
 
   .content {
+    width: 100%;
     margin: 0 auto;
     padding: 0 24px 48px;
     gap: 48px;
@@ -1938,8 +1964,15 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
   .hero-install { display: none; }
 
-  .hero-visual { margin-top: 24px; }
-  .desktop-bg { aspect-ratio: 10 / 8; }
+  .hero-visual {
+    margin-top: 24px;
+    --scroll-pad: -180px;
+    --scroll-rad: -400px;
+  }
+  .mock-cursor {
+    animation-name: mock-cursor-move-mobile;
+  }
+  .desktop-bg { aspect-ratio: 10 / 8; padding: 0; }
 
   .content {
     padding: 0 16px 40px;
