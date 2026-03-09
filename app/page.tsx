@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useLayoutEffect } from "react";
+import { useState, useCallback, useRef, useLayoutEffect, useEffect } from "react";
 import "./styles.css";
 
 function CopyButton({ text }: { text: string }) {
@@ -25,7 +25,26 @@ function CopyButton({ text }: { text: string }) {
 
 export default function Home() {
   const [paused, setPaused] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
   const heroRef = useRef<HTMLDivElement>(null);
+
+  // Track which section is in view for sidebar active state
+  useEffect(() => {
+    const sections = document.querySelectorAll<HTMLElement>(".hero, .section[id]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const id = entry.target.id || "";
+            setActiveSection(id);
+          }
+        }
+      },
+      { rootMargin: "-20% 0px -60% 0px" }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
 
   // Measure cursor targets. useLayoutEffect runs before paint so animations
   // haven't started — elements are at base CSS positions. On resize, we
@@ -52,14 +71,13 @@ export default function Home() {
     const tbFromRight = 12 + 13; // px from right edge to center
     const tbY = ((ch - 12 - 13) / ch) * 100;
 
-    // Card: in the 1fr grid column (after 48px sidebar)
+    // Card: ratio within full container width
     const cardEl = container.querySelector(".mock-card-target");
     const cardRatio = cardEl
       ? (() => {
           const r = cardEl.getBoundingClientRect();
           const cx = r.left + r.width / 2 - ox0;
-          // Store as ratio within the 1fr column (after 48px sidebar)
-          return (cx - 48) / (cw0 - 48);
+          return cx / cw0;
         })()
       : 0.35;
     const cardY = cardEl
@@ -90,8 +108,8 @@ export default function Home() {
       hero.style.setProperty("--tb-x", `${((cw - tbFromRight) / cw) * 100}%`);
       hero.style.setProperty("--tb-y", `${tbY}%`);
 
-      // Card — proportional within the 1fr column
-      const cardX = ((48 + cardRatio * (cw - 48)) / cw) * 100;
+      // Card — proportional within full width
+      const cardX = cardRatio * 100;
       hero.style.setProperty("--card-x", `${cardX}%`);
       hero.style.setProperty("--card-y", `${cardY}%`);
 
@@ -125,39 +143,34 @@ export default function Home() {
         </a>
 
         <nav className="toc">
-          <a href="#" className="toc-link active">Overview</a>
-          <a href="#how-it-works" className="toc-link">How It Works</a>
-          <a href="#output" className="toc-link">Output</a>
-          <a href="#install" className="toc-link">Install</a>
-        </nav>
-
-        <div className="sidebar-footer">
+          <a href="#" className={`toc-link${activeSection === "" ? " active" : ""}`}>Overview</a>
+          <a href="#how-it-works" className={`toc-link${activeSection === "how-it-works" ? " active" : ""}`}>How It Works</a>
+          <a href="#output" className={`toc-link${activeSection === "output" ? " active" : ""}`}>Output</a>
+          <a href="#install" className={`toc-link${activeSection === "install" ? " active" : ""}`}>Install</a>
           <a
             href="https://github.com/khadgi-sujan/retune"
-            className="sidebar-ext-link"
+            className="toc-link"
             target="_blank"
             rel="noopener"
           >
             GitHub
           </a>
-          <a
-            href="https://www.npmjs.com/package/retune"
-            className="sidebar-ext-link"
-            target="_blank"
-            rel="noopener"
-          >
-            npm
-          </a>
-        </div>
+        </nav>
       </aside>
 
       {/* ── Main Content ── */}
       <main className="content">
         {/* ── Hero ── */}
         <section className="hero">
-          <h1 className="hero-heading">
-            Stop prompting for pixels.
-          </h1>
+          <div className="hero-top-row">
+            <h1 className="hero-heading">
+              Stop prompting for pixels.
+            </h1>
+            <div className="hero-install">
+              <code className="hero-install-cmd">npm install retune</code>
+              <CopyButton text="npm install retune" />
+            </div>
+          </div>
           <p className="hero-sub">
             Select any element in your running React app, tweak it visually,
             and let your AI coding tool write the CSS. No more describing
@@ -174,14 +187,6 @@ export default function Home() {
             >
               Try it on this page
             </button>
-            <a
-              href="https://github.com/khadgi-sujan/retune"
-              className="cta-secondary"
-              target="_blank"
-              rel="noopener"
-            >
-              View on GitHub &rarr;
-            </a>
           </div>
 
           <div ref={heroRef} className={`hero-visual${paused ? " animation-paused" : ""}`}>
@@ -194,34 +199,81 @@ export default function Home() {
               <div className="browser-url">localhost:3000</div>
             </div>
             <div className="browser-content">
-              <div className="mock-sidebar">
-                <div className="mock-sidebar-item active" />
-                <div className="mock-sidebar-item" />
-                <div className="mock-sidebar-item" />
-                <div className="mock-sidebar-item" />
-              </div>
               <div className="mock-main">
-                <div className="mock-heading" />
+                {/* Top nav */}
+                <div className="mock-nav">
+                  <div className="mock-nav-logo" />
+                  <div className="mock-nav-links">
+                    <div className="mock-nav-link active" />
+                    <div className="mock-nav-link" />
+                    <div className="mock-nav-link" />
+                  </div>
+                  <div className="mock-nav-avatar" />
+                </div>
+                {/* Page header */}
+                <div className="mock-page-header">
+                  <div className="mock-heading" />
+                  <div className="mock-subheading" />
+                </div>
+                {/* Stat cards */}
                 <div className="mock-cards">
                   <div className="mock-card">
                     <div className="mock-card-label" />
                     <div className="mock-card-value" />
+                    <div className="mock-card-bar">
+                      <div className="mock-bar-fill" style={{ width: "72%" }} />
+                    </div>
                   </div>
                   <div className="mock-card mock-card-target">
                     <div className="mock-card-label" />
                     <div className="mock-card-value" />
-                    <div className="mock-selection-ring" />
+                    <div className="mock-card-bar">
+                      <div className="mock-bar-fill accent" style={{ width: "58%" }} />
+                    </div>
+                    <div className="mock-selection-overlay" />
+                    <div className="mock-selection-label">div.mock-card 120×52</div>
                   </div>
                   <div className="mock-card">
                     <div className="mock-card-label" />
                     <div className="mock-card-value" />
+                    <div className="mock-card-bar">
+                      <div className="mock-bar-fill" style={{ width: "85%" }} />
+                    </div>
+                  </div>
+                  <div className="mock-card">
+                    <div className="mock-card-label" />
+                    <div className="mock-card-value" />
+                    <div className="mock-card-bar">
+                      <div className="mock-bar-fill" style={{ width: "40%" }} />
+                    </div>
                   </div>
                 </div>
+                {/* Table */}
                 <div className="mock-table">
-                  <div className="mock-table-row header" />
-                  <div className="mock-table-row" />
-                  <div className="mock-table-row" />
-                  <div className="mock-table-row" />
+                  <div className="mock-table-row header">
+                    <div className="mock-cell wide" />
+                    <div className="mock-cell" />
+                    <div className="mock-cell" />
+                    <div className="mock-cell narrow" />
+                  </div>
+                  <div className="mock-table-row">
+                    <div className="mock-cell wide" />
+                    <div className="mock-cell" />
+                    <div className="mock-cell" />
+                    <div className="mock-cell narrow" />
+                  </div>
+                  <div className="mock-table-row">
+                    <div className="mock-cell wide" />
+                    <div className="mock-cell" />
+                    <div className="mock-cell" />
+                    <div className="mock-cell narrow" />
+                  </div>
+                  <div className="mock-table-row">
+                    <div className="mock-cell wide" />
+                    <div className="mock-cell" />
+                    <div className="mock-cell" />
+                    <div className="mock-cell narrow" />
+                  </div>
                 </div>
               </div>
               {/* Retune toolbar — single element that morphs from circle to pill */}
@@ -495,7 +547,6 @@ export default function Home() {
 
           <div className="install-steps">
             <div className="install-step">
-              <div className="install-step-num">1</div>
               <div className="install-step-content">
                 <p className="install-step-title">Install the package</p>
                 <div className="code-block">
@@ -506,7 +557,6 @@ export default function Home() {
             </div>
 
             <div className="install-step">
-              <div className="install-step-num">2</div>
               <div className="install-step-content">
                 <p className="install-step-title">Add to your layout</p>
                 <div className="code-block">
@@ -521,7 +571,6 @@ export default function Home() {
             </div>
 
             <div className="install-step">
-              <div className="install-step-num">3</div>
               <div className="install-step-content">
                 <p className="install-step-title">Connect your AI tool</p>
                 <p className="install-step-desc">Add to <code>.mcp.json</code> (Claude Code) or MCP settings (Cursor):</p>
