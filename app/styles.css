@@ -1233,34 +1233,6 @@ body { background: #fafaf9; }
 
 /* ── Controls Grid ── */
 
-.controls-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-top: 40px;
-}
-
-.control-card {
-  background: #f5f5f4;
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.control-card-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1c1917;
-  margin: 0 0 8px;
-}
-
-.control-list {
-  font-size: 13px;
-  line-height: 1.7;
-  color: #78716c;
-  font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
-  margin: 0;
-}
-
 /* ── Output Block ── */
 
 .output-block {
@@ -1431,13 +1403,27 @@ body { background: #fafaf9; }
   margin: 10px 0 0;
 }
 
-/* ── Tags ── */
+/* ── Tags / Compat ── */
+
+.install-compat {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid #e7e5e4;
+}
+
+.install-compat-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #a8a29e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 12px;
+}
 
 .tag-row {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 20px;
 }
 
 .tag {
@@ -1530,10 +1516,6 @@ body { background: #fafaf9; }
   .hero-visual { display: none; }
 
   .steps-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .controls-grid {
     grid-template-columns: 1fr;
   }
 

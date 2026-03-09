@@ -127,10 +127,8 @@ export default function Home() {
         <nav className="toc">
           <a href="#" className="toc-link active">Overview</a>
           <a href="#how-it-works" className="toc-link">How It Works</a>
-          <a href="#controls" className="toc-link">Controls</a>
           <a href="#output" className="toc-link">Output</a>
           <a href="#install" className="toc-link">Install</a>
-          <a href="#works-with" className="toc-link">Compatibility</a>
         </nav>
 
         <div className="sidebar-footer">
@@ -158,7 +156,7 @@ export default function Home() {
         {/* ── Hero ── */}
         <section className="hero">
           <h1 className="hero-heading">
-            Stop prompting<br />for pixels.
+            Stop prompting for pixels.
           </h1>
           <p className="hero-sub">
             Select any element in your running React app, tweak it visually,
@@ -442,61 +440,22 @@ export default function Home() {
               <div className="step-number">01</div>
               <p className="step-title">Select an element</p>
               <p className="step-card-desc">
-                Click anything on your page. Retune identifies the element,
-                its React component, CSS classes, and computed styles.
+                Click anything on your page — Retune identifies the element, its component, and styles.
               </p>
             </div>
             <div className="step-card">
               <div className="step-number">02</div>
               <p className="step-title">Tweak visually</p>
               <p className="step-card-desc">
-                Adjust spacing, colors, typography, layout, and more with
-                intuitive controls. Changes preview live in the browser.
+                Adjust spacing, colors, typography, and layout with live preview in the browser.
               </p>
             </div>
             <div className="step-card">
               <div className="step-number">03</div>
               <p className="step-title">Apply via AI</p>
               <p className="step-card-desc">
-                Your MCP-connected agent reads the structured diff and applies
-                changes directly to your source code.
+                Your MCP-connected agent reads the structured diff and applies changes to source code.
               </p>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Dynamic Controls ── */}
-        <section className="section" id="controls">
-          <p className="section-label">Dynamic controls</p>
-          <h2 className="section-heading">The right controls for every element</h2>
-          <p className="section-desc">
-            Retune detects the element type and shows only relevant properties.
-            No digging through 300+ CSS properties.
-          </p>
-          <div className="controls-grid">
-            <div className="control-card">
-              <p className="control-card-title">Any element</p>
-              <p className="control-list">Padding, Margin, Border-radius, Background, Opacity, Box shadow</p>
-            </div>
-            <div className="control-card">
-              <p className="control-card-title">Text</p>
-              <p className="control-list">Font size, Weight, Line height, Letter spacing, Color, Alignment</p>
-            </div>
-            <div className="control-card">
-              <p className="control-card-title">Flex container</p>
-              <p className="control-list">Direction, Gap, Align items, Justify content, Wrap</p>
-            </div>
-            <div className="control-card">
-              <p className="control-card-title">Grid container</p>
-              <p className="control-list">Template columns, Template rows, Gap</p>
-            </div>
-            <div className="control-card">
-              <p className="control-card-title">Positioned</p>
-              <p className="control-list">Top, Right, Bottom, Left, Z-index</p>
-            </div>
-            <div className="control-card">
-              <p className="control-card-title">Appearance</p>
-              <p className="control-list">Background, Border, Box shadow, Opacity, Filters</p>
             </div>
           </div>
         </section>
@@ -580,29 +539,19 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
 
-        {/* ── Works With ── */}
-        <section className="section" id="works-with">
-          <p className="section-label">Compatibility</p>
-          <h2 className="section-heading">Works with your stack</h2>
-          <p className="section-desc">
-            Retune detects your styling approach automatically and formats
-            changes to match.
-          </p>
-          <div className="tag-row">
-            <span className="tag">Tailwind CSS</span>
-            <span className="tag">CSS Modules</span>
-            <span className="tag">Plain CSS</span>
-            <span className="tag">Inline Styles</span>
-            <span className="tag">styled-components</span>
-          </div>
-          <div className="tag-row" style={{ marginTop: 8 }}>
-            <span className="tag">Next.js</span>
-            <span className="tag">Vite</span>
-            <span className="tag">Remix</span>
-            <span className="tag">Claude Code</span>
-            <span className="tag">Cursor</span>
+          <div className="install-compat">
+            <p className="install-compat-label">Works with</p>
+            <div className="tag-row">
+              <span className="tag">Next.js</span>
+              <span className="tag">Vite</span>
+              <span className="tag">Remix</span>
+              <span className="tag">Tailwind CSS</span>
+              <span className="tag">CSS Modules</span>
+              <span className="tag">Plain CSS</span>
+              <span className="tag">Claude Code</span>
+              <span className="tag">Cursor</span>
+            </div>
           </div>
         </section>
 
