@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import "./styles.css";
 
 function CopyButton({ text }: { text: string }) {
@@ -25,6 +25,70 @@ function CopyButton({ text }: { text: string }) {
 
 export default function Home() {
   const [paused, setPaused] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+    const update = () => {
+      // Cursor is position:absolute inside .browser-content (position:relative)
+      // so left/top % are relative to browser-content
+      const container = hero.querySelector(".browser-content") as HTMLElement | null;
+      const inner = hero.querySelector(".mock-panel-inner") as HTMLElement | null;
+      if (!container || !inner) return;
+
+      const targets = {
+        toolbar: hero.querySelector("[data-cursor-target='toolbar']"),
+        card: hero.querySelector("[data-cursor-target='card']"),
+        padding: hero.querySelector("[data-cursor-target='padding']"),
+        radius: hero.querySelector("[data-cursor-target='radius']"),
+      };
+      if (!targets.toolbar || !targets.card || !targets.padding || !targets.radius) return;
+
+      // Pause animations to measure accurately
+      hero.classList.add("measuring");
+      hero.offsetHeight;
+
+      const cr = container.getBoundingClientRect();
+      const pos = (el: Element) => {
+        const r = el.getBoundingClientRect();
+        return {
+          x: ((r.left + r.width / 2 - cr.left) / cr.width) * 100,
+          y: ((r.top + r.height / 2 - cr.top) / cr.height) * 100,
+        };
+      };
+
+      // Toolbar (collapsed = small circle at bottom-right)
+      const tb = pos(targets.toolbar);
+      hero.style.setProperty("--tb-x", `${tb.x}%`);
+      hero.style.setProperty("--tb-y", `${tb.y}%`);
+
+      // Card (middle card)
+      const card = pos(targets.card);
+      hero.style.setProperty("--card-x", `${card.x}%`);
+      hero.style.setProperty("--card-y", `${card.y}%`);
+
+      // Padding input (scroll at 0)
+      const pad = pos(targets.padding);
+      hero.style.setProperty("--pad-x", `${pad.x}%`);
+      hero.style.setProperty("--pad-y", `${pad.y}%`);
+
+      // Radius input (after simulated scroll)
+      inner.style.transform = "translateY(-190px)";
+      inner.offsetHeight;
+      const rad = pos(targets.radius);
+      hero.style.setProperty("--rad-x", `${rad.x}%`);
+      hero.style.setProperty("--rad-y", `${rad.y}%`);
+
+      // Restore
+      inner.style.transform = "";
+      hero.classList.remove("measuring");
+    };
+    const t = setTimeout(update, 300);
+    window.addEventListener("resize", update);
+    return () => { clearTimeout(t); window.removeEventListener("resize", update); };
+  }, []);
+
   return (
     <div className="layout">
       {/* ── Sidebar TOC ── */}
@@ -96,7 +160,7 @@ export default function Home() {
             </a>
           </div>
 
-          <div className={`hero-visual${paused ? " animation-paused" : ""}`}>
+          <div ref={heroRef} className={`hero-visual${paused ? " animation-paused" : ""}`}>
             <div className="browser-chrome">
               <div className="browser-dots">
                 <span className="dot dot-red" />
@@ -119,7 +183,7 @@ export default function Home() {
                     <div className="mock-card-label" />
                     <div className="mock-card-value" />
                   </div>
-                  <div className="mock-card mock-card-target">
+                  <div className="mock-card mock-card-target" data-cursor-target="card">
                     <div className="mock-card-label" />
                     <div className="mock-card-value" />
                     <div className="mock-selection-ring" />
@@ -137,7 +201,7 @@ export default function Home() {
                 </div>
               </div>
               {/* Retune toolbar — single element that morphs from circle to pill */}
-              <div className="mock-toolbar">
+              <div className="mock-toolbar" data-cursor-target="toolbar">
                 {/* Collapse button — visible when collapsed, shrinks away when expanded */}
                 <div className="mock-collapse-btn">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 2.75V4.5M16.9069 5.09326L15.5962 6.40392M6.40381 15.5962L5.09315 16.9069M4.5 11H2.75M6.40381 6.40381L5.09315 5.09315M14.1323 20.999L10.3851 10.7984C10.2362 10.3929 10.6368 10.0021 11.0385 10.1611L21.0397 14.1199C21.4283 14.2737 21.4679 14.8081 21.1062 15.0175L17.3654 17.1832C17.2898 17.227 17.227 17.2898 17.1832 17.3654L15.0343 21.0771C14.822 21.4438 14.2784 21.3967 14.1323 20.999Z"/></svg>
@@ -182,6 +246,7 @@ export default function Home() {
                   <div className="mock-panel-tab active">Design</div>
                 </div>
                 <div className="mock-panel-scroll">
+                <div className="mock-panel-inner">
                 <div className="mock-panel-header">
                   <div className="mock-el-tag">div</div>
                   <div className="mock-scope-row">
@@ -235,7 +300,7 @@ export default function Home() {
                       </div>
                       <div className="mock-group-label">Padding</div>
                       <div className="mock-input-row">
-                        <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M7.5 16a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zM7 7.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM13 11h-2v2h2v-2zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2z"/></svg></span><span className="mock-input-value mock-val-pad">12px</span></div>
+                        <div className="mock-input" data-cursor-target="padding"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M7.5 16a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zM7 7.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM13 11h-2v2h2v-2zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2z"/></svg></span><span className="mock-input-value mock-val-pad">12px</span></div>
                         <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 7.5a.5.5 0 0 0-1 0v9a.5.5 0 0 0 1 0v-9zM16.5 7a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0v-9a.5.5 0 0 1 .5-.5zM13 13v-2h-2v2h2zm1-2a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2z"/></svg></span><span className="mock-input-value">16px</span></div>
                         <div className="mock-split-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM17 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM9.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM9 16.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/></svg></div>
                       </div>
@@ -279,7 +344,7 @@ export default function Home() {
                       </div>
                       <div className="mock-group-label">Corner radius</div>
                       <div className="mock-input-row">
-                        <div className="mock-input"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M12.478 8H12.5h3a.5.5 0 0 1 0 1h-3c-.708 0-1.21 0-1.6.032-.488.032-.724.124-.908.218a2.25 2.25 0 0 0-.874.874c-.094.184-.186.42-.218.908C9 11.291 9 11.792 9 12.5v3a.5.5 0 0 1-1 0v-3.022c0-.7 0-1.245.036-1.66.035-.449.077-.831.149-1.183a3.25 3.25 0 0 1 1.64-1.64c.352-.148.734-.19 1.183-.225C11.233 8 11.778 8 12.478 8Z"/></svg></span><span className="mock-input-value mock-val-radius">8px</span></div>
+                        <div className="mock-input" data-cursor-target="radius"><span className="mock-input-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M12.478 8H12.5h3a.5.5 0 0 1 0 1h-3c-.708 0-1.21 0-1.6.032-.488.032-.724.124-.908.218a2.25 2.25 0 0 0-.874.874c-.094.184-.186.42-.218.908C9 11.291 9 11.792 9 12.5v3a.5.5 0 0 1-1 0v-3.022c0-.7 0-1.245.036-1.66.035-.449.077-.831.149-1.183a3.25 3.25 0 0 1 1.64-1.64c.352-.148.734-.19 1.183-.225C11.233 8 11.778 8 12.478 8Z"/></svg></span><span className="mock-input-value mock-val-radius">8px</span></div>
                         <div className="mock-split-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.9"><path fillRule="evenodd" clipRule="evenodd" d="M8 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM17 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zM9.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM9 16.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/></svg></div>
                       </div>
                       <div className="mock-group-label">Overflow</div>
@@ -314,10 +379,12 @@ export default function Home() {
                     <div className="mock-section-header"><span>Filters</span><div className="mock-section-action"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M12 6C12.2761 6 12.5 6.22386 12.5 6.5V11.5H17.5C17.7761 11.5 18 11.7239 18 12C18 12.2761 17.7761 12.5 17.5 12.5H12.5V17.5C12.5 17.7761 12.2761 18 12 18C11.7239 18 11.5 17.7761 11.5 17.5V12.5H6.5C6.22386 12.5 6 12.2761 6 12C6 11.7239 6.22386 11.5 6.5 11.5H11.5V6.5C11.5 6.22386 11.7239 6 12 6Z" fillOpacity="0.9"/></svg></div></div>
                   </div>
                 </div>
+                </div>
               </div>
               {/* Animated cursor */}
               <div className="mock-cursor">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
+                <svg className="cursor-pointer" width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
+                <svg className="cursor-crosshair" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1917" strokeWidth="1.5" strokeLinecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
               </div>
             </div>
             <button

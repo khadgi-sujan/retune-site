@@ -220,6 +220,15 @@ body { background: #fafaf9; }
 .hero-visual {
   position: relative;
   margin-top: 40px;
+  /* Cursor target positions — computed by JS from actual DOM, fallbacks here */
+  --tb-x: 96%;
+  --tb-y: 93%;
+  --card-x: 38%;
+  --card-y: 25%;
+  --pad-x: 80%;
+  --pad-y: 65%;
+  --rad-x: 82%;
+  --rad-y: 75%;
 }
 
 .browser-chrome {
@@ -410,14 +419,7 @@ body { background: #fafaf9; }
   min-width: 26px;
   z-index: 3;
   overflow: hidden;
-  animation: mock-toolbar-morph 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-}
-@keyframes mock-toolbar-morph {
-  0%, 20% { padding: 0; }
-  22%     { padding: 3px; }
-  95%     { padding: 3px; }
-  97%     { padding: 0; }
-  100%    { padding: 0; }
+  padding: 3px;
 }
 
 /* Collapse button: 26×26 circle with 12px icon
@@ -555,10 +557,12 @@ body { background: #fafaf9; }
 }
 
 /* Edit count badge: 20×20 (real: 32×32), font 8px (real: 13px)
-   Collapses width to 0 when hidden, pops with scale+blur when visible */
+   Enters with scale+blur+opacity (GPU-only, no layout thrash) */
 .mock-edit-count-wrap { display: contents; }
 .mock-edit-count {
+  width: 20px;
   height: 20px;
+  padding: 0 6px;
   border-radius: 999px;
   background: #3b82f6;
   color: #fff;
@@ -573,11 +577,11 @@ body { background: #fafaf9; }
   animation: mock-badge-pop 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 @keyframes mock-badge-pop {
-  0%, 59% { width: 0; min-width: 0; padding: 0; opacity: 0; }
-  62%     { width: 20px; min-width: 20px; padding: 0 6px; opacity: 1; }
-  95%     { width: 20px; min-width: 20px; padding: 0 6px; opacity: 1; }
-  97%     { width: 0; min-width: 0; padding: 0; opacity: 0; }
-  100%    { width: 0; min-width: 0; padding: 0; opacity: 0; }
+  0%, 58% { transform: scale(0); opacity: 0; filter: blur(4px); }
+  61%     { transform: scale(1); opacity: 1; filter: blur(0); }
+  93%     { transform: scale(1); opacity: 1; filter: blur(0); }
+  96%     { transform: scale(0); opacity: 0; filter: blur(4px); }
+  100%    { transform: scale(0); opacity: 0; filter: blur(4px); }
 }
 
 /* Selection ring on target card */
@@ -588,8 +592,8 @@ body { background: #fafaf9; }
 @keyframes mock-ring-toggle {
   0%, 38% { opacity: 0; }
   40% { opacity: 1; }
-  95% { opacity: 1; }
-  97% { opacity: 0; }
+  93% { opacity: 1; }
+  96% { opacity: 0; }
   100% { opacity: 0; }
 }
 
@@ -598,11 +602,12 @@ body { background: #fafaf9; }
   animation: mock-card-changes 7s ease infinite;
 }
 @keyframes mock-card-changes {
-  0%, 58% { padding: 10px; border-radius: 6px; }
-  62%     { padding: 14px; border-radius: 6px; }
-  66%     { padding: 14px; border-radius: 6px; }
-  70%     { padding: 14px; border-radius: 10px; }
-  95%     { padding: 14px; border-radius: 10px; }
+  0%, 57% { padding: 10px; border-radius: 6px; }
+  61%     { padding: 14px; border-radius: 6px; }
+  69%     { padding: 14px; border-radius: 6px; }
+  73%     { padding: 14px; border-radius: 10px; }
+  93%     { padding: 14px; border-radius: 10px; }
+  96%     { padding: 10px; border-radius: 6px; }
   100%    { padding: 10px; border-radius: 6px; }
 }
 
@@ -624,10 +629,10 @@ body { background: #fafaf9; }
 }
 
 @keyframes mock-panel-toggle {
-  0%, 45% { opacity: 0; transform: translateY(8px); }
-  48% { opacity: 1; transform: translateY(0); }
-  95% { opacity: 1; transform: translateY(0); }
-  97% { opacity: 0; transform: translateY(8px); }
+  0%, 39% { opacity: 0; transform: translateY(8px); }
+  42% { opacity: 1; transform: translateY(0); }
+  93% { opacity: 1; transform: translateY(0); }
+  96% { opacity: 0; transform: translateY(8px); }
   100% { opacity: 0; transform: translateY(8px); }
 }
 
@@ -714,8 +719,36 @@ body { background: #fafaf9; }
 .mock-panel-scroll {
   padding: 0;
   flex: 1;
-  overflow-y: auto;
+  overflow: hidden;
   min-height: 0;
+}
+
+.mock-panel-inner {
+  will-change: transform;
+  animation: mock-panel-scroll-sim 7s ease infinite;
+}
+@keyframes mock-panel-scroll-sim {
+  /* No scroll until after padding tweak */
+  0%, 61% { transform: translateY(0); }
+  /* Scroll up to reveal corner radius field */
+  66% { transform: translateY(-190px); }
+  /* Hold */
+  93% { transform: translateY(-190px); }
+  /* Reset */
+  96% { transform: translateY(0); }
+  100% { transform: translateY(0); }
+}
+
+/* Measuring mode — disable animations to get accurate positions */
+.hero-visual.measuring .mock-toolbar,
+.hero-visual.measuring .mock-panel {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+.hero-visual.measuring .mock-panel-inner {
+  animation: none !important;
+  transform: none !important;
 }
 
 /* Sections */
@@ -739,7 +772,7 @@ body { background: #fafaf9; }
 .mock-section-action {
   font-size: 10px;
   font-weight: 400;
-  color: #a8a29e;
+  color: rgba(0, 0, 0, 0.9);
   width: 16px;
   height: 16px;
   display: flex;
@@ -824,7 +857,7 @@ body { background: #fafaf9; }
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #a8a29e;
+  color: rgba(0, 0, 0, 0.9);
 }
 
 /* Select input with chevron */
@@ -876,7 +909,7 @@ body { background: #fafaf9; }
   justify-content: center;
   font-size: 6px;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(0, 0, 0, 0.9);
 }
 .mock-seg-btn.active {
   color: rgba(0, 0, 0, 0.9);
@@ -907,25 +940,25 @@ body { background: #fafaf9; }
   padding-left: 0;
 }
 
-/* Value flash on padding change (first change at 60%) */
+/* Value flash on padding change (cursor clicks at ~59%) */
 .mock-val-pad {
   animation: mock-val-flash-1 7s ease infinite;
 }
 @keyframes mock-val-flash-1 {
-  0%, 58% { background: transparent; }
-  60% { background: #dbeafe; border-radius: 3px; }
-  68% { background: transparent; }
+  0%, 57% { background: transparent; }
+  59% { background: #dbeafe; border-radius: 3px; }
+  67% { background: transparent; }
   100% { background: transparent; }
 }
 
-/* Value flash on radius change (second change at 68%) */
+/* Value flash on radius change (cursor clicks at ~69%) */
 .mock-val-radius {
   animation: mock-val-flash-2 7s ease infinite;
 }
 @keyframes mock-val-flash-2 {
-  0%, 66% { background: transparent; }
-  68% { background: #dbeafe; border-radius: 3px; }
-  76% { background: transparent; }
+  0%, 69% { background: transparent; }
+  71% { background: #dbeafe; border-radius: 3px; }
+  79% { background: transparent; }
   100% { background: transparent; }
 }
 
@@ -939,37 +972,65 @@ body { background: #fafaf9; }
   top: 70%;
   animation: mock-cursor-move 7s ease infinite;
 }
+.mock-cursor .cursor-pointer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: cursor-icon-pointer 7s ease infinite;
+}
+.mock-cursor .cursor-crosshair {
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  animation: cursor-icon-crosshair 7s ease infinite;
+}
+@keyframes cursor-icon-pointer {
+  0%, 20% { opacity: 1; }
+  22% { opacity: 0; }
+  95% { opacity: 0; }
+  97% { opacity: 1; }
+  100% { opacity: 1; }
+}
+@keyframes cursor-icon-crosshair {
+  0%, 20% { opacity: 0; }
+  22% { opacity: 1; }
+  95% { opacity: 1; }
+  97% { opacity: 0; }
+  100% { opacity: 0; }
+}
 
 @keyframes mock-cursor-move {
   /* Hidden initially */
-  0%, 8% { opacity: 0; left: 60%; top: 70%; transform: scale(1); }
+  0%, 8% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
   /* Appear */
-  12% { opacity: 1; left: 60%; top: 70%; transform: scale(1); }
+  12% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
   /* Move to collapsed toolbar (bottom-right) */
-  20% { opacity: 1; left: 90%; top: 88%; transform: scale(1); }
+  20% { opacity: 1; left: var(--tb-x); top: var(--tb-y); transform: scale(1); }
   /* Click toolbar */
-  21% { left: 90%; top: 88%; transform: scale(0.8); }
-  22% { left: 90%; top: 88%; transform: scale(1); }
+  21% { left: var(--tb-x); top: var(--tb-y); transform: scale(0.8); }
+  22% { left: var(--tb-x); top: var(--tb-y); transform: scale(1); }
   /* Move to middle card */
-  32% { left: 42%; top: 34%; transform: scale(1); }
+  32% { left: var(--card-x); top: var(--card-y); transform: scale(1); }
   /* Click card */
-  39% { left: 42%; top: 34%; transform: scale(0.8); }
-  40% { left: 42%; top: 34%; transform: scale(1); }
-  /* Move to panel padding field */
-  55% { left: 78%; top: 55%; transform: scale(1); }
+  39% { left: var(--card-x); top: var(--card-y); transform: scale(0.8); }
+  40% { left: var(--card-x); top: var(--card-y); transform: scale(1); }
+  /* Move to panel — padding field */
+  55% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
   /* Click/tweak padding */
-  59% { left: 78%; top: 55%; transform: scale(0.8); }
-  61% { left: 78%; top: 55%; transform: scale(1); }
-  /* Move to radius field (Appearance section) */
-  64% { left: 78%; top: 67%; transform: scale(1); }
+  58% { left: var(--pad-x); top: var(--pad-y); transform: scale(0.8); }
+  60% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
+  /* Hold at padding while panel scrolls (61-66%) */
+  65% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
+  /* Move to radius field after scroll completes at 66% */
+  68% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   /* Click/tweak radius */
-  67% { left: 78%; top: 67%; transform: scale(0.8); }
-  69% { left: 78%; top: 67%; transform: scale(1); }
+  70% { left: var(--rad-x); top: var(--rad-y); transform: scale(0.8); }
+  72% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   /* Hold */
-  88% { opacity: 1; left: 78%; top: 67%; transform: scale(1); }
+  88% { opacity: 1; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   /* Fade out */
-  94% { opacity: 0; left: 78%; top: 67%; transform: scale(1); }
-  100% { opacity: 0; left: 60%; top: 70%; transform: scale(1); }
+  94% { opacity: 0; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  100% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
 }
 
 /* Pause/resume button */
@@ -1007,6 +1068,9 @@ body { background: #fafaf9; }
 .hero-visual.animation-paused .mock-card-target .mock-selection-ring,
 .hero-visual.animation-paused .mock-edit-count,
 .hero-visual.animation-paused .mock-cursor,
+.hero-visual.animation-paused .cursor-pointer,
+.hero-visual.animation-paused .cursor-crosshair,
+.hero-visual.animation-paused .mock-panel-inner,
 .hero-visual.animation-paused .mock-val-pad,
 .hero-visual.animation-paused .mock-val-radius {
   animation-play-state: paused;
@@ -1025,7 +1089,10 @@ body { background: #fafaf9; }
   .mock-value-animate,
   .mock-edit-count-wrap,
   .mock-edit-count,
-  .mock-cursor {
+  .mock-cursor,
+  .cursor-pointer,
+  .cursor-crosshair,
+  .mock-panel-inner {
     animation: none;
   }
   .animation-pause-btn { display: none; }
@@ -1036,7 +1103,7 @@ body { background: #fafaf9; }
   .mock-toolbar-expanded > * { transform: none; filter: none; }
   .mock-panel { opacity: 1; transform: none; }
   .mock-card-target .mock-selection-ring { opacity: 1; }
-  .mock-edit-count { width: 20px; min-width: 20px; padding: 0 6px; opacity: 1; transform: none; filter: none; }
+  .mock-edit-count { opacity: 1; transform: scale(1); filter: none; }
   .mock-toolbar-btn.enables-on-change { opacity: 1; }
   .mock-toolbar-btn.always-disabled { opacity: 0.2; }
   .mock-cursor { display: none; }
