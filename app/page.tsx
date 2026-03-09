@@ -3,6 +3,8 @@
 import { useState, useCallback, useRef, useLayoutEffect, useEffect } from "react";
 import "./styles.css";
 
+const retuneVersion = process.env.RETUNE_VERSION ?? "0.0.0";
+
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = useCallback(() => {
@@ -180,7 +182,20 @@ export default function Home() {
       {/* ── Sidebar TOC ── */}
       <aside className={`sidebar${menuOpen ? " menu-open" : ""}`}>
         <a href="#" className="sidebar-logo">
-          <div className="logo-mark" />
+          <svg className="logo-mark" width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="16" y="11" width="4" height="8" fill="currentColor"/>
+            <rect x="16" y="3" width="4" height="8" fill="currentColor"/>
+            <rect x="20" y="19" width="4" height="8" fill="currentColor"/>
+            <rect x="28" y="11" width="4" height="8" fill="currentColor"/>
+            <rect x="24" y="19" width="4" height="8" fill="currentColor"/>
+            <rect x="28" y="27" width="4" height="8" fill="currentColor"/>
+            <rect x="32" y="35" width="4" height="8" fill="currentColor"/>
+            <rect x="36" y="35" width="4" height="8" fill="currentColor"/>
+            <rect x="40" y="27" width="4" height="8" fill="currentColor"/>
+            <rect x="8" y="27" width="4" height="8" fill="currentColor"/>
+            <rect x="4" y="35" width="4" height="8" fill="currentColor"/>
+            <rect x="12" y="19" width="4" height="8" fill="currentColor"/>
+          </svg>
           <span className="logo-name">Retune</span>
         </a>
 
@@ -212,7 +227,7 @@ export default function Home() {
               rel="noopener"
               onClick={() => setMenuOpen(false)}
             >
-              v0.3.0
+              v{retuneVersion}
             </a>
           </div>
         </nav>

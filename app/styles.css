@@ -40,6 +40,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   align-items: center;
   gap: 6px;
   text-decoration: none;
+  color: #1c1917;
   margin-bottom: 36px;
   margin-left: 12px;
   margin-right: 12px;
@@ -48,11 +49,11 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 
 .logo-mark {
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.10);
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
+
 
 .logo-name {
   font-size: 15px;

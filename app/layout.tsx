@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { Retune } from "retune";
 
 export const metadata: Metadata = {
-  title: "Retune — Visual devtools for AI-assisted development",
+  title: "Retune — The visual layer for vibe coding",
   description:
-    "Select any element in your running React app, tweak it visually, and let your AI coding tool write the CSS. No more describing layouts in words.",
+    "Select any element in your running app, tweak it visually, and let your AI coding tool write the changes. The visual layer for vibe coding.",
   openGraph: {
     title: "Retune",
-    description: "Visual devtools that persist changes to source code via AI agents.",
+    description: "The visual layer for vibe coding.",
     siteName: "Retune",
     type: "website",
   },
