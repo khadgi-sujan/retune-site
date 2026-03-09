@@ -205,6 +205,15 @@ export default function Home() {
             >
               GitHub
             </a>
+            <a
+              href="https://www.npmjs.com/package/retune"
+              className="toc-link"
+              target="_blank"
+              rel="noopener"
+              onClick={() => setMenuOpen(false)}
+            >
+              v0.3.0
+            </a>
           </div>
         </nav>
       </aside>
