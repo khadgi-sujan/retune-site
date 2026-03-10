@@ -23,12 +23,10 @@ export default function Home() {
         {/* ── Hero ── */}
         <section className="hero">
           <h1 className="hero-heading">
-            Stop prompting for pixels.
+            The visual layer for vibe coding.
           </h1>
           <p className="hero-sub">
-            Select any element in your running app, tweak it visually, and
-            your AI coding tool writes the change to source. Like DevTools,
-            but the changes stick.
+            Click any element in your running app, adjust spacing, colors, typography, and more, and your AI agent writes the changes to source. No more prompting for pixels.
           </p>
           <div className="cta-row desktop-only">
             <TryItButton />
@@ -52,75 +50,60 @@ export default function Home() {
                 <div className="mock-nav">
                   <div className="mock-nav-logo" />
                   <div className="mock-nav-links">
-                    <div className="mock-nav-link active" />
+                    <div className="mock-nav-link" />
                     <div className="mock-nav-link" />
                     <div className="mock-nav-link" />
                   </div>
-                  <div className="mock-nav-avatar" />
+                  <div className="mock-nav-cta" />
                 </div>
-                {/* Page header */}
-                <div className="mock-page-header">
-                  <div className="mock-heading" />
-                  <div className="mock-subheading" />
+                {/* Hero */}
+                <div className="mock-hero">
+                  <div className="mock-hero-heading" />
+                  <div className="mock-hero-heading second" />
+                  <div className="mock-hero-sub" />
+                  <div className="mock-hero-sub second" />
+                  <div className="mock-hero-buttons">
+                    <div className="mock-hero-btn primary" />
+                    <div className="mock-hero-btn" />
+                  </div>
                 </div>
-                {/* Stat cards */}
+                {/* Hero image */}
+                <div className="mock-hero-image">
+                  <div className="mock-hi-bar" />
+                  <div className="mock-hi-bar short" />
+                  <div className="mock-hi-grid">
+                    <div className="mock-hi-cell" />
+                    <div className="mock-hi-cell" />
+                    <div className="mock-hi-cell" />
+                  </div>
+                </div>
+                {/* Feature cards */}
                 <div className="mock-cards">
-                  <div className="mock-card">
-                    <div className="mock-card-label" />
-                    <div className="mock-card-value" />
-                    <div className="mock-card-bar">
-                      <div className="mock-bar-fill" style={{ width: "72%" }} />
-                    </div>
-                  </div>
                   <div className="mock-card mock-card-target">
-                    <div className="mock-card-label" />
-                    <div className="mock-card-value" />
-                    <div className="mock-card-bar">
-                      <div className="mock-bar-fill accent" style={{ width: "58%" }} />
+                    <div className="mock-card-icon-row">
+                      <div className="mock-card-dot" />
                     </div>
+                    <div className="mock-card-title" />
+                    <div className="mock-card-desc" />
+                    <div className="mock-card-desc short" />
                     <div className="mock-selection-overlay" />
-                    <div className="mock-selection-label">div.mock-card 120×52</div>
+                    <div className="mock-selection-label">div.card 140×68</div>
                   </div>
                   <div className="mock-card">
-                    <div className="mock-card-label" />
-                    <div className="mock-card-value" />
-                    <div className="mock-card-bar">
-                      <div className="mock-bar-fill" style={{ width: "85%" }} />
+                    <div className="mock-card-icon-row">
+                      <div className="mock-card-dot purple" />
                     </div>
+                    <div className="mock-card-title" />
+                    <div className="mock-card-desc" />
+                    <div className="mock-card-desc short" />
                   </div>
                   <div className="mock-card">
-                    <div className="mock-card-label" />
-                    <div className="mock-card-value" />
-                    <div className="mock-card-bar">
-                      <div className="mock-bar-fill" style={{ width: "40%" }} />
+                    <div className="mock-card-icon-row">
+                      <div className="mock-card-dot green" />
                     </div>
-                  </div>
-                </div>
-                {/* Table */}
-                <div className="mock-table">
-                  <div className="mock-table-row header">
-                    <div className="mock-cell wide" />
-                    <div className="mock-cell" />
-                    <div className="mock-cell" />
-                    <div className="mock-cell narrow" />
-                  </div>
-                  <div className="mock-table-row">
-                    <div className="mock-cell wide" />
-                    <div className="mock-cell" />
-                    <div className="mock-cell" />
-                    <div className="mock-cell narrow" />
-                  </div>
-                  <div className="mock-table-row">
-                    <div className="mock-cell wide" />
-                    <div className="mock-cell" />
-                    <div className="mock-cell" />
-                    <div className="mock-cell narrow" />
-                  </div>
-                  <div className="mock-table-row">
-                    <div className="mock-cell wide" />
-                    <div className="mock-cell" />
-                    <div className="mock-cell" />
-                    <div className="mock-cell narrow" />
+                    <div className="mock-card-title" />
+                    <div className="mock-card-desc" />
+                    <div className="mock-card-desc short" />
                   </div>
                 </div>
               </div>
