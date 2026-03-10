@@ -1,240 +1,25 @@
-"use client";
-
-import { useState, useCallback, useRef, useLayoutEffect, useEffect } from "react";
 import "./styles.css";
+import {
+  CopyButton,
+  HeroInstallCopy,
+  FaqItem,
+  TryItButton,
+  HeroCursorPositioner,
+  Sidebar,
+} from "./components";
 
 const retuneVersion = process.env.RETUNE_VERSION ?? "0.0.0";
 
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  }, [text]);
-  return (
-    <button className="copy-btn" onClick={handleCopy} aria-label="Copy to clipboard">
-      <span className={`copy-icon ${copied ? "copy-icon-out" : "copy-icon-in"}`}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
-      </span>
-      <span className={`copy-icon ${copied ? "copy-icon-in" : "copy-icon-out"}`}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-      </span>
-    </button>
-  );
-}
-
-function HeroInstallCopy() {
-  const [copied, setCopied] = useState(false);
-  const handleClick = useCallback(() => {
-    navigator.clipboard.writeText("npm install retune").then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  }, []);
-  return (
-    <button className="hero-install" onClick={handleClick}>
-      <code className="hero-install-cmd">npm install retune</code>
-      <span className="hero-install-icon">
-        <span className={`copy-icon ${copied ? "copy-icon-out" : "copy-icon-in"}`}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
-        </span>
-        <span className={`copy-icon ${copied ? "copy-icon-in" : "copy-icon-out"}`}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-        </span>
-      </span>
-    </button>
-  );
-}
-
-function FaqItem({ question, children }: { question: string; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className={`faq-item${open ? " open" : ""}`}>
-      <button className="faq-question" onClick={() => setOpen(!open)}>
-        <span>{question}</span>
-        <svg className="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 6 8 10 12 6" /></svg>
-      </button>
-      <div className="faq-answer">
-        <div>
-          <p>{children}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
-  const [paused, setPaused] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const heroRef = useRef<HTMLDivElement>(null);
-
-  // Track which section is in view for sidebar active state
-  useEffect(() => {
-    const sections = document.querySelectorAll<HTMLElement>(".hero, .section[id]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const id = entry.target.id || "";
-            setActiveSection(id);
-          }
-        }
-      },
-      { rootMargin: "-20% 0px -60% 0px" }
-    );
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
-  }, []);
-
-  // Measure cursor targets. useLayoutEffect runs before paint so animations
-  // haven't started — elements are at base CSS positions. On resize, we
-  // recompute X positions from stored pixel offsets (Y is stable since
-  // browser-content height scales with aspect-ratio).
-  useLayoutEffect(() => {
-    const hero = heroRef.current;
-    if (!hero) return;
-    const container = hero.querySelector(".browser-content") as HTMLElement | null;
-    if (!container) return;
-
-    const ch = container.clientHeight;
-    const panelOffsetPx = 8; // panel animation starts at translateY(8px)
-
-    // Measure once at mount — get pixel offsets from right edge and Y positions
-    const cw0 = container.clientWidth;
-    const cr0 = container.getBoundingClientRect();
-    const borderL = parseFloat(getComputedStyle(container).borderLeftWidth) || 0;
-    const borderT = parseFloat(getComputedStyle(container).borderTopWidth) || 0;
-    const ox0 = cr0.left + borderL;
-    const oy0 = cr0.top + borderT;
-
-    // Toolbar: bottom: 12px, right: 12px, 26×26
-    const tbFromRight = 12 + 13; // px from right edge to center
-    const tbY = ((ch - 12 - 13) / ch) * 100;
-
-    // Card: ratio within full container width
-    const cardEl = container.querySelector(".mock-card-target");
-    const cardRatio = cardEl
-      ? (() => {
-          const r = cardEl.getBoundingClientRect();
-          const cx = r.left + r.width / 2 - ox0;
-          return cx / cw0;
-        })()
-      : 0.35;
-    const cardY = cardEl
-      ? ((cardEl.getBoundingClientRect().top + cardEl.getBoundingClientRect().height / 2 - oy0) / ch) * 100
-      : 25;
-
-    // Panel items: right-aligned (panel: right: 8px, width: 180px)
-    const measurePanelItem = (selector: string) => {
-      const val = container.querySelector(selector);
-      const input = val?.closest(".mock-input");
-      if (!input) return null;
-      const r = input.getBoundingClientRect();
-      const centerX = r.left + r.width / 2 - ox0;
-      const centerY = r.top + r.height / 2 - oy0;
-      return {
-        fromRight: cw0 - centerX, // px from right edge
-        y: ((centerY - panelOffsetPx) / ch) * 100, // compensate for panel translateY(8px)
-      };
-    };
-
-    const padMeasure = measurePanelItem(".mock-val-pad");
-    const radMeasure = measurePanelItem(".mock-val-radius");
-    const padScrollPct = (80 / ch) * 100;  // first scroll to show padding
-    const radScrollPct = (250 / ch) * 100;  // second scroll to show radius
-
-    // Apply positions for a given container width
-    const apply = (cw: number) => {
-      // Toolbar
-      hero.style.setProperty("--tb-x", `${((cw - tbFromRight) / cw) * 100}%`);
-      hero.style.setProperty("--tb-y", `${tbY}%`);
-
-      // Card — proportional within full width
-      const cardX = cardRatio * 100;
-      hero.style.setProperty("--card-x", `${cardX}%`);
-      hero.style.setProperty("--card-y", `${cardY}%`);
-
-      // Panel items — fixed px from right edge, offset by scroll at time of interaction
-      if (padMeasure) {
-        hero.style.setProperty("--pad-x", `${((cw - padMeasure.fromRight) / cw) * 100}%`);
-        hero.style.setProperty("--pad-y", `${padMeasure.y - padScrollPct}%`);
-      }
-      if (radMeasure) {
-        hero.style.setProperty("--rad-x", `${((cw - radMeasure.fromRight) / cw) * 100}%`);
-        hero.style.setProperty("--rad-y", `${radMeasure.y - radScrollPct}%`);
-      }
-    };
-
-    // Initial apply
-    apply(cw0);
-
-    // Recompute on resize — only X positions change
-    const onResize = () => apply(container.clientWidth);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
   return (
     <div className="layout">
+      <a href="#main-content" className="skip-link">Skip to content</a>
+
       {/* ── Sidebar TOC ── */}
-      <aside className={`sidebar${menuOpen ? " menu-open" : ""}`}>
-        <a href="#" className="sidebar-logo">
-          <svg className="logo-mark" width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="16" y="11" width="4" height="8" fill="currentColor"/>
-            <rect x="16" y="3" width="4" height="8" fill="currentColor"/>
-            <rect x="20" y="19" width="4" height="8" fill="currentColor"/>
-            <rect x="28" y="11" width="4" height="8" fill="currentColor"/>
-            <rect x="24" y="19" width="4" height="8" fill="currentColor"/>
-            <rect x="28" y="27" width="4" height="8" fill="currentColor"/>
-            <rect x="32" y="35" width="4" height="8" fill="currentColor"/>
-            <rect x="36" y="35" width="4" height="8" fill="currentColor"/>
-            <rect x="40" y="27" width="4" height="8" fill="currentColor"/>
-            <rect x="8" y="27" width="4" height="8" fill="currentColor"/>
-            <rect x="4" y="35" width="4" height="8" fill="currentColor"/>
-            <rect x="12" y="19" width="4" height="8" fill="currentColor"/>
-          </svg>
-          <span className="logo-name">Retune</span>
-        </a>
-
-        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
-          <span className="hamburger-line" />
-          <span className="hamburger-line" />
-        </button>
-
-        <nav className="toc">
-          <div className="toc-inner">
-            <a href="#" className={`toc-link${activeSection === "" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>Overview</a>
-            <a href="#how-it-works" className={`toc-link${activeSection === "how-it-works" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>How It Works</a>
-            <a href="#output" className={`toc-link${activeSection === "output" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>Agent Output</a>
-            <a href="#install" className={`toc-link${activeSection === "install" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>Install</a>
-            <a href="#faq" className={`toc-link${activeSection === "faq" ? " active" : ""}`} onClick={() => setMenuOpen(false)}>FAQ</a>
-            <a
-              href="https://github.com/khadgi-sujan/retune"
-              className="toc-link"
-              target="_blank"
-              rel="noopener"
-              onClick={() => setMenuOpen(false)}
-            >
-              GitHub
-            </a>
-            <a
-              href="https://www.npmjs.com/package/retune"
-              className="toc-link"
-              target="_blank"
-              rel="noopener"
-              onClick={() => setMenuOpen(false)}
-            >
-              v{retuneVersion}
-            </a>
-          </div>
-        </nav>
-      </aside>
+      <Sidebar version={retuneVersion} />
 
       {/* ── Main Content ── */}
-      <main className="content">
+      <main className="content" id="main-content">
         {/* ── Hero ── */}
         <section className="hero">
           <h1 className="hero-heading">
@@ -246,22 +31,13 @@ export default function Home() {
             but the changes stick.
           </p>
           <div className="cta-row">
-            <button
-              className="cta-primary desktop-only"
-              onClick={() => {
-                const host = document.querySelector("[data-retune-host]") as HTMLElement;
-                const btn = host?.shadowRoot?.querySelector(".retune-toolbar-collapse-btn") as HTMLElement;
-                btn?.click();
-              }}
-            >
-              Try it on this page
-            </button>
+            <TryItButton />
             <HeroInstallCopy />
           </div>
           <p className="mobile-callout">Retune is a desktop tool — try it on a larger screen to see the live demo.</p>
 
-          <div ref={heroRef} className={`hero-visual${paused ? " animation-paused" : ""}`}>
-            <div className="desktop-bg">
+          <HeroCursorPositioner>
+            <div className="desktop-bg" aria-hidden="true">
             <div className="browser-chrome">
               <div className="browser-dots">
                 <span className="dot dot-red" />
@@ -584,18 +360,7 @@ export default function Home() {
               </div>
             </div>
             </div>
-            <button
-              className="animation-pause-btn"
-              onClick={() => setPaused(p => !p)}
-              aria-label={paused ? "Resume animation" : "Pause animation"}
-            >
-              {paused ? (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              ) : (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
-              )}
-            </button>
-          </div>
+          </HeroCursorPositioner>
         </section>
 
         {/* ── How It Works ── */}
@@ -606,19 +371,19 @@ export default function Home() {
           </p>
           <div className="steps-grid">
             <div className="step-card">
-              <p className="step-title">Select an element</p>
+              <h3 className="step-title">Select an element</h3>
               <p className="step-card-desc">
                 Click anything on your page — Retune identifies the component, its styles, and where it lives in code.
               </p>
             </div>
             <div className="step-card">
-              <p className="step-title">Tweak visually</p>
+              <h3 className="step-title">Tweak visually</h3>
               <p className="step-card-desc">
                 Adjust spacing, colors, typography, and layout. Changes preview instantly in the browser.
               </p>
             </div>
             <div className="step-card">
-              <p className="step-title">Apply via AI</p>
+              <h3 className="step-title">Apply via AI</h3>
               <p className="step-card-desc">
                 Your AI tool (Claude Code, Cursor) picks up exact before/after values and applies them to your source files.
               </p>
@@ -661,7 +426,7 @@ export default function Home() {
           <div className="install-steps">
             <div className="install-step">
               <div className="install-step-content">
-                <p className="install-step-title">Install the package</p>
+                <h3 className="install-step-title">Install the package</h3>
                 <div className="code-block">
                   <CopyButton text="npm install retune" />
                   <div className="code-line"><span className="code-comment">$</span> npm install retune</div>
@@ -671,7 +436,7 @@ export default function Home() {
 
             <div className="install-step">
               <div className="install-step-content">
-                <p className="install-step-title">Add to your layout</p>
+                <h3 className="install-step-title">Add to your layout</h3>
                 <div className="code-block">
                   <CopyButton text={`import { Retune } from "retune"\n\n// Add anywhere in your component tree\n<Retune />`} />
                   <div className="code-line"><span className="code-keyword">import</span> {"{"} Retune {"}"} <span className="code-keyword">from</span> <span className="code-string">"retune"</span></div>
@@ -685,7 +450,7 @@ export default function Home() {
 
             <div className="install-step">
               <div className="install-step-content">
-                <p className="install-step-title">Connect your AI tool</p>
+                <h3 className="install-step-title">Connect your AI tool</h3>
                 <p className="install-step-desc">Add to <code>.mcp.json</code> (Claude Code) or MCP settings (Cursor):</p>
                 <div className="code-block">
                   <CopyButton text={`{\n  "mcpServers": {\n    "retune": {\n      "command": "npx",\n      "args": ["-y", "retune"]\n    }\n  }\n}`} />
@@ -746,7 +511,7 @@ export default function Home() {
 
         {/* ── Footer ── */}
         <footer className="footer">
-          <p className="footer-text">MIT License. Created by <a href="https://x.com/___sujan" className="footer-link" target="_blank" rel="noopener">Sujan Khadgi</a>.</p>
+          <p className="footer-text">MIT License. Created by <a href="https://x.com/___sujan" className="footer-link" target="_blank" rel="noopener noreferrer">Sujan Khadgi</a>.</p>
         </footer>
       </main>
     </div>

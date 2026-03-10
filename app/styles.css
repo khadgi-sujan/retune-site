@@ -9,6 +9,45 @@ html {
 
 body { background: #fafaf9; letter-spacing: -0.045px; }
 
+/* ── Accessibility ── */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 1000;
+  padding: 8px 16px;
+  background: #1c1917;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: top 150ms ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Global focus styles */
+:focus-visible {
+  outline: 2px solid #1c1917;
+  outline-offset: 2px;
+}
+
 /* ── Layout: Sidebar + Content ── */
 
 .layout {
@@ -113,8 +152,14 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   transition: color 0.15s;
 }
 
-.toc-link:hover {
+.toc-link:hover,
+.toc-link:focus-visible {
   color: #1c1917;
+}
+
+.toc-link:focus-visible {
+  outline-offset: -2px;
+  border-radius: 6px;
 }
 
 .toc-link.active {
@@ -162,11 +207,12 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   font-size: 11px;
   line-height: 18px;
 
-  color: #a8a29e;
+  color: #78716c;
   transition: color 150ms ease;
 }
 
-.hero-install:hover .hero-install-cmd {
+.hero-install:hover .hero-install-cmd,
+.hero-install:focus-visible .hero-install-cmd {
   color: #1c1917;
 }
 
@@ -174,14 +220,15 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   position: relative;
   width: 14px;
   height: 14px;
-  color: #a8a29e;
+  color: #78716c;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: color 150ms ease;
 }
 
-.hero-install:hover .hero-install-icon {
+.hero-install:hover .hero-install-icon,
+.hero-install:focus-visible .hero-install-icon {
   color: #1c1917;
 }
 
@@ -236,7 +283,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   display: none;
   font-size: 13px;
   line-height: 20px;
-  color: #a8a29e;
+  color: #78716c;
   margin: 0;
 }
 
@@ -255,7 +302,13 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   transition: background 0.15s ease;
 }
 
-.cta-primary:hover { background: #292524; }
+.cta-primary:hover,
+.cta-primary:focus-visible { background: #292524; }
+
+.cta-primary:focus-visible {
+  outline-color: #1c1917;
+  outline-offset: 3px;
+}
 
 /* ── Hero Visual (Browser Mockup) ── */
 
@@ -1632,7 +1685,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 .code-block:hover .copy-btn { opacity: 1; }
-.copy-btn:hover { background: #e7e5e4; color: #44403c; }
+.copy-btn:hover,
+.copy-btn:focus-visible { background: #e7e5e4; color: #44403c; }
+.code-block .copy-btn:focus-visible { opacity: 1; }
 
 .copy-icon {
   position: absolute;
@@ -1767,8 +1822,14 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   cursor: pointer;
 }
 
-.faq-question:hover {
+.faq-question:hover,
+.faq-question:focus-visible {
   color: #44403c;
+}
+
+.faq-question:focus-visible {
+  outline-offset: -2px;
+  border-radius: 4px;
 }
 
 .faq-chevron {
@@ -1812,10 +1873,16 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   .faq-answer { transition: none; }
   .faq-chevron { transition: none; }
   .hamburger-line { transition: none; }
   .toc { transition: none; }
+  .toc-link { transition: none; }
+  .cta-primary { transition: none; }
+  .footer-link { transition: none; }
+  .hero-install-cmd { transition: none; }
+  .hero-install-icon { transition: none; }
 }
 
 /* ── Footer ── */
@@ -1828,7 +1895,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .footer-text {
   font-size: 13px;
-  color: #a8a29e;
+  color: #78716c;
   margin: 0;
 }
 
@@ -1838,7 +1905,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   transition: color 150ms ease;
 }
 
-.footer-link:hover {
+.footer-link:hover,
+.footer-link:focus-visible {
   color: #1c1917;
 }
 
