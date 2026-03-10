@@ -171,11 +171,13 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .content {
   width: auto;
-  max-width: 720px;
+  max-width: 800px;
   flex: 1;
   padding: 0 48px 64px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   gap: 64px;
   min-width: 0;
 }
@@ -186,9 +188,11 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   font-size: 26px;
   font-weight: 500;
   line-height: 32px;
-
   color: #1c1917;
   margin: 0 0 12px;
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
 }
 
 .hero-install {
@@ -237,7 +241,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   line-height: 22px;
   color: #78716c;
   margin: 0 0 32px;
-  max-width: none;
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
 }
 
 .section-heading {
@@ -261,6 +267,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .section {
   padding-top: 0;
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
 }
 
 /* ── Hero ── */
@@ -268,6 +277,11 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .hero {
   padding: 72px 0 0;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: center;
 }
 
 /* ── CTA ── */
@@ -277,6 +291,10 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
+  width: 100%;
+  max-width: 640px;
+  justify-content: flex-start;
+  align-self: center;
 }
 
 .mobile-callout {
@@ -314,8 +332,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .desktop-bg {
   border-radius: 12px;
-  padding: 16px;
+  padding: 32px 80px;
   aspect-ratio: 16 / 10;
+  width: 800px;
   display: flex;
   flex-direction: column;
   background:
@@ -597,16 +616,29 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
    └─────────────────┴────────┴────────┘
    Easing: ease-out-cubic (softer than real ease-out-quint at small scale)
    Transition durations: 0.15s (real 0.2s), icon-in 0.1s (real 0.15s)
-   At 7s loop: 0.15s ≈ 2%, 0.1s ≈ 1.5%, 15ms stagger ≈ 0.2%
+   At 10s loop: 0.15s ≈ 1.5%, 0.1s ≈ 1%, 15ms stagger ≈ 0.15%
 
-   Timeline (7s):
-   0-20%   collapsed 26px circle, cursor approaches
-   21%     click → collapse btn shrinks, expanded grows (2% window)
-   23-38%  expanded toolbar, cursor moves to card
-   40%     card selected, ring appears
-   48%     panel slides up
-   60%     change → badge grows in, buttons enable (2% window)
-   95-97%  everything collapses back (2% window)
+   Timeline (10s):
+   ── Action phase (0-64%) ──
+   0-14%   collapsed 26px circle, cursor approaches
+   15%     click → collapse btn shrinks, expanded grows
+   16-22%  expanded toolbar, cursor moves to card
+   28%     card selected, ring appears
+   29%     panel slides up
+   37%     scroll to padding, cursor moves to padding field
+   42%     padding change → badge grows in, buttons enable
+   48%     scroll to radius field
+   55%     radius change → count swaps to 2
+   58%     terminal appears
+   59-64%  terminal lines reveal
+   ── Breathing room (64-72%) ──
+   ── Staged ending (72-94%) ──
+   72-75%  badge clears
+   82-85%  terminal hides, cursor fades
+   86-89%  ring hides, card resets
+   87-90%  panel hides, scroll resets
+   90-94%  toolbar collapses
+   ── Gap (94-100%) ──
 */
 
 /* Single toolbar — morphs between 26px collapsed circle and expanded pill
@@ -639,12 +671,13 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   justify-content: center;
   color: #1c1917;
   flex-shrink: 0;
-  animation: mock-collapse-shrink 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  animation: mock-collapse-shrink 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 @keyframes mock-collapse-shrink {
-  0%, 20% { opacity: 1; transform: scale(1); filter: blur(0); }
-  22%     { opacity: 0; transform: scale(0.85); filter: blur(4px); }
-  95%     { opacity: 0; transform: scale(0.85); filter: blur(4px); }
+  0%, 14% { opacity: 1; transform: scale(1); filter: blur(0); }
+  15.5%   { opacity: 0; transform: scale(0.85); filter: blur(4px); }
+  92%     { opacity: 0; transform: scale(0.85); filter: blur(4px); }
+  94%     { opacity: 1; transform: scale(1); filter: blur(0); }
   100%    { opacity: 1; transform: scale(1); filter: blur(0); }
 }
 
@@ -654,13 +687,13 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   align-items: center;
   gap: 4px;
   overflow: hidden;
-  animation: mock-expanded-grow 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  animation: mock-expanded-grow 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 @keyframes mock-expanded-grow {
-  0%, 20% { max-width: 0; opacity: 0; gap: 0; }
-  22%     { max-width: 200px; opacity: 1; gap: 4px; }
-  95%     { max-width: 200px; opacity: 1; gap: 4px; }
-  97%     { max-width: 0; opacity: 0; gap: 0; }
+  0%, 14% { max-width: 0; opacity: 0; gap: 0; }
+  15.5%   { max-width: 200px; opacity: 1; gap: 4px; }
+  90%     { max-width: 200px; opacity: 1; gap: 4px; }
+  94%     { max-width: 0; opacity: 0; gap: 0; }
   100%    { max-width: 0; opacity: 0; gap: 0; }
 }
 
@@ -678,7 +711,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 
 /* Staggered icon pop-in: scale(0.95)+blur(1px) → normal
-   15ms stagger ≈ 0.2% of 7s, transition 0.1s ≈ 1.5% */
+   15ms stagger ≈ 0.15% of 10s, transition 0.1s ≈ 1% */
 .mock-toolbar-expanded > :nth-child(2) { animation-name: mock-icon-pop-0; }
 .mock-toolbar-expanded > :nth-child(3) { animation-name: mock-icon-pop-1; }
 .mock-toolbar-expanded > :nth-child(4) { animation-name: mock-icon-pop-2; }
@@ -687,77 +720,77 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-toolbar-expanded > :nth-child(7) { animation-name: mock-icon-pop-5; }
 
 .mock-toolbar-expanded > :nth-child(n+2) {
-  animation-duration: 7s;
+  animation-duration: 10s;
   animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   animation-iteration-count: infinite;
 }
 
 @keyframes mock-icon-pop-0 {
-  0%, 21.0% { transform: scale(0.95); filter: blur(1px); }
-  22.5% { transform: scale(1); filter: blur(0); }
-  95% { transform: scale(1); filter: blur(0); }
-  97% { transform: scale(0.95); filter: blur(1px); }
+  0%, 14.7% { transform: scale(0.95); filter: blur(1px); }
+  15.7% { transform: scale(1); filter: blur(0); }
+  90% { transform: scale(1); filter: blur(0); }
+  94% { transform: scale(0.95); filter: blur(1px); }
   100% { transform: scale(0.95); filter: blur(1px); }
 }
 @keyframes mock-icon-pop-1 {
-  0%, 21.2% { transform: scale(0.95); filter: blur(1px); }
-  22.7% { transform: scale(1); filter: blur(0); }
-  95% { transform: scale(1); filter: blur(0); }
-  97% { transform: scale(0.95); filter: blur(1px); }
+  0%, 14.85% { transform: scale(0.95); filter: blur(1px); }
+  15.85% { transform: scale(1); filter: blur(0); }
+  90% { transform: scale(1); filter: blur(0); }
+  94% { transform: scale(0.95); filter: blur(1px); }
   100% { transform: scale(0.95); filter: blur(1px); }
 }
 @keyframes mock-icon-pop-2 {
-  0%, 21.4% { transform: scale(0.95); filter: blur(1px); }
-  22.9% { transform: scale(1); filter: blur(0); }
-  95% { transform: scale(1); filter: blur(0); }
-  97% { transform: scale(0.95); filter: blur(1px); }
+  0%, 15.0% { transform: scale(0.95); filter: blur(1px); }
+  16.0% { transform: scale(1); filter: blur(0); }
+  90% { transform: scale(1); filter: blur(0); }
+  94% { transform: scale(0.95); filter: blur(1px); }
   100% { transform: scale(0.95); filter: blur(1px); }
 }
 @keyframes mock-icon-pop-3 {
-  0%, 21.6% { transform: scale(0.95); filter: blur(1px); }
-  23.1% { transform: scale(1); filter: blur(0); }
-  95% { transform: scale(1); filter: blur(0); }
-  97% { transform: scale(0.95); filter: blur(1px); }
+  0%, 15.15% { transform: scale(0.95); filter: blur(1px); }
+  16.15% { transform: scale(1); filter: blur(0); }
+  90% { transform: scale(1); filter: blur(0); }
+  94% { transform: scale(0.95); filter: blur(1px); }
   100% { transform: scale(0.95); filter: blur(1px); }
 }
 @keyframes mock-icon-pop-4 {
-  0%, 21.8% { transform: scale(0.95); filter: blur(1px); }
-  23.3% { transform: scale(1); filter: blur(0); }
-  95% { transform: scale(1); filter: blur(0); }
-  97% { transform: scale(0.95); filter: blur(1px); }
+  0%, 15.3% { transform: scale(0.95); filter: blur(1px); }
+  16.3% { transform: scale(1); filter: blur(0); }
+  90% { transform: scale(1); filter: blur(0); }
+  94% { transform: scale(0.95); filter: blur(1px); }
   100% { transform: scale(0.95); filter: blur(1px); }
 }
 @keyframes mock-icon-pop-5 {
-  0%, 22.0% { transform: scale(0.95); filter: blur(1px); }
-  23.5% { transform: scale(1); filter: blur(0); }
-  95% { transform: scale(1); filter: blur(0); }
-  97% { transform: scale(0.95); filter: blur(1px); }
+  0%, 15.45% { transform: scale(0.95); filter: blur(1px); }
+  16.45% { transform: scale(1); filter: blur(0); }
+  90% { transform: scale(1); filter: blur(0); }
+  94% { transform: scale(0.95); filter: blur(1px); }
   100% { transform: scale(0.95); filter: blur(1px); }
 }
 
 /* enables-on-change: staggers in disabled (0.2), enables at 60% */
 .mock-toolbar-btn.enables-on-change {
-  animation: mock-btn-enable 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  animation: mock-btn-enable 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 @keyframes mock-btn-enable {
-  0%, 21.0% { transform: scale(0.95); filter: blur(1px); opacity: 0.2; }
-  22.5%     { transform: scale(1); filter: blur(0); opacity: 0.2; }
-  58%       { opacity: 0.2; }
-  62%       { opacity: 1; }
-  95%       { opacity: 1; transform: scale(1); filter: blur(0); }
-  97%       { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
+  0%, 14.7% { transform: scale(0.95); filter: blur(1px); opacity: 0.2; }
+  15.7%     { transform: scale(1); filter: blur(0); opacity: 0.2; }
+  41%       { opacity: 0.2; }
+  43%       { opacity: 1; }
+  90%       { opacity: 1; transform: scale(1); filter: blur(0); }
+  94%       { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
   100%      { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
 }
 
 /* Always-disabled (redo) — staggers in, stays at opacity 0.2 */
 .mock-toolbar-btn.always-disabled {
-  animation: mock-btn-always-disabled 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  animation: mock-btn-always-disabled 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 @keyframes mock-btn-always-disabled {
-  0%, 21.4% { transform: scale(0.95); filter: blur(1px); opacity: 0.2; }
-  22.9%     { transform: scale(1); filter: blur(0); opacity: 0.2; }
-  95%       { opacity: 0.2; transform: scale(1); filter: blur(0); }
-  97%       { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
+  0%, 15.0% { transform: scale(0.95); filter: blur(1px); opacity: 0.2; }
+  16.0%     { transform: scale(1); filter: blur(0); opacity: 0.2; }
+  90%       { opacity: 0.2; transform: scale(1); filter: blur(0); }
+  94%       { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
   100%      { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
 }
 
@@ -766,13 +799,13 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-edit-count-wrap {
   overflow: hidden;
   flex-shrink: 0;
-  animation: mock-badge-space 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  animation: mock-badge-space 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 @keyframes mock-badge-space {
-  0%, 58% { width: 0; }
-  60%     { width: 20px; }
-  90%     { width: 20px; }
-  94%     { width: 0; }
+  0%, 41% { width: 0; }
+  42%     { width: 20px; }
+  72%     { width: 20px; }
+  75%     { width: 0; }
   100%    { width: 0; }
 }
 .mock-edit-count {
@@ -791,13 +824,13 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   flex-shrink: 0;
   overflow: hidden;
   will-change: transform, opacity;
-  animation: mock-badge-pop 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  animation: mock-badge-pop 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 @keyframes mock-badge-pop {
-  0%, 58% { transform: scale(0); opacity: 0; filter: blur(4px); }
-  60%     { transform: scale(1); opacity: 1; filter: blur(0); }
-  90%     { transform: scale(1); opacity: 1; filter: blur(0); }
-  94%     { transform: scale(0); opacity: 0; filter: blur(4px); }
+  0%, 41% { transform: scale(0); opacity: 0; filter: blur(4px); }
+  42%     { transform: scale(1); opacity: 1; filter: blur(0); }
+  72%     { transform: scale(1); opacity: 1; filter: blur(0); }
+  75%     { transform: scale(0); opacity: 0; filter: blur(4px); }
   100%    { transform: scale(0); opacity: 0; filter: blur(4px); }
 }
 /* Count text swap: "1" shows first, "2" replaces after radius change */
@@ -808,16 +841,16 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   align-items: center;
   justify-content: center;
 }
-.mock-count-1 { animation: mock-count-1-swap 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
-.mock-count-2 { animation: mock-count-2-swap 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+.mock-count-1 { animation: mock-count-1-swap 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+.mock-count-2 { animation: mock-count-2-swap 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
 @keyframes mock-count-1-swap {
-  0%, 77% { opacity: 1; }
-  79%     { opacity: 0; }
+  0%, 54% { opacity: 1; }
+  55%     { opacity: 0; }
   100%    { opacity: 0; }
 }
 @keyframes mock-count-2-swap {
-  0%, 77% { opacity: 0; }
-  79%     { opacity: 1; }
+  0%, 54% { opacity: 0; }
+  55%     { opacity: 1; }
   100%    { opacity: 1; }
 }
 
@@ -825,27 +858,27 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-card-target .mock-selection-overlay,
 .mock-card-target .mock-selection-label {
   opacity: 0;
-  animation: mock-ring-toggle 7s ease infinite;
+  animation: mock-ring-toggle 10s ease infinite;
 }
 @keyframes mock-ring-toggle {
-  0%, 38% { opacity: 0; }
-  40% { opacity: 1; }
-  93% { opacity: 1; }
-  96% { opacity: 0; }
+  0%, 27% { opacity: 0; }
+  28% { opacity: 1; }
+  86% { opacity: 1; }
+  89% { opacity: 0; }
   100% { opacity: 0; }
 }
 
 /* Card padding + radius change */
 .mock-card-target {
-  animation: mock-card-changes 7s ease infinite;
+  animation: mock-card-changes 10s ease infinite;
 }
 @keyframes mock-card-changes {
-  0%, 57% { padding: 10px; border-radius: 6px; }
-  61%     { padding: 14px; border-radius: 6px; }
-  69%     { padding: 14px; border-radius: 6px; }
-  73%     { padding: 14px; border-radius: 10px; }
-  93%     { padding: 14px; border-radius: 10px; }
-  96%     { padding: 10px; border-radius: 6px; }
+  0%, 40% { padding: 10px; border-radius: 6px; }
+  42%     { padding: 14px; border-radius: 6px; }
+  48%     { padding: 14px; border-radius: 6px; }
+  51%     { padding: 14px; border-radius: 10px; }
+  86%     { padding: 14px; border-radius: 10px; }
+  89%     { padding: 10px; border-radius: 6px; }
   100%    { padding: 10px; border-radius: 6px; }
 }
 
@@ -863,14 +896,14 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   z-index: 2;
   display: flex;
   flex-direction: column;
-  animation: mock-panel-toggle 7s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  animation: mock-panel-toggle 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 
 @keyframes mock-panel-toggle {
-  0%, 39% { opacity: 0; transform: translateY(8px); }
-  42% { opacity: 1; transform: translateY(0); }
-  93% { opacity: 1; transform: translateY(0); }
-  96% { opacity: 0; transform: translateY(8px); }
+  0%, 27% { opacity: 0; transform: translateY(8px); }
+  29% { opacity: 1; transform: translateY(0); }
+  87% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 0; transform: translateY(8px); }
   100% { opacity: 0; transform: translateY(8px); }
 }
 
@@ -979,21 +1012,21 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .mock-panel-inner {
   will-change: transform;
-  animation: mock-panel-scroll-sim 7s ease infinite;
+  animation: mock-panel-scroll-sim 10s ease infinite;
 }
 @keyframes mock-panel-scroll-sim {
   /* No scroll until cursor is over the panel */
-  0%, 49% { transform: translateY(0); }
+  0%, 34% { transform: translateY(0); }
   /* Scroll to show padding field (cursor is on panel, moving toward padding) */
-  53% { transform: translateY(var(--scroll-pad, -80px)); }
+  37% { transform: translateY(var(--scroll-pad, -80px)); }
   /* Hold while cursor interacts with padding */
-  64% { transform: translateY(var(--scroll-pad, -80px)); }
+  45% { transform: translateY(var(--scroll-pad, -80px)); }
   /* Scroll more to reveal corner radius field (cursor still on panel) */
-  69% { transform: translateY(var(--scroll-rad, -250px)); }
+  48% { transform: translateY(var(--scroll-rad, -250px)); }
   /* Hold */
-  90% { transform: translateY(var(--scroll-rad, -250px)); }
+  87% { transform: translateY(var(--scroll-rad, -250px)); }
   /* Reset */
-  94% { transform: translateY(0); }
+  90% { transform: translateY(0); }
   100% { transform: translateY(0); }
 }
 
@@ -1190,24 +1223,24 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 /* Value flash on padding change (cursor clicks at 58%) */
 .mock-val-pad {
   position: relative;
-  animation: mock-val-flash-1 7s ease infinite;
+  animation: mock-val-flash-1 10s ease infinite;
 }
 @keyframes mock-val-flash-1 {
-  0%, 57% { background: transparent; }
-  59% { background: #dbeafe; border-radius: 3px; }
-  67% { background: transparent; }
+  0%, 40% { background: transparent; }
+  42% { background: #dbeafe; border-radius: 3px; }
+  47% { background: transparent; }
   100% { background: transparent; }
 }
 
 /* Value flash on radius change (cursor clicks at 77%) */
 .mock-val-radius {
   position: relative;
-  animation: mock-val-flash-2 7s ease infinite;
+  animation: mock-val-flash-2 10s ease infinite;
 }
 @keyframes mock-val-flash-2 {
-  0%, 76% { background: transparent; }
-  78% { background: #dbeafe; border-radius: 3px; }
-  86% { background: transparent; }
+  0%, 53% { background: transparent; }
+  55% { background: #dbeafe; border-radius: 3px; }
+  60% { background: transparent; }
   100% { background: transparent; }
 }
 
@@ -1222,36 +1255,36 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   align-items: center;
   justify-content: center;
 }
-.mock-val-pad .mock-val-before { animation: mock-val-pad-before 7s ease infinite; }
-.mock-val-pad .mock-val-after  { animation: mock-val-pad-after 7s ease infinite; }
+.mock-val-pad .mock-val-before { animation: mock-val-pad-before 10s ease infinite; }
+.mock-val-pad .mock-val-after  { animation: mock-val-pad-after 10s ease infinite; }
 @keyframes mock-val-pad-before {
-  0%, 58% { opacity: 1; }
-  59%     { opacity: 0; }
-  93%     { opacity: 0; }
-  96%     { opacity: 1; }
+  0%, 41% { opacity: 1; }
+  42%     { opacity: 0; }
+  86%     { opacity: 0; }
+  89%     { opacity: 1; }
   100%    { opacity: 1; }
 }
 @keyframes mock-val-pad-after {
-  0%, 58% { opacity: 0; }
-  59%     { opacity: 1; }
-  93%     { opacity: 1; }
-  96%     { opacity: 0; }
+  0%, 41% { opacity: 0; }
+  42%     { opacity: 1; }
+  86%     { opacity: 1; }
+  89%     { opacity: 0; }
   100%    { opacity: 0; }
 }
-.mock-val-radius .mock-val-before { animation: mock-val-rad-before 7s ease infinite; }
-.mock-val-radius .mock-val-after  { animation: mock-val-rad-after 7s ease infinite; }
+.mock-val-radius .mock-val-before { animation: mock-val-rad-before 10s ease infinite; }
+.mock-val-radius .mock-val-after  { animation: mock-val-rad-after 10s ease infinite; }
 @keyframes mock-val-rad-before {
-  0%, 77% { opacity: 1; }
-  78%     { opacity: 0; }
-  93%     { opacity: 0; }
-  96%     { opacity: 1; }
+  0%, 54% { opacity: 1; }
+  55%     { opacity: 0; }
+  86%     { opacity: 0; }
+  89%     { opacity: 1; }
   100%    { opacity: 1; }
 }
 @keyframes mock-val-rad-after {
-  0%, 77% { opacity: 0; }
-  78%     { opacity: 1; }
-  93%     { opacity: 1; }
-  96%     { opacity: 0; }
+  0%, 54% { opacity: 0; }
+  55%     { opacity: 1; }
+  86%     { opacity: 1; }
+  89%     { opacity: 0; }
   100%    { opacity: 0; }
 }
 
@@ -1271,7 +1304,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08);
   opacity: 0;
   transform: translateY(6px);
-  animation: mock-terminal-toggle 7s ease infinite;
+  animation: mock-terminal-toggle 10s ease infinite;
   overflow: hidden;
 }
 .mock-term-titlebar {
@@ -1298,10 +1331,10 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   padding: 8px 10px;
 }
 @keyframes mock-terminal-toggle {
-  0%, 80% { opacity: 0; transform: translateY(6px); }
-  83% { opacity: 1; transform: translateY(0); }
-  95% { opacity: 1; transform: translateY(0); }
-  98% { opacity: 0; transform: translateY(6px); }
+  0%, 56% { opacity: 0; transform: translateY(6px); }
+  58% { opacity: 1; transform: translateY(0); }
+  82% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 0; transform: translateY(6px); }
   100% { opacity: 0; transform: translateY(6px); }
 }
 .mock-terminal-line {
@@ -1313,41 +1346,41 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   align-items: center;
   gap: 4px;
   margin-bottom: 2px;
-  animation: mock-term-reveal 7s ease infinite;
+  animation: mock-term-reveal 10s ease infinite;
 }
-.mock-term-line-2 { animation: mock-term-reveal-2 7s ease infinite; }
-.mock-term-line-3 { animation: mock-term-reveal-3 7s ease infinite; }
+.mock-term-line-2 { animation: mock-term-reveal-2 10s ease infinite; }
+.mock-term-line-3 { animation: mock-term-reveal-3 10s ease infinite; }
 .mock-term-line-4 {
   margin-top: 4px;
-  animation: mock-term-reveal-4 7s ease infinite;
+  animation: mock-term-reveal-4 10s ease infinite;
 }
 
 @keyframes mock-term-reveal {
-  0%, 82% { opacity: 0; }
-  85% { opacity: 1; }
-  95% { opacity: 1; }
-  98% { opacity: 0; }
+  0%, 57% { opacity: 0; }
+  59% { opacity: 1; }
+  82% { opacity: 1; }
+  85% { opacity: 0; }
   100% { opacity: 0; }
 }
 @keyframes mock-term-reveal-2 {
-  0%, 85% { opacity: 0; }
-  87% { opacity: 1; }
-  95% { opacity: 1; }
-  98% { opacity: 0; }
+  0%, 59% { opacity: 0; }
+  61% { opacity: 1; }
+  82% { opacity: 1; }
+  85% { opacity: 0; }
   100% { opacity: 0; }
 }
 @keyframes mock-term-reveal-3 {
-  0%, 87% { opacity: 0; }
-  89% { opacity: 1; }
-  95% { opacity: 1; }
-  98% { opacity: 0; }
+  0%, 61% { opacity: 0; }
+  63% { opacity: 1; }
+  82% { opacity: 1; }
+  85% { opacity: 0; }
   100% { opacity: 0; }
 }
 @keyframes mock-term-reveal-4 {
-  0%, 89% { opacity: 0; }
-  91% { opacity: 1; }
-  95% { opacity: 1; }
-  98% { opacity: 0; }
+  0%, 62% { opacity: 0; }
+  64% { opacity: 1; }
+  82% { opacity: 1; }
+  85% { opacity: 0; }
   100% { opacity: 0; }
 }
 .mock-term-mascot {
@@ -1372,93 +1405,89 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
   left: 60%;
   top: 70%;
-  animation: mock-cursor-move 7s ease infinite;
+  animation: mock-cursor-move 10s ease infinite;
 }
 .mock-cursor .cursor-pointer {
   position: absolute;
   top: 0;
   left: 0;
-  animation: cursor-icon-pointer 7s ease infinite;
+  animation: cursor-icon-pointer 10s ease infinite;
 }
 .mock-cursor .cursor-crosshair {
   position: absolute;
   top: -9px;
   left: -9px;
-  animation: cursor-icon-crosshair 7s ease infinite;
+  animation: cursor-icon-crosshair 10s ease infinite;
 }
 @keyframes cursor-icon-pointer {
-  0%, 20% { opacity: 1; }
-  22% { opacity: 0; }
+  0%, 14% { opacity: 1; }
+  15.5% { opacity: 0; }
   /* Switch back to pointer when cursor enters panel */
-  50% { opacity: 0; }
-  52% { opacity: 1; }
-  95% { opacity: 1; }
-  97% { opacity: 1; }
+  35% { opacity: 0; }
+  36% { opacity: 1; }
   100% { opacity: 1; }
 }
 @keyframes cursor-icon-crosshair {
-  0%, 20% { opacity: 0; }
-  22% { opacity: 1; }
+  0%, 14% { opacity: 0; }
+  15.5% { opacity: 1; }
   /* Switch to pointer when cursor enters panel */
-  50% { opacity: 1; }
-  52% { opacity: 0; }
-  95% { opacity: 0; }
-  97% { opacity: 0; }
+  35% { opacity: 1; }
+  36% { opacity: 0; }
   100% { opacity: 0; }
 }
 
 @keyframes mock-cursor-move {
   /* Hidden initially */
-  0%, 8% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
+  0%, 6% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
   /* Appear */
-  12% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
+  9% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
   /* Move to collapsed toolbar (bottom-right) */
-  20% { opacity: 1; left: var(--tb-x); top: var(--tb-y); transform: scale(1); }
+  14% { opacity: 1; left: var(--tb-x); top: var(--tb-y); transform: scale(1); }
   /* Click toolbar */
-  21% { left: var(--tb-x); top: var(--tb-y); transform: scale(0.8); }
-  22% { left: var(--tb-x); top: var(--tb-y); transform: scale(1); }
+  15% { left: var(--tb-x); top: var(--tb-y); transform: scale(0.8); }
+  15.5% { left: var(--tb-x); top: var(--tb-y); transform: scale(1); }
   /* Move to middle card */
-  32% { left: var(--card-x); top: var(--card-y); transform: scale(1); }
+  22% { left: var(--card-x); top: var(--card-y); transform: scale(1); }
   /* Click card */
-  39% { left: var(--card-x); top: var(--card-y); transform: scale(0.8); }
-  40% { left: var(--card-x); top: var(--card-y); transform: scale(1); }
+  27% { left: var(--card-x); top: var(--card-y); transform: scale(0.8); }
+  28% { left: var(--card-x); top: var(--card-y); transform: scale(1); }
   /* Move to panel — padding field */
-  55% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
+  38% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
   /* Click/tweak padding */
-  58% { left: var(--pad-x); top: var(--pad-y); transform: scale(0.8); }
-  60% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
-  /* Hold at padding while panel scrolls (64-69%) */
-  70% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
+  41% { left: var(--pad-x); top: var(--pad-y); transform: scale(0.8); }
+  42% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
+  /* Hold at padding while panel scrolls */
+  49% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
   /* Move to radius field after scroll completes */
-  75% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  52% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   /* Click/tweak radius */
-  77% { left: var(--rad-x); top: var(--rad-y); transform: scale(0.8); }
-  79% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
-  /* Hold */
-  88% { opacity: 1; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
-  /* Fade out */
-  94% { opacity: 0; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  54% { left: var(--rad-x); top: var(--rad-y); transform: scale(0.8); }
+  55% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  /* Hold through breathing room */
+  82% { opacity: 1; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  /* Fade out with terminal */
+  85% { opacity: 0; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   100% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
 }
 
 @keyframes mock-cursor-move-mobile {
-  0%, 8% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
-  12% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
-  20% { opacity: 1; left: 94%; top: 92%; transform: scale(1); }
-  21% { left: 94%; top: 92%; transform: scale(0.8); }
-  22% { left: 94%; top: 92%; transform: scale(1); }
-  32% { left: 38%; top: 45%; transform: scale(1); }
-  39% { left: 38%; top: 45%; transform: scale(0.8); }
-  40% { left: 38%; top: 45%; transform: scale(1); }
-  55% { left: 62%; top: 52%; transform: scale(1); }
-  58% { left: 62%; top: 52%; transform: scale(0.8); }
-  60% { left: 62%; top: 52%; transform: scale(1); }
-  70% { left: 62%; top: 52%; transform: scale(1); }
-  75% { left: 61%; top: 48%; transform: scale(1); }
-  77% { left: 61%; top: 48%; transform: scale(0.8); }
-  79% { left: 61%; top: 48%; transform: scale(1); }
-  88% { opacity: 1; left: 61%; top: 48%; transform: scale(1); }
-  94% { opacity: 0; left: 61%; top: 48%; transform: scale(1); }
+  0%, 6% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
+  9% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
+  14% { opacity: 1; left: 94%; top: 92%; transform: scale(1); }
+  15% { left: 94%; top: 92%; transform: scale(0.8); }
+  15.5% { left: 94%; top: 92%; transform: scale(1); }
+  22% { left: 38%; top: 45%; transform: scale(1); }
+  27% { left: 38%; top: 45%; transform: scale(0.8); }
+  28% { left: 38%; top: 45%; transform: scale(1); }
+  38% { left: 62%; top: 52%; transform: scale(1); }
+  41% { left: 62%; top: 52%; transform: scale(0.8); }
+  42% { left: 62%; top: 52%; transform: scale(1); }
+  49% { left: 62%; top: 52%; transform: scale(1); }
+  52% { left: 61%; top: 48%; transform: scale(1); }
+  54% { left: 61%; top: 48%; transform: scale(0.8); }
+  55% { left: 61%; top: 48%; transform: scale(1); }
+  82% { opacity: 1; left: 61%; top: 48%; transform: scale(1); }
+  85% { opacity: 0; left: 61%; top: 48%; transform: scale(1); }
   100% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
 }
 
@@ -1891,6 +1920,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   border-top: 1px solid rgba(0, 0, 0, 0.05);
   margin-top: 0;
   padding: 24px 0;
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
 }
 
 .footer-text {
@@ -1979,6 +2011,12 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   .section-heading { font-size: 16px; line-height: 24px; }
 }
 
+@media (min-width: 1069px) {
+  .hero-visual {
+    --scroll-rad: -290px;
+  }
+}
+
 @media (max-width: 768px) {
   .desktop-only { display: none; }
   .mobile-callout { display: block; }
@@ -2036,9 +2074,6 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
     margin-top: 24px;
     --scroll-pad: -180px;
     --scroll-rad: -400px;
-  }
-  .mock-cursor {
-    animation-name: mock-cursor-move-mobile;
   }
   .desktop-bg { aspect-ratio: 10 / 8; padding: 0; }
 

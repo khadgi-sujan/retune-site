@@ -88,8 +88,6 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     if (!container) return;
 
     const ch = container.clientHeight;
-    const panelOffsetPx = 8;
-
     const cw0 = container.clientWidth;
     const cr0 = container.getBoundingClientRect();
     const borderL = parseFloat(getComputedStyle(container).borderLeftWidth) || 0;
@@ -112,23 +110,49 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
       ? ((cardEl.getBoundingClientRect().top + cardEl.getBoundingClientRect().height / 2 - oy0) / ch) * 100
       : 25;
 
-    const measurePanelItem = (selector: string) => {
+    // Panel layout: measure relative positions (transform-independent)
+    const panelEl = container.querySelector(".mock-panel");
+    const panelScrollEl = container.querySelector(".mock-panel-scroll");
+    const panelInnerEl = container.querySelector(".mock-panel-inner");
+    const panelCSSTop = 8; // .mock-panel { top: 8px }
+
+    // Tabs height = distance from panel top to scroll viewport
+    const tabsHeight = panelEl && panelScrollEl
+      ? panelScrollEl.getBoundingClientRect().top - panelEl.getBoundingClientRect().top
+      : 0;
+
+    // Read scroll amounts from CSS variables
+    const heroStyle = getComputedStyle(hero);
+    const scrollPad = parseFloat(heroStyle.getPropertyValue('--scroll-pad')) || -80;
+    const scrollRad = parseFloat(heroStyle.getPropertyValue('--scroll-rad')) || -250;
+
+    const measurePanelItem = (selector: string, scrollPx: number) => {
       const val = container.querySelector(selector);
       const input = val?.closest(".mock-input");
-      if (!input) return null;
-      const r = input.getBoundingClientRect();
-      const centerX = r.left + r.width / 2 - ox0;
-      const centerY = r.top + r.height / 2 - oy0;
+      if (!input || !panelInnerEl) return null;
+      const inputRect = input.getBoundingClientRect();
+      const innerRect = panelInnerEl.getBoundingClientRect();
+
+      // Field center within panel inner (relative diff cancels parent transforms)
+      const fieldInInner = inputRect.top + inputRect.height / 2 - innerRect.top;
+
+      // After scroll, field position within scroll viewport
+      const fieldAfterScroll = fieldInInner + scrollPx;
+
+      // Y in container (settled: panel at CSS top, no animation transform)
+      const centerY = panelCSSTop + tabsHeight + fieldAfterScroll;
+
+      // X position
+      const centerX = inputRect.left + inputRect.width / 2 - ox0;
+
       return {
         fromRight: cw0 - centerX,
-        y: ((centerY - panelOffsetPx) / ch) * 100,
+        y: (centerY / ch) * 100,
       };
     };
 
-    const padMeasure = measurePanelItem(".mock-val-pad");
-    const radMeasure = measurePanelItem(".mock-val-radius");
-    const padScrollPct = (80 / ch) * 100;
-    const radScrollPct = (250 / ch) * 100;
+    const padMeasure = measurePanelItem(".mock-val-pad", scrollPad);
+    const radMeasure = measurePanelItem(".mock-val-radius", scrollRad);
 
     const apply = (cw: number) => {
       hero.style.setProperty("--tb-x", `${((cw - tbFromRight) / cw) * 100}%`);
@@ -140,11 +164,11 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
 
       if (padMeasure) {
         hero.style.setProperty("--pad-x", `${((cw - padMeasure.fromRight) / cw) * 100}%`);
-        hero.style.setProperty("--pad-y", `${padMeasure.y - padScrollPct}%`);
+        hero.style.setProperty("--pad-y", `${padMeasure.y}%`);
       }
       if (radMeasure) {
         hero.style.setProperty("--rad-x", `${((cw - radMeasure.fromRight) / cw) * 100}%`);
-        hero.style.setProperty("--rad-y", `${radMeasure.y - radScrollPct}%`);
+        hero.style.setProperty("--rad-y", `${radMeasure.y}%`);
       }
     };
 
