@@ -171,7 +171,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .content {
   width: auto;
-  max-width: 800px;
+  max-width: none;
   flex: 1;
   padding: 0 48px 64px;
   display: flex;
@@ -282,6 +282,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   align-items: center;
   justify-content: flex-start;
   align-self: center;
+  width: 100%;
+  max-width: 800px;
 }
 
 /* ── CTA ── */
@@ -303,6 +305,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   line-height: 20px;
   color: #78716c;
   margin: 0;
+  width: 100%;
 }
 
 .cta-primary {
@@ -334,7 +337,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   border-radius: 12px;
   padding: 32px 80px;
   aspect-ratio: 16 / 10;
-  width: 800px;
+  width: 100%;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   background:
@@ -348,6 +352,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .hero-visual {
   position: relative;
   margin-top: 40px;
+  width: 100%;
+  align-self: stretch;
   /* Cursor target positions (% of .browser-content padding box) */
   --tb-x: 96%;
   --tb-y: 93%;
@@ -1944,7 +1950,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 /* ── Responsive ── */
 
-@media (max-width: 1068px) {
+@media (max-width: 1240px) {
   html { scroll-padding-top: 56px; }
 
   .layout {
@@ -1956,12 +1962,12 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
     top: 0;
     left: auto;
     width: 100%;
-    max-width: 720px;
-    margin: 0 auto;
+    max-width: none;
+    margin: 0;
     height: auto;
     flex-direction: row;
     align-items: center;
-    padding: 12px 24px;
+    padding: 12px calc((100% - 640px) / 2);
     border-right: none;
     border-bottom: none;
     gap: 16px;
@@ -2011,15 +2017,20 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   .section-heading { font-size: 16px; line-height: 24px; }
 }
 
-@media (min-width: 1069px) {
+@media (min-width: 1241px) {
   .hero-visual {
     --scroll-rad: -290px;
   }
 }
 
+@media (max-width: 847px) {
+  .desktop-bg { aspect-ratio: 10 / 8; padding: 0; max-width: 640px; margin: 0 auto; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.08); }
+}
+
 @media (max-width: 768px) {
   .desktop-only { display: none; }
   .mobile-callout { display: block; }
+  .hero-visual { margin-top: 24px; }
 }
 
 @media (max-width: 640px) {
@@ -2075,7 +2086,6 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
     --scroll-pad: -180px;
     --scroll-rad: -400px;
   }
-  .desktop-bg { aspect-ratio: 10 / 8; padding: 0; }
 
   .content {
     padding: 0 16px 40px;

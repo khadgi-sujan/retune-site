@@ -30,7 +30,7 @@ export default function Home() {
             your AI coding tool writes the change to source. Like DevTools,
             but the changes stick.
           </p>
-          <div className="cta-row">
+          <div className="cta-row desktop-only">
             <TryItButton />
             <HeroInstallCopy />
           </div>
