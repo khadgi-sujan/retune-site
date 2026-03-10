@@ -1,0 +1,42 @@
+# Retune
+
+> The visual layer for vibe coding.
+
+Retune is a browser overlay for developers that lets you visually edit any element in your running web app — spacing, colors, typography, layout, and more — with instant preview. Your AI coding tool (Claude Code, Cursor) then writes the changes to source code via MCP (Model Context Protocol).
+
+## How It Works
+
+1. Add `<Retune />` to your app (development only, hidden in production)
+2. Click any element to select it
+3. Tweak properties visually with instant live preview
+4. Your AI agent picks up structured diffs and applies them to source files
+
+## Key Features
+
+- Visual editing of CSS properties (spacing, colors, typography, layout, shadows, filters, gradients)
+- Smart element identification using CSS selectors, React component hierarchy, and source file locations
+- Styling approach detection (Tailwind, CSS Modules, plain CSS) by analyzing document.styleSheets — no build plugins needed
+- Pseudo-state editing (:hover, :focus, :active)
+- Undo/redo with coalescing for scrub gestures
+- Live preview via Constructable Stylesheets (non-destructive)
+- MCP server for AI tool integration, plus clipboard fallback
+
+## Compatibility
+
+- Frameworks: Next.js, Vite, Remix
+- Styling: Tailwind CSS, CSS Modules, plain CSS, any atomic CSS framework
+- AI Tools: Claude Code, Cursor (via MCP)
+
+## Installation
+
+```
+npm install retune
+```
+
+## Links
+
+- Website: https://retune.dev
+- GitHub: https://github.com/khadgi-sujan/retune
+- npm: https://www.npmjs.com/package/retune
+- License: MIT
+- Author: Sujan Khadgi (@___sujan)
