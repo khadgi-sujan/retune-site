@@ -71,11 +71,11 @@ export default function Home() {
                 <div className="mock-logos">
                   <span className="mock-logos-label">Trusted by teams at</span>
                   <div className="mock-logos-row">
-                    <span className="mock-logo">Vercel</span>
-                    <span className="mock-logo">Stripe</span>
-                    <span className="mock-logo">Linear</span>
-                    <span className="mock-logo">Notion</span>
-                    <span className="mock-logo">Supabase</span>
+                    <span className="mock-logo">Wavelength</span>
+                    <span className="mock-logo">Koda</span>
+                    <span className="mock-logo">Novexa</span>
+                    <span className="mock-logo">Arcline</span>
+                    <span className="mock-logo">Pylon</span>
                   </div>
                 </div>
                 {/* Bento feature grid */}
@@ -489,6 +489,25 @@ export default function Home() {
               <div className="mock-cursor">
                 <svg className="cursor-pointer" width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
                 <svg className="cursor-crosshair" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1917" strokeWidth="1.5" strokeLinecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+              </div>
+            </div>
+            {/* macOS dock */}
+            <div className="mock-dock">
+              <div className="mock-dock-glass">
+                <img className="mock-dock-icon" src="/dock/finder.png" alt="" />
+                <img className="mock-dock-icon" src="/dock/terminal.png" alt="" />
+                <img className="mock-dock-icon" src="/dock/safari.png" alt="" />
+                <img className="mock-dock-icon" src="/dock/settings.png" alt="" />
+                <img className="mock-dock-icon" src="/dock/calendar.png" alt="" />
+                <img className="mock-dock-icon" src="/dock/notes.png" alt="" />
+                <div className="mock-dock-sep" />
+                <img className="mock-dock-icon" src="/dock/trash.png" alt="" />
+              </div>
+              {/* Running app dots — positioned below their respective icons */}
+              <div className="mock-dock-dots">
+                <span className="mock-dock-dot-space" />
+                <span className="mock-dock-dot" />
+                <span className="mock-dock-dot" />
               </div>
             </div>
             </div>

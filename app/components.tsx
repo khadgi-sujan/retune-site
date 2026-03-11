@@ -156,6 +156,22 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     const padMeasure = measurePanelItem(".mock-val-pad", scrollPad);
     const radMeasure = measurePanelItem(".mock-val-radius", scrollRad);
 
+    // Measure dock terminal icon position relative to mock-terminal's final position
+    const dockTermIcon = hero.querySelector('.mock-dock-icon[src="/dock/terminal.png"]') as HTMLElement | null;
+    const terminalEl = container.querySelector(".mock-terminal") as HTMLElement | null;
+
+    let genieOriginX = "50%";
+    let genieOriginY = "calc(100% + 60px)";
+    if (dockTermIcon && terminalEl) {
+      const dockRect = dockTermIcon.getBoundingClientRect();
+      const termRect = terminalEl.getBoundingClientRect();
+      // Dock icon center relative to terminal element
+      const dockCenterX = dockRect.left + dockRect.width / 2 - termRect.left;
+      const dockCenterY = dockRect.top + dockRect.height / 2 - termRect.top;
+      genieOriginX = `${dockCenterX}px`;
+      genieOriginY = `${dockCenterY}px`;
+    }
+
     const apply = (cw: number) => {
       hero.style.setProperty("--tb-x", `${((cw - tbFromRight) / cw) * 100}%`);
       hero.style.setProperty("--tb-y", `${tbY}%`);
@@ -172,6 +188,9 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
         hero.style.setProperty("--rad-x", `${((cw - radMeasure.fromRight) / cw) * 100}%`);
         hero.style.setProperty("--rad-y", `${radMeasure.y}%`);
       }
+
+      hero.style.setProperty("--genie-origin-x", genieOriginX);
+      hero.style.setProperty("--genie-origin-y", genieOriginY);
     };
 
     apply(cw0);

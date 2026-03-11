@@ -336,7 +336,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .desktop-bg {
   border-radius: 8px;
-  padding: 32px 80px;
+  padding: 32px 80px 48px;
   aspect-ratio: 16 / 10;
   width: 100%;
   max-width: 800px;
@@ -344,7 +344,72 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   flex-direction: column;
   background: url('https://images.unsplash.com/photo-1578926375605-eaf7559b1458?w=1200&q=80&fm=webp') center / cover no-repeat;
   overflow: hidden;
+  position: relative;
 }
+
+/* macOS dock */
+.mock-dock {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+}
+
+/* The glass pill — sits behind the icons, dots sit below it */
+.mock-dock-glass {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 4px;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.mock-dock-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: block;
+}
+
+/* Dots row — sits below the glass pill, aligned to running apps */
+.mock-dock-dots {
+  position: absolute;
+  bottom: 3px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 45px;
+  gap: 27px;
+}
+
+/* Invisible spacer to skip Finder position */
+.mock-dock-dot-space {
+  display: none;
+}
+
+.mock-dock-dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+  flex-shrink: 0;
+}
+
+.mock-dock-sep {
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 0 2px;
+}
+
 
 .hero-visual {
   position: relative;
@@ -363,6 +428,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   /* Panel scroll distances */
   --scroll-pad: -80px;
   --scroll-rad: -250px;
+  /* Genie effect origin (overridden by JS) */
+  --genie-origin-x: 50%;
+  --genie-origin-y: calc(100% + 60px);
 }
 
 .browser-chrome {
@@ -1220,32 +1288,35 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 
 @keyframes mock-panel-toggle {
-  0%, 27% { opacity: 0; transform: translateY(8px); }
-  29% { opacity: 1; transform: translateY(0); }
-  87% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 0; transform: translateY(8px); }
-  100% { opacity: 0; transform: translateY(8px); }
+  /* Enter: slide in from right */
+  0%, 27% { opacity: 0; transform: translateX(20px); }
+  29%     { opacity: 1; transform: translateX(0); }
+  /* Visible */
+  87%     { opacity: 1; transform: translateX(0); }
+  /* Exit: slide out to right */
+  90%     { opacity: 0; transform: translateX(20px); }
+  100%    { opacity: 0; transform: translateX(20px); }
 }
 
 /* Tab bar with sliding pill */
 .mock-panel-tabs {
   display: flex;
   position: relative;
-  padding: 6px;
-  gap: 2px;
+  padding: 6px 8px;
+  gap: 10px;
   border-bottom: 1px solid #e7e5e4;
 }
 .mock-panel-tab-pill {
   position: absolute;
   top: 6px;
-  right: 6px;
-  width: calc(50% - 8px);
+  left: 52px;
+  width: 40px;
   height: calc(100% - 12px);
-  border-radius: 6px;
+  border-radius: 4px;
   background: rgba(0, 0, 0, 0.05);
 }
 .mock-panel-tab {
-  flex: 1;
+  flex: 0 0 auto;
   text-align: center;
   font-size: 9px;
   font-weight: 500;
@@ -1297,16 +1368,16 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   gap: 3px;
   padding: 0 6px;
   border-radius: 5px;
-  background: #f5f5f4;
+  background: #F5F5F4;
   font-size: 7px;
   font-weight: 400;
-  color: #57534e;
+  color: #000000;
   white-space: nowrap;
   height: 20px;
 }
 .mock-selector-tag.active {
-  background: #3b82f6;
-  color: #fff;
+  background: #DBEAFE;
+  color: #1C60BA;
 }
 .mock-selector-count {
   display: inline-flex;
@@ -1623,8 +1694,10 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   z-index: 10;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08);
   opacity: 0;
-  transform: translateY(6px);
-  animation: mock-terminal-toggle 10s ease infinite;
+  /* Genie origin: measured position of dock terminal icon */
+  transform-origin: var(--genie-origin-x, 50%) var(--genie-origin-y, calc(100% + 60px));
+  transform: perspective(400px) scaleX(0.05) scaleY(0.05) rotateX(-50deg) translateY(200px);
+  animation: mock-terminal-toggle 10s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   overflow: hidden;
 }
 .mock-term-titlebar {
@@ -1651,11 +1724,53 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   padding: 8px 10px;
 }
 @keyframes mock-terminal-toggle {
-  0%, 56% { opacity: 0; transform: translateY(6px); }
-  58% { opacity: 1; transform: translateY(0); }
-  82% { opacity: 1; transform: translateY(0); }
-  85% { opacity: 0; transform: translateY(6px); }
-  100% { opacity: 0; transform: translateY(6px); }
+  /* Hidden — collapsed at dock, funnel-warped */
+  0%, 56% {
+    opacity: 0;
+    transform: perspective(400px) scaleX(0.05) scaleY(0.05) rotateX(-50deg) translateY(200px);
+  }
+  /* Genie open — funnel expanding, still warped */
+  56.8% {
+    opacity: 0.6;
+    transform: perspective(500px) scaleX(0.3) scaleY(0.5) rotateX(-30deg) translateY(40px);
+  }
+  /* Almost open — slight warp remaining */
+  57.5% {
+    opacity: 0.9;
+    transform: perspective(600px) scaleX(0.8) scaleY(0.9) rotateX(-8deg) translateY(5px);
+  }
+  /* Overshoot */
+  58.2% {
+    opacity: 1;
+    transform: perspective(800px) scaleX(1.01) scaleY(1.01) rotateX(1deg) translateY(-2px);
+  }
+  /* Settle */
+  59% {
+    opacity: 1;
+    transform: perspective(800px) scaleX(1) scaleY(1) rotateX(0deg) translateY(0);
+  }
+  /* Visible */
+  82% {
+    opacity: 1;
+    transform: perspective(800px) scaleX(1) scaleY(1) rotateX(0deg) translateY(0);
+  }
+  /* Genie close — funnel collapsing back */
+  83% {
+    opacity: 0.9;
+    transform: perspective(600px) scaleX(0.8) scaleY(0.9) rotateX(-8deg) translateY(5px);
+  }
+  84% {
+    opacity: 0.5;
+    transform: perspective(500px) scaleX(0.3) scaleY(0.5) rotateX(-30deg) translateY(40px);
+  }
+  85% {
+    opacity: 0;
+    transform: perspective(400px) scaleX(0.05) scaleY(0.05) rotateX(-50deg) translateY(200px);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(400px) scaleX(0.05) scaleY(0.05) rotateX(-50deg) translateY(200px);
+  }
 }
 .mock-terminal-line {
   white-space: nowrap;
@@ -2341,6 +2456,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 @media (max-width: 847px) {
   .desktop-bg { aspect-ratio: 10 / 8; padding: 0; max-width: 640px; margin: 0 auto; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.08); }
+  .mock-dock { display: none; }
 }
 
 @media (max-width: 768px) {
