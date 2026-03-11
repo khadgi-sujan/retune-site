@@ -46,64 +46,213 @@ export default function Home() {
             </div>
             <div className="browser-content">
               <div className="mock-main">
-                {/* Top nav */}
+                {/* Nav */}
                 <div className="mock-nav">
                   <div className="mock-nav-logo" />
+                  <span className="mock-nav-brand">Acme</span>
                   <div className="mock-nav-links">
-                    <div className="mock-nav-link" />
-                    <div className="mock-nav-link" />
-                    <div className="mock-nav-link" />
+                    <span className="mock-nav-link">Features</span>
+                    <span className="mock-nav-link">Pricing</span>
+                    <span className="mock-nav-link">Docs</span>
                   </div>
-                  <div className="mock-nav-cta" />
+                  <div className="mock-nav-cta">Sign up</div>
                 </div>
                 {/* Hero */}
                 <div className="mock-hero">
-                  <div className="mock-hero-heading" />
-                  <div className="mock-hero-heading second" />
-                  <div className="mock-hero-sub" />
-                  <div className="mock-hero-sub second" />
+                  <div className="mock-hero-badge">New: AI Workflows</div>
+                  <h2 className="mock-hero-heading">Build better products, ship them faster</h2>
+                  <p className="mock-hero-sub">The modern platform for teams who move fast. Start free, scale when you're ready.</p>
                   <div className="mock-hero-buttons">
-                    <div className="mock-hero-btn primary" />
-                    <div className="mock-hero-btn" />
+                    <div className="mock-hero-btn primary">Get started</div>
+                    <div className="mock-hero-btn">Learn more</div>
                   </div>
                 </div>
-                {/* Hero image */}
-                <div className="mock-hero-image">
-                  <div className="mock-hi-bar" />
-                  <div className="mock-hi-bar short" />
-                  <div className="mock-hi-grid">
-                    <div className="mock-hi-cell" />
-                    <div className="mock-hi-cell" />
-                    <div className="mock-hi-cell" />
+                {/* Logos */}
+                <div className="mock-logos">
+                  <span className="mock-logos-label">Trusted by teams at</span>
+                  <div className="mock-logos-row">
+                    <span className="mock-logo">Vercel</span>
+                    <span className="mock-logo">Stripe</span>
+                    <span className="mock-logo">Linear</span>
+                    <span className="mock-logo">Notion</span>
+                    <span className="mock-logo">Supabase</span>
                   </div>
                 </div>
-                {/* Feature cards */}
-                <div className="mock-cards">
-                  <div className="mock-card mock-card-target">
-                    <div className="mock-card-icon-row">
-                      <div className="mock-card-dot" />
+                {/* Bento feature grid */}
+                <div className="mock-features-header">
+                  <h3 className="mock-section-title">Everything you need to ship</h3>
+                  <p className="mock-section-sub">Powerful features to help your team move faster</p>
+                </div>
+                <div className="mock-bento">
+                  <div className="mock-bento-slot">
+                    <div className="mock-bento-card mock-card-target">
+                      <span className="mock-bento-title">Analytics</span>
+                      <span className="mock-bento-sub">Real-time metrics and insights</span>
+                      <div className="mock-bento-visual">
+                        <div className="mock-bento-chart">
+                          <div className="mock-chart-bar" style={{height: '40%'}} />
+                          <div className="mock-chart-bar" style={{height: '65%'}} />
+                          <div className="mock-chart-bar" style={{height: '45%'}} />
+                          <div className="mock-chart-bar" style={{height: '80%'}} />
+                          <div className="mock-chart-bar" style={{height: '60%'}} />
+                          <div className="mock-chart-bar" style={{height: '90%'}} />
+                          <div className="mock-chart-bar" style={{height: '70%'}} />
+                        </div>
+                      </div>
                     </div>
-                    <div className="mock-card-title" />
-                    <div className="mock-card-desc" />
-                    <div className="mock-card-desc short" />
                     <div className="mock-selection-overlay" />
-                    <div className="mock-selection-label">div.card 140×68</div>
+                    <div className="mock-selection-label">div.card 180×120</div>
                   </div>
-                  <div className="mock-card">
-                    <div className="mock-card-icon-row">
-                      <div className="mock-card-dot purple" />
+                  <div className="mock-bento-card">
+                    <span className="mock-bento-title">Links</span>
+                    <span className="mock-bento-sub">Short links with tracking</span>
+                    <div className="mock-bento-visual">
+                      <div className="mock-bento-links">
+                        <div className="mock-link-row">
+                          <span className="mock-link-url">acme.co/launch</span>
+                          <span className="mock-link-count">2.4k</span>
+                        </div>
+                        <div className="mock-link-row">
+                          <span className="mock-link-url">acme.co/demo</span>
+                          <span className="mock-link-count">1.8k</span>
+                        </div>
+                        <div className="mock-link-row">
+                          <span className="mock-link-url">acme.co/pricing</span>
+                          <span className="mock-link-count">956</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="mock-card-title" />
-                    <div className="mock-card-desc" />
-                    <div className="mock-card-desc short" />
                   </div>
-                  <div className="mock-card">
-                    <div className="mock-card-icon-row">
-                      <div className="mock-card-dot green" />
+                  <div className="mock-bento-card">
+                    <span className="mock-bento-title">API</span>
+                    <span className="mock-bento-sub">Developer-first platform</span>
+                    <div className="mock-bento-visual">
+                      <div className="mock-bento-code">
+                        <div className="mock-code-line"><span className="mock-code-kw">const</span> res = <span className="mock-code-kw">await</span> acme</div>
+                        <div className="mock-code-line">  .<span className="mock-code-fn">analytics</span>.<span className="mock-code-fn">query</span>({"{"}</div>
+                        <div className="mock-code-line">    event: <span className="mock-code-str">"click"</span>,</div>
+                        <div className="mock-code-line">  {"}"})</div>
+                      </div>
                     </div>
-                    <div className="mock-card-title" />
-                    <div className="mock-card-desc" />
-                    <div className="mock-card-desc short" />
+                  </div>
+                </div>
+                {/* Stats row */}
+                <div className="mock-stats">
+                  <div className="mock-stat">
+                    <span className="mock-stat-num">10k+</span>
+                    <span className="mock-stat-label">Teams</span>
+                  </div>
+                  <div className="mock-stat">
+                    <span className="mock-stat-num">99.9%</span>
+                    <span className="mock-stat-label">Uptime</span>
+                  </div>
+                  <div className="mock-stat">
+                    <span className="mock-stat-num">2M+</span>
+                    <span className="mock-stat-label">Events / day</span>
+                  </div>
+                  <div className="mock-stat">
+                    <span className="mock-stat-num">150ms</span>
+                    <span className="mock-stat-label">Avg latency</span>
+                  </div>
+                </div>
+                {/* Second bento row — wider cards */}
+                <div className="mock-bento mock-bento-2col">
+                  <div className="mock-bento-card">
+                    <span className="mock-bento-title">Integrations</span>
+                    <span className="mock-bento-sub">Connect with 50+ tools your team already uses</span>
+                    <div className="mock-bento-visual">
+                      <div className="mock-integrations">
+                        <div className="mock-integration-pill">Slack</div>
+                        <div className="mock-integration-pill">GitHub</div>
+                        <div className="mock-integration-pill">Figma</div>
+                        <div className="mock-integration-pill">Linear</div>
+                        <div className="mock-integration-pill">Notion</div>
+                        <div className="mock-integration-pill">Vercel</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mock-bento-card">
+                    <span className="mock-bento-title">Team Collaboration</span>
+                    <span className="mock-bento-sub">Real-time multiplayer editing for your whole team</span>
+                    <div className="mock-bento-visual">
+                      <div className="mock-avatars">
+                        <div className="mock-avatar" style={{background: '#3b82f6'}}>S</div>
+                        <div className="mock-avatar" style={{background: '#8b5cf6'}}>A</div>
+                        <div className="mock-avatar" style={{background: '#ec4899'}}>M</div>
+                        <div className="mock-avatar" style={{background: '#f59e0b'}}>J</div>
+                        <div className="mock-avatar mock-avatar-more">+5</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Testimonials */}
+                <div className="mock-testimonials">
+                  <div className="mock-testimonial">
+                    <p className="mock-testimonial-text">"Acme cut our deploy time in half. The analytics alone are worth it."</p>
+                    <div className="mock-testimonial-author">
+                      <div className="mock-testimonial-avatar" style={{background: '#3b82f6'}} />
+                      <div>
+                        <span className="mock-testimonial-name">Sarah Chen</span>
+                        <span className="mock-testimonial-role">CTO, Wavelength</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mock-testimonial">
+                    <p className="mock-testimonial-text">"The API is incredibly well-designed. Our team was productive on day one."</p>
+                    <div className="mock-testimonial-author">
+                      <div className="mock-testimonial-avatar" style={{background: '#8b5cf6'}} />
+                      <div>
+                        <span className="mock-testimonial-name">Alex Rivera</span>
+                        <span className="mock-testimonial-role">Eng Lead, Koda</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mock-testimonial">
+                    <p className="mock-testimonial-text">"Switched from three different tools. Acme does it all, beautifully."</p>
+                    <div className="mock-testimonial-author">
+                      <div className="mock-testimonial-avatar" style={{background: '#059669'}} />
+                      <div>
+                        <span className="mock-testimonial-name">Priya Patel</span>
+                        <span className="mock-testimonial-role">PM, Novexa</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* CTA section */}
+                <div className="mock-bottom-cta">
+                  <h3 className="mock-bottom-heading">Ready to get started?</h3>
+                  <p className="mock-bottom-sub">Free for individuals. Team plans for organizations.</p>
+                  <div className="mock-hero-buttons">
+                    <div className="mock-hero-btn primary">Start for free</div>
+                    <div className="mock-hero-btn">Talk to sales</div>
+                  </div>
+                </div>
+                {/* Footer */}
+                <div className="mock-footer">
+                  <div className="mock-footer-cols">
+                    <div className="mock-footer-col">
+                      <span className="mock-footer-heading">Product</span>
+                      <span className="mock-footer-link">Features</span>
+                      <span className="mock-footer-link">Pricing</span>
+                      <span className="mock-footer-link">Changelog</span>
+                      <span className="mock-footer-link">Docs</span>
+                    </div>
+                    <div className="mock-footer-col">
+                      <span className="mock-footer-heading">Company</span>
+                      <span className="mock-footer-link">About</span>
+                      <span className="mock-footer-link">Blog</span>
+                      <span className="mock-footer-link">Careers</span>
+                      <span className="mock-footer-link">Contact</span>
+                    </div>
+                    <div className="mock-footer-col">
+                      <span className="mock-footer-heading">Legal</span>
+                      <span className="mock-footer-link">Privacy</span>
+                      <span className="mock-footer-link">Terms</span>
+                      <span className="mock-footer-link">DPA</span>
+                    </div>
+                  </div>
+                  <div className="mock-footer-bottom">
+                    <span className="mock-footer-copy">&copy; 2025 Acme Inc.</span>
                   </div>
                 </div>
               </div>

@@ -106,8 +106,10 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
           return cx / cw0;
         })()
       : 0.35;
+    // Card is below the fold; mock-page-scroll shifts mock-main by -180px before cursor reaches it
+    const mockPageScrollY = 180;
     const cardY = cardEl
-      ? ((cardEl.getBoundingClientRect().top + cardEl.getBoundingClientRect().height / 2 - oy0) / ch) * 100
+      ? ((cardEl.getBoundingClientRect().top + cardEl.getBoundingClientRect().height / 2 - oy0 - mockPageScrollY) / ch) * 100
       : 25;
 
     // Panel layout: measure relative positions (transform-independent)
