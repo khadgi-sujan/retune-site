@@ -156,21 +156,108 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     const padMeasure = measurePanelItem(".mock-val-pad", scrollPad);
     const radMeasure = measurePanelItem(".mock-val-radius", scrollRad);
 
-    // Measure dock terminal icon position relative to mock-terminal's final position
-    const dockTermIcon = hero.querySelector('.mock-dock-icon[src="/dock/terminal.png"]') as HTMLElement | null;
-    const terminalEl = container.querySelector(".mock-terminal") as HTMLElement | null;
+    // Measure genie target: the minimized dock thumbnail.
+    // Terminal is in .desktop-bg, positioned via CSS.
+    // We compute how far it needs to translate to reach the dock thumbnail.
+    const desktopBg = hero.querySelector('.desktop-bg') as HTMLElement | null;
+    const dockThumb = hero.querySelector('.mock-dock-spacer') as HTMLElement | null;
+    const termEl = desktopBg?.querySelector('.mock-terminal') as HTMLElement | null;
 
-    let genieOriginX = "50%";
-    let genieOriginY = "calc(100% + 60px)";
-    if (dockTermIcon && terminalEl) {
-      const dockRect = dockTermIcon.getBoundingClientRect();
-      const termRect = terminalEl.getBoundingClientRect();
-      // Dock icon center relative to terminal element
-      const dockCenterX = dockRect.left + dockRect.width / 2 - termRect.left;
-      const dockCenterY = dockRect.top + dockRect.height / 2 - termRect.top;
-      genieOriginX = `${dockCenterX}px`;
-      genieOriginY = `${dockCenterY}px`;
+    let genieDx = "200px";
+    let genieDy = "200px";
+    let genieScale = "0.1";
+    if (desktopBg && dockThumb && termEl) {
+      const bgRect = desktopBg.getBoundingClientRect();
+      const thumbRect = dockThumb.getBoundingClientRect();
+
+      // Terminal's open position (CSS: bottom: 56px, left: 88px in .desktop-bg)
+      const termWidth = 240;
+      const termHeight = termEl.scrollHeight;
+      const termCssLeft = 88; // 80px padding + 8px offset
+      const termCssBottom = 56; // 48px padding + 8px offset
+
+      // Terminal center in .desktop-bg coords
+      const termCx = termCssLeft + termWidth / 2;
+      const termCy = bgRect.height - termCssBottom - termHeight / 2;
+
+      // Dock thumbnail center in .desktop-bg coords
+      const thumbCx = thumbRect.left + thumbRect.width / 2 - bgRect.left;
+      const thumbCy = thumbRect.top + thumbRect.height / 2 - bgRect.top;
+
+      // Translation delta from terminal open position to dock thumbnail
+      const dx = thumbCx - termCx;
+      const dy = thumbCy - termCy;
+
+      // Scale: thumbnail width / terminal width
+      const dockScale = thumbRect.width / termWidth;
+
+      genieDx = `${dx}px`;
+      genieDy = `${dy}px`;
+      genieScale = `${dockScale}`;
     }
+
+    // ── Generate precise genie keyframes (Harshil Shah's two-phase algorithm) ──
+    // 20 frames per transition × 18-point polygon = smooth, accurate genie effect
+    const dxVal = parseFloat(genieDx);
+    const dyVal = parseFloat(genieDy);
+    const scVal = parseFloat(genieScale);
+    const GF = 20;
+    const SL = 8;
+
+    function qEase(t: number): number {
+      if (t <= 0) return 0;
+      if (t >= 1) return 1;
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function geniePoly(slide: number): string {
+      const p: string[] = [];
+      for (let i = 0; i <= SL; i++) {
+        const y = i / SL;
+        const sq = qEase(Math.min(1, slide * y));
+        p.push(`${(100 - sq * 45).toFixed(1)}% ${(y * 100).toFixed(1)}%`);
+      }
+      for (let i = SL; i >= 0; i--) {
+        const y = i / SL;
+        const sq = qEase(Math.min(1, slide * y));
+        p.push(`${(sq * 45).toFixed(1)}% ${(y * 100).toFixed(1)}%`);
+      }
+      return `polygon(${p.join(', ')})`;
+    }
+
+    function genieXform(tp: number): string {
+      const et = qEase(tp);
+      return `translate(${(dxVal * et).toFixed(2)}px, ${(dyVal * et).toFixed(2)}px) scale(${(1 + (scVal - 1) * et).toFixed(4)})`;
+    }
+
+    const genieRect = geniePoly(0);
+    const genieDocked = `translate(${dxVal.toFixed(2)}px, ${dyVal.toFixed(2)}px) scale(${scVal})`;
+
+    let kf = '@keyframes mock-terminal-toggle {\n';
+    kf += `  0%, 55.9% { transform: ${genieDocked}; clip-path: ${genieRect}; }\n`;
+
+    for (let i = 0; i <= GF; i++) {
+      const gp = 1 - i / GF;
+      const pct = (56 + (i / GF) * 4).toFixed(2);
+      kf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.4) / 0.6))}; clip-path: ${geniePoly(Math.min(1, gp / 0.5))}; }\n`;
+    }
+
+    for (let i = 0; i <= GF; i++) {
+      const gp = i / GF;
+      const pct = (91 + (i / GF) * 4).toFixed(2);
+      kf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.4) / 0.6))}; clip-path: ${geniePoly(Math.min(1, gp / 0.5))}; }\n`;
+    }
+
+    kf += `  95.1%, 100% { transform: ${genieDocked}; clip-path: ${genieRect}; }\n`;
+    kf += '}';
+
+    let genieStyleEl = document.querySelector('style[data-genie]') as HTMLStyleElement;
+    if (!genieStyleEl) {
+      genieStyleEl = document.createElement('style');
+      genieStyleEl.setAttribute('data-genie', '');
+      document.head.appendChild(genieStyleEl);
+    }
+    genieStyleEl.textContent = kf;
 
     const apply = (cw: number) => {
       hero.style.setProperty("--tb-x", `${((cw - tbFromRight) / cw) * 100}%`);
@@ -189,15 +276,19 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
         hero.style.setProperty("--rad-y", `${radMeasure.y}%`);
       }
 
-      hero.style.setProperty("--genie-origin-x", genieOriginX);
-      hero.style.setProperty("--genie-origin-y", genieOriginY);
+      hero.style.setProperty("--genie-dx", genieDx);
+      hero.style.setProperty("--genie-dy", genieDy);
+      hero.style.setProperty("--genie-scale", genieScale);
     };
 
     apply(cw0);
 
     const onResize = () => apply(container.clientWidth);
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      document.querySelector('style[data-genie]')?.remove();
+    };
   }, []);
 
   return (

@@ -410,6 +410,20 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   margin: 0 2px;
 }
 
+/* Dock spacer — holds room for the minimized terminal, collapses when open */
+.mock-dock-spacer {
+  width: 26px;
+  height: 18px;
+  overflow: hidden;
+  animation: mock-dock-spacer-toggle 10s ease infinite;
+}
+@keyframes mock-dock-spacer-toggle {
+  0%, 56% { width: 26px; height: 18px; }
+  60% { width: 0; height: 0; }
+  91% { width: 0; height: 0; }
+  95% { width: 26px; height: 18px; }
+  100% { width: 26px; height: 18px; }
+}
 
 .hero-visual {
   position: relative;
@@ -428,9 +442,10 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   /* Panel scroll distances */
   --scroll-pad: -80px;
   --scroll-rad: -250px;
-  /* Genie effect origin (overridden by JS) */
-  --genie-origin-x: 50%;
-  --genie-origin-y: calc(100% + 60px);
+  /* Genie effect: translation to dock position (overridden by JS) */
+  --genie-dx: 200px;
+  --genie-dy: 200px;
+  --genie-scale: 0.1;
 }
 
 .browser-chrome {
@@ -1292,9 +1307,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   0%, 27% { opacity: 0; transform: translateX(20px); }
   29%     { opacity: 1; transform: translateX(0); }
   /* Visible */
-  87%     { opacity: 1; transform: translateX(0); }
-  /* Exit: slide out to right */
-  90%     { opacity: 0; transform: translateX(20px); }
+  92%     { opacity: 1; transform: translateX(0); }
+  /* Exit: slide out to right (overlaps with terminal minimize) */
+  95%     { opacity: 0; transform: translateX(20px); }
   100%    { opacity: 0; transform: translateX(20px); }
 }
 
@@ -1679,11 +1694,12 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   100%    { opacity: 0; }
 }
 
-/* Claude Code terminal */
+/* Claude Code terminal — positioned in .desktop-bg so it can genie to/from dock */
 .mock-terminal {
   position: absolute;
-  bottom: 8px;
-  left: 8px;
+  /* Position over the browser-content area (account for desktop padding + chrome) */
+  bottom: calc(48px + 8px); /* desktop padding-bottom + offset from browser bottom */
+  left: calc(80px + 8px); /* desktop padding-left + offset from browser left */
   width: 240px;
   background: #0c0a09;
   border-radius: 8px;
@@ -1693,11 +1709,11 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   color: #d6d3d1;
   z-index: 10;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  opacity: 0;
-  /* Genie origin: measured position of dock terminal icon */
-  transform-origin: var(--genie-origin-x, 50%) var(--genie-origin-y, calc(100% + 60px));
-  transform: perspective(400px) scaleX(0.05) scaleY(0.05) rotateX(-50deg) translateY(200px);
-  animation: mock-terminal-toggle 10s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  /* Genie: JS sets --genie-dx/dy (translation to dock) and --genie-scale (thumbnail/terminal ratio) */
+  will-change: transform, clip-path;
+  transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  animation: mock-terminal-toggle 10s linear infinite;
   overflow: hidden;
 }
 .mock-term-titlebar {
@@ -1723,53 +1739,90 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-term-body {
   padding: 8px 10px;
 }
+/* Genie keyframes computed from Harshil Shah's algorithm:
+   Two overlapping phases — Shearing (0-50%): bottom edge narrows toward dock,
+   Translation (40-100%): whole window moves to dock. Overlap at 40-50%.
+   Side curves use quadraticEaseInOut at 4 height samples (0%, 33%, 66%, 100%)
+   for an 8-point polygon approximating the bezier-curved genie edges. */
 @keyframes mock-terminal-toggle {
-  /* Hidden — collapsed at dock, funnel-warped */
-  0%, 56% {
-    opacity: 0;
-    transform: perspective(400px) scaleX(0.05) scaleY(0.05) rotateX(-50deg) translateY(200px);
+  /* ── Docked state (rectangle thumbnail) ── */
+  0% {
+    transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
+    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
   }
-  /* Genie open — funnel expanding, still warped */
-  56.8% {
-    opacity: 0.6;
-    transform: perspective(500px) scaleX(0.3) scaleY(0.5) rotateX(-30deg) translateY(40px);
+  56% {
+    transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
+    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
   }
-  /* Almost open — slight warp remaining */
-  57.5% {
-    opacity: 0.9;
-    transform: perspective(600px) scaleX(0.8) scaleY(0.9) rotateX(-8deg) translateY(5px);
+  /* ── Genie RESTORE (open from dock) ── */
+  /* Leaving dock — strong funnel, mostly translated */
+  56.5% {
+    transform: translate(calc(var(--genie-dx, 200px) * 0.78), calc(var(--genie-dy, 200px) * 0.78)) scale(0.30);
+    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
   }
-  /* Overshoot */
-  58.2% {
-    opacity: 1;
-    transform: perspective(800px) scaleX(1.01) scaleY(1.01) rotateX(1deg) translateY(-2px);
+  /* Emerging — strong funnel, half-translated */
+  57.2% {
+    transform: translate(calc(var(--genie-dx, 200px) * 0.47), calc(var(--genie-dy, 200px) * 0.47)) scale(0.58);
+    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
   }
-  /* Settle */
-  59% {
-    opacity: 1;
-    transform: perspective(800px) scaleX(1) scaleY(1) rotateX(0deg) translateY(0);
+  /* Approaching open — strong funnel, nearly in position */
+  58% {
+    transform: translate(calc(var(--genie-dx, 200px) * 0.17), calc(var(--genie-dy, 200px) * 0.17)) scale(0.85);
+    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
   }
-  /* Visible */
-  82% {
-    opacity: 1;
-    transform: perspective(800px) scaleX(1) scaleY(1) rotateX(0deg) translateY(0);
+  /* Unshearing — moderate funnel, at position */
+  58.5% {
+    transform: translate(0, 0) scale(1);
+    clip-path: polygon(0% 0%, 100% 0%, 93% 33%, 74% 66%, 66% 100%, 34% 100%, 26% 66%, 7% 33%);
   }
-  /* Genie close — funnel collapsing back */
-  83% {
-    opacity: 0.9;
-    transform: perspective(600px) scaleX(0.8) scaleY(0.9) rotateX(-8deg) translateY(5px);
+  /* Nearly open — slight funnel */
+  59.2% {
+    transform: translate(0, 0) scale(1);
+    clip-path: polygon(0% 0%, 100% 0%, 96% 33%, 84% 66%, 80% 100%, 20% 100%, 16% 66%, 4% 33%);
   }
-  84% {
-    opacity: 0.5;
-    transform: perspective(500px) scaleX(0.3) scaleY(0.5) rotateX(-30deg) translateY(40px);
+  /* ── Fully open (rectangle) ── */
+  60% {
+    transform: translate(0, 0) scale(1);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
   }
-  85% {
-    opacity: 0;
-    transform: perspective(400px) scaleX(0.05) scaleY(0.05) rotateX(-50deg) translateY(200px);
+  91% {
+    transform: translate(0, 0) scale(1);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
+  }
+  /* ── Genie MINIMIZE (close to dock) ── */
+  /* Shearing begins — slight funnel, still at position */
+  91.8% {
+    transform: translate(0, 0) scale(1);
+    clip-path: polygon(0% 0%, 100% 0%, 96% 33%, 84% 66%, 80% 100%, 20% 100%, 16% 66%, 4% 33%);
+  }
+  /* More shearing — moderate funnel */
+  92.5% {
+    transform: translate(0, 0) scale(1);
+    clip-path: polygon(0% 0%, 100% 0%, 93% 33%, 74% 66%, 66% 100%, 34% 100%, 26% 66%, 7% 33%);
+  }
+  /* Full funnel, translation starts — overlap phase */
+  93% {
+    transform: translate(calc(var(--genie-dx, 200px) * 0.17), calc(var(--genie-dy, 200px) * 0.17)) scale(0.85);
+    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
+  }
+  /* Collapsing — past halfway to dock */
+  93.8% {
+    transform: translate(calc(var(--genie-dx, 200px) * 0.47), calc(var(--genie-dy, 200px) * 0.47)) scale(0.58);
+    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
+  }
+  /* Approaching dock */
+  94.5% {
+    transform: translate(calc(var(--genie-dx, 200px) * 0.78), calc(var(--genie-dy, 200px) * 0.78)) scale(0.30);
+    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
+  }
+  /* ── Back in dock (rectangle thumbnail) ── */
+  95% {
+    transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
+    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
   }
   100% {
-    opacity: 0;
-    transform: perspective(400px) scaleX(0.05) scaleY(0.05) rotateX(-50deg) translateY(200px);
+    transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
+    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
   }
 }
 .mock-terminal-line {
@@ -1791,31 +1844,31 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 
 @keyframes mock-term-reveal {
-  0%, 57% { opacity: 0; }
-  59% { opacity: 1; }
-  82% { opacity: 1; }
-  85% { opacity: 0; }
+  0%, 60% { opacity: 0; }
+  62% { opacity: 1; }
+  90% { opacity: 1; }
+  91% { opacity: 0; }
   100% { opacity: 0; }
 }
 @keyframes mock-term-reveal-2 {
-  0%, 59% { opacity: 0; }
-  61% { opacity: 1; }
-  82% { opacity: 1; }
-  85% { opacity: 0; }
+  0%, 62% { opacity: 0; }
+  64% { opacity: 1; }
+  90% { opacity: 1; }
+  91% { opacity: 0; }
   100% { opacity: 0; }
 }
 @keyframes mock-term-reveal-3 {
-  0%, 61% { opacity: 0; }
-  63% { opacity: 1; }
-  82% { opacity: 1; }
-  85% { opacity: 0; }
+  0%, 64% { opacity: 0; }
+  66% { opacity: 1; }
+  90% { opacity: 1; }
+  91% { opacity: 0; }
   100% { opacity: 0; }
 }
 @keyframes mock-term-reveal-4 {
-  0%, 62% { opacity: 0; }
-  64% { opacity: 1; }
-  82% { opacity: 1; }
-  85% { opacity: 0; }
+  0%, 66% { opacity: 0; }
+  68% { opacity: 1; }
+  90% { opacity: 1; }
+  91% { opacity: 0; }
   100% { opacity: 0; }
 }
 .mock-term-mascot {
@@ -1992,7 +2045,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .hero-visual.animation-paused .mock-val-before,
 .hero-visual.animation-paused .mock-val-after,
 .hero-visual.animation-paused .mock-terminal,
-.hero-visual.animation-paused .mock-terminal-line {
+.hero-visual.animation-paused .mock-terminal-line,
+.hero-visual.animation-paused .mock-dock-spacer {
   animation-play-state: paused;
 }
 
@@ -2018,7 +2072,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   .cursor-crosshair,
   .mock-panel-inner,
   .mock-terminal,
-  .mock-terminal-line {
+  .mock-terminal-line,
+  .mock-dock-spacer {
     animation: none;
   }
   .animation-pause-btn { display: none; }

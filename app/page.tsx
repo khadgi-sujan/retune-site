@@ -445,46 +445,6 @@ export default function Home() {
                 </div>
                 </div>
               </div>
-              {/* Claude Code terminal */}
-              <div className="mock-terminal">
-                <div className="mock-term-titlebar">
-                  <span className="mock-term-dot" />
-                  <span className="mock-term-dot" />
-                  <span className="mock-term-dot" />
-                  <span className="mock-term-title">claude</span>
-                </div>
-                <div className="mock-term-body">
-                  <div className="mock-terminal-line mock-term-line-1">
-                    <svg className="mock-term-mascot" width="27" height="18" viewBox="0 0 18 12" fill="#D4775B" shapeRendering="crispEdges">
-                      {/* Head */}
-                      <rect x="3" y="0" width="12" height="2"/>
-                      {/* Eyes (negative space) */}
-                      <rect x="3" y="2" width="2" height="2"/>
-                      <rect x="6" y="2" width="6" height="2"/>
-                      <rect x="13" y="2" width="2" height="2"/>
-                      {/* Body (wider) */}
-                      <rect x="2" y="4" width="15" height="2"/>
-                      <rect x="1" y="4" width="1" height="2"/>
-                      <rect x="3" y="6" width="12" height="2"/>
-                      {/* Feet */}
-                      <rect x="4" y="8" width="1" height="2"/>
-                      <rect x="6" y="8" width="1" height="2"/>
-                      <rect x="11" y="8" width="1" height="2"/>
-                      <rect x="13" y="8" width="1" height="2"/>
-                    </svg>
-                    <span>Editing <span className="mock-term-file">Card.tsx</span></span>
-                  </div>
-                  <div className="mock-terminal-line mock-term-line-2">
-                    <span className="mock-term-dim">    padding: </span>12px → 16px
-                  </div>
-                  <div className="mock-terminal-line mock-term-line-3">
-                    <span className="mock-term-dim">    border-radius: </span>8px → 12px
-                  </div>
-                  <div className="mock-terminal-line mock-term-line-4">
-                    <span className="mock-term-check">✓</span> Changes applied
-                  </div>
-                </div>
-              </div>
               {/* Animated cursor */}
               <div className="mock-cursor">
                 <svg className="cursor-pointer" width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
@@ -501,6 +461,7 @@ export default function Home() {
                 <img className="mock-dock-icon" src="/dock/calendar.png" alt="" />
                 <img className="mock-dock-icon" src="/dock/notes.png" alt="" />
                 <div className="mock-dock-sep" />
+                <div className="mock-dock-spacer" />
                 <img className="mock-dock-icon" src="/dock/trash.png" alt="" />
               </div>
               {/* Running app dots — positioned below their respective icons */}
@@ -508,6 +469,46 @@ export default function Home() {
                 <span className="mock-dock-dot-space" />
                 <span className="mock-dock-dot" />
                 <span className="mock-dock-dot" />
+              </div>
+            </div>
+            {/* Claude Code terminal — in desktop-bg so it can genie to/from dock */}
+            <div className="mock-terminal">
+              <div className="mock-term-titlebar">
+                <span className="mock-term-dot" />
+                <span className="mock-term-dot" />
+                <span className="mock-term-dot" />
+                <span className="mock-term-title">claude</span>
+              </div>
+              <div className="mock-term-body">
+                <div className="mock-terminal-line mock-term-line-1">
+                  <svg className="mock-term-mascot" width="27" height="18" viewBox="0 0 18 12" fill="#D4775B" shapeRendering="crispEdges">
+                    {/* Head */}
+                    <rect x="3" y="0" width="12" height="2"/>
+                    {/* Eyes (negative space) */}
+                    <rect x="3" y="2" width="2" height="2"/>
+                    <rect x="6" y="2" width="6" height="2"/>
+                    <rect x="13" y="2" width="2" height="2"/>
+                    {/* Body (wider) */}
+                    <rect x="2" y="4" width="15" height="2"/>
+                    <rect x="1" y="4" width="1" height="2"/>
+                    <rect x="3" y="6" width="12" height="2"/>
+                    {/* Feet */}
+                    <rect x="4" y="8" width="1" height="2"/>
+                    <rect x="6" y="8" width="1" height="2"/>
+                    <rect x="11" y="8" width="1" height="2"/>
+                    <rect x="13" y="8" width="1" height="2"/>
+                  </svg>
+                  <span>Editing <span className="mock-term-file">Card.tsx</span></span>
+                </div>
+                <div className="mock-terminal-line mock-term-line-2">
+                  <span className="mock-term-dim">    padding: </span>12px → 16px
+                </div>
+                <div className="mock-terminal-line mock-term-line-3">
+                  <span className="mock-term-dim">    border-radius: </span>8px → 12px
+                </div>
+                <div className="mock-terminal-line mock-term-line-4">
+                  <span className="mock-term-check">✓</span> Changes applied
+                </div>
               </div>
             </div>
             </div>
