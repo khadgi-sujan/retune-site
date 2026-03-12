@@ -418,9 +418,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   animation: mock-dock-spacer-toggle 10s ease infinite;
 }
 @keyframes mock-dock-spacer-toggle {
-  0%, 56% { width: 26px; height: 18px; }
+  0%, 58% { width: 26px; height: 18px; }
   60% { width: 0; height: 0; }
-  91% { width: 0; height: 0; }
+  93% { width: 0; height: 0; }
   95% { width: 26px; height: 18px; }
   100% { width: 26px; height: 18px; }
 }
@@ -430,15 +430,17 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   margin-top: 40px;
   width: 100%;
   align-self: stretch;
-  /* Cursor target positions (% of .browser-content padding box) */
-  --tb-x: 96%;
-  --tb-y: 93%;
-  --card-x: 38%;
-  --card-y: 25%;
-  --pad-x: 80%;
-  --pad-y: 65%;
-  --rad-x: 82%;
-  --rad-y: 75%;
+  /* Cursor target positions (% of .desktop-bg, set by JS) */
+  --tb-x: 87%;
+  --tb-y: 85%;
+  --card-x: 40%;
+  --card-y: 33%;
+  --pad-x: 74%;
+  --pad-y: 64%;
+  --rad-x: 76%;
+  --rad-y: 71%;
+  --dock-x: 59%;
+  --dock-y: 96%;
   /* Panel scroll distances */
   --scroll-pad: -80px;
   --scroll-rad: -250px;
@@ -472,6 +474,16 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .dot-red { background: #f87171; }
 .dot-yellow { background: #fbbf24; }
 .dot-green { background: #4ade80; }
+.dot-red, .dot-yellow, .dot-green {
+  animation: mock-dot-unfocus 10s ease infinite;
+}
+@keyframes mock-dot-unfocus {
+  0%, 58% { filter: saturate(1); }
+  60% { filter: saturate(0) brightness(0.7); }
+  91% { filter: saturate(0) brightness(0.7); }
+  93% { filter: saturate(1); }
+  100% { filter: saturate(1); }
+}
 
 .browser-url {
   flex: 1;
@@ -670,8 +682,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-bento-card {
   background: #fafaf9;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
-  padding: 10px 10px 0;
+  border-radius: 0px;
+  padding: 8px 8px 0;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1249,13 +1261,13 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-count-1 { animation: mock-count-1-swap 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
 .mock-count-2 { animation: mock-count-2-swap 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
 @keyframes mock-count-1-swap {
-  0%, 54% { opacity: 1; }
-  55%     { opacity: 0; }
+  0%, 50% { opacity: 1; }
+  51%     { opacity: 0; }
   100%    { opacity: 0; }
 }
 @keyframes mock-count-2-swap {
-  0%, 54% { opacity: 0; }
-  55%     { opacity: 1; }
+  0%, 50% { opacity: 0; }
+  51%     { opacity: 1; }
   100%    { opacity: 1; }
 }
 
@@ -1274,15 +1286,17 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 
 /* Card padding + radius change */
-.mock-card-target {
+.mock-bento-card {
   animation: mock-card-changes 10s ease infinite;
 }
 @keyframes mock-card-changes {
-  0%, 48% { border-radius: 8px; }
-  51%     { border-radius: 14px; }
-  86%     { border-radius: 14px; }
-  89%     { border-radius: 8px; }
-  100%    { border-radius: 8px; }
+  0%, 41% { padding: 8px 8px 0; border-radius: 0px; }
+  42%     { padding: 16px 16px 0; border-radius: 0px; }
+  50%     { padding: 16px 16px 0; border-radius: 0px; }
+  51%     { padding: 16px 16px 0; border-radius: 8px; }
+  86%     { padding: 16px 16px 0; border-radius: 8px; }
+  89%     { padding: 8px 8px 0; border-radius: 0px; }
+  100%    { padding: 8px 8px 0; border-radius: 0px; }
 }
 
 /* Panel appears after selection */
@@ -1426,9 +1440,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   /* Scroll to show padding field (cursor is on panel, moving toward padding) */
   37% { transform: translateY(var(--scroll-pad, -80px)); }
   /* Hold while cursor interacts with padding */
-  45% { transform: translateY(var(--scroll-pad, -80px)); }
-  /* Scroll more to reveal corner radius field (cursor still on panel) */
-  48% { transform: translateY(var(--scroll-rad, -250px)); }
+  44% { transform: translateY(var(--scroll-pad, -80px)); }
+  /* Scroll more to reveal corner radius field */
+  47% { transform: translateY(var(--scroll-rad, -250px)); }
   /* Hold */
   87% { transform: translateY(var(--scroll-rad, -250px)); }
   /* Reset */
@@ -1644,9 +1658,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   animation: mock-val-flash-2 10s ease infinite;
 }
 @keyframes mock-val-flash-2 {
-  0%, 53% { background: transparent; }
-  55% { background: #dbeafe; border-radius: 3px; }
-  60% { background: transparent; }
+  0%, 49% { background: transparent; }
+  50% { background: #dbeafe; border-radius: 3px; }
+  56% { background: transparent; }
   100% { background: transparent; }
 }
 
@@ -1680,15 +1694,15 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-val-radius .mock-val-before { animation: mock-val-rad-before 10s ease infinite; }
 .mock-val-radius .mock-val-after  { animation: mock-val-rad-after 10s ease infinite; }
 @keyframes mock-val-rad-before {
-  0%, 54% { opacity: 1; }
-  55%     { opacity: 0; }
+  0%, 50% { opacity: 1; }
+  51%     { opacity: 0; }
   86%     { opacity: 0; }
   89%     { opacity: 1; }
   100%    { opacity: 1; }
 }
 @keyframes mock-val-rad-after {
-  0%, 54% { opacity: 0; }
-  55%     { opacity: 1; }
+  0%, 50% { opacity: 0; }
+  51%     { opacity: 1; }
   86%     { opacity: 1; }
   89%     { opacity: 0; }
   100%    { opacity: 0; }
@@ -1697,9 +1711,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 /* Claude Code terminal — positioned in .desktop-bg so it can genie to/from dock */
 .mock-terminal {
   position: absolute;
-  /* Position over the browser-content area (account for desktop padding + chrome) */
-  bottom: calc(48px + 8px); /* desktop padding-bottom + offset from browser bottom */
-  left: calc(80px + 8px); /* desktop padding-left + offset from browser left */
+  /* Centered over the browser-content area, raised slightly */
+  bottom: calc(48px + 32px);
+  left: calc(50% - 120px); /* center: 50% minus half of 240px width */
   width: 240px;
   background: #0c0a09;
   border-radius: 8px;
@@ -1730,6 +1744,30 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.12);
 }
+.mock-term-dot:nth-child(1) { animation: mock-term-dot-red 10s ease infinite; }
+.mock-term-dot:nth-child(2) { animation: mock-term-dot-yellow 10s ease infinite; }
+.mock-term-dot:nth-child(3) { animation: mock-term-dot-green 10s ease infinite; }
+@keyframes mock-term-dot-red {
+  0%, 59% { background: rgba(255, 255, 255, 0.12); }
+  60% { background: #ff5f57; }
+  91% { background: #ff5f57; }
+  92% { background: rgba(255, 255, 255, 0.12); }
+  100% { background: rgba(255, 255, 255, 0.12); }
+}
+@keyframes mock-term-dot-yellow {
+  0%, 59% { background: rgba(255, 255, 255, 0.12); }
+  60% { background: #febc2e; }
+  91% { background: #febc2e; }
+  92% { background: rgba(255, 255, 255, 0.12); }
+  100% { background: rgba(255, 255, 255, 0.12); }
+}
+@keyframes mock-term-dot-green {
+  0%, 59% { background: rgba(255, 255, 255, 0.12); }
+  60% { background: #28c840; }
+  91% { background: #28c840; }
+  92% { background: rgba(255, 255, 255, 0.12); }
+  100% { background: rgba(255, 255, 255, 0.12); }
+}
 .mock-term-title {
   font-size: 7px;
   font-family: system-ui;
@@ -1739,92 +1777,10 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-term-body {
   padding: 8px 10px;
 }
-/* Genie keyframes computed from Harshil Shah's algorithm:
-   Two overlapping phases — Shearing (0-50%): bottom edge narrows toward dock,
-   Translation (40-100%): whole window moves to dock. Overlap at 40-50%.
-   Side curves use quadraticEaseInOut at 4 height samples (0%, 33%, 66%, 100%)
-   for an 8-point polygon approximating the bezier-curved genie edges. */
-@keyframes mock-terminal-toggle {
-  /* ── Docked state (rectangle thumbnail) ── */
-  0% {
-    transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
-    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
-  }
-  56% {
-    transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
-    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
-  }
-  /* ── Genie RESTORE (open from dock) ── */
-  /* Leaving dock — strong funnel, mostly translated */
-  56.5% {
-    transform: translate(calc(var(--genie-dx, 200px) * 0.78), calc(var(--genie-dy, 200px) * 0.78)) scale(0.30);
-    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
-  }
-  /* Emerging — strong funnel, half-translated */
-  57.2% {
-    transform: translate(calc(var(--genie-dx, 200px) * 0.47), calc(var(--genie-dy, 200px) * 0.47)) scale(0.58);
-    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
-  }
-  /* Approaching open — strong funnel, nearly in position */
-  58% {
-    transform: translate(calc(var(--genie-dx, 200px) * 0.17), calc(var(--genie-dy, 200px) * 0.17)) scale(0.85);
-    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
-  }
-  /* Unshearing — moderate funnel, at position */
-  58.5% {
-    transform: translate(0, 0) scale(1);
-    clip-path: polygon(0% 0%, 100% 0%, 93% 33%, 74% 66%, 66% 100%, 34% 100%, 26% 66%, 7% 33%);
-  }
-  /* Nearly open — slight funnel */
-  59.2% {
-    transform: translate(0, 0) scale(1);
-    clip-path: polygon(0% 0%, 100% 0%, 96% 33%, 84% 66%, 80% 100%, 20% 100%, 16% 66%, 4% 33%);
-  }
-  /* ── Fully open (rectangle) ── */
-  60% {
-    transform: translate(0, 0) scale(1);
-    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
-  }
-  91% {
-    transform: translate(0, 0) scale(1);
-    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
-  }
-  /* ── Genie MINIMIZE (close to dock) ── */
-  /* Shearing begins — slight funnel, still at position */
-  91.8% {
-    transform: translate(0, 0) scale(1);
-    clip-path: polygon(0% 0%, 100% 0%, 96% 33%, 84% 66%, 80% 100%, 20% 100%, 16% 66%, 4% 33%);
-  }
-  /* More shearing — moderate funnel */
-  92.5% {
-    transform: translate(0, 0) scale(1);
-    clip-path: polygon(0% 0%, 100% 0%, 93% 33%, 74% 66%, 66% 100%, 34% 100%, 26% 66%, 7% 33%);
-  }
-  /* Full funnel, translation starts — overlap phase */
-  93% {
-    transform: translate(calc(var(--genie-dx, 200px) * 0.17), calc(var(--genie-dy, 200px) * 0.17)) scale(0.85);
-    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
-  }
-  /* Collapsing — past halfway to dock */
-  93.8% {
-    transform: translate(calc(var(--genie-dx, 200px) * 0.47), calc(var(--genie-dy, 200px) * 0.47)) scale(0.58);
-    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
-  }
-  /* Approaching dock */
-  94.5% {
-    transform: translate(calc(var(--genie-dx, 200px) * 0.78), calc(var(--genie-dy, 200px) * 0.78)) scale(0.30);
-    clip-path: polygon(0% 0%, 100% 0%, 90% 33%, 65% 66%, 55% 100%, 45% 100%, 35% 66%, 10% 33%);
-  }
-  /* ── Back in dock (rectangle thumbnail) ── */
-  95% {
-    transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
-    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
-  }
-  100% {
-    transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
-    clip-path: polygon(0% 0%, 100% 0%, 100% 33%, 100% 66%, 100% 100%, 0% 100%, 0% 66%, 0% 33%);
-  }
-}
+/* Genie keyframes are generated dynamically in JS (components.tsx)
+   using Harshil Shah's two-phase algorithm with 20 frames per transition
+   and 18-point polygons. The @keyframes mock-terminal-toggle rule is
+   injected into a <style data-genie> element at runtime. */
 .mock-terminal-line {
   white-space: nowrap;
   opacity: 0;
@@ -1888,7 +1844,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 /* Animated cursor */
 .mock-cursor {
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   pointer-events: none;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
   left: 60%;
@@ -1925,37 +1881,50 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 
 @keyframes mock-cursor-move {
-  /* Hidden initially */
-  0%, 6% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
-  /* Appear */
-  9% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
+  0% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
   /* Move to collapsed toolbar (bottom-right) */
   14% { opacity: 1; left: var(--tb-x); top: var(--tb-y); transform: scale(1); }
   /* Click toolbar */
-  15% { left: var(--tb-x); top: var(--tb-y); transform: scale(0.8); }
-  15.5% { left: var(--tb-x); top: var(--tb-y); transform: scale(1); }
+  15% { opacity: 1; left: var(--tb-x); top: var(--tb-y); transform: scale(0.8); }
+  15.5% { opacity: 1; left: var(--tb-x); top: var(--tb-y); transform: scale(1); }
   /* Move to middle card */
-  22% { left: var(--card-x); top: var(--card-y); transform: scale(1); }
+  22% { opacity: 1; left: var(--card-x); top: var(--card-y); transform: scale(1); }
   /* Click card */
-  27% { left: var(--card-x); top: var(--card-y); transform: scale(0.8); }
-  28% { left: var(--card-x); top: var(--card-y); transform: scale(1); }
+  27% { opacity: 1; left: var(--card-x); top: var(--card-y); transform: scale(0.8); }
+  28% { opacity: 1; left: var(--card-x); top: var(--card-y); transform: scale(1); }
   /* Move to panel — padding field */
-  38% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
+  38% { opacity: 1; left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
   /* Click/tweak padding */
-  41% { left: var(--pad-x); top: var(--pad-y); transform: scale(0.8); }
-  42% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
-  /* Hold at padding while panel scrolls */
-  49% { left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
-  /* Move to radius field after scroll completes */
-  52% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  41% { opacity: 1; left: var(--pad-x); top: var(--pad-y); transform: scale(0.8); }
+  42% { opacity: 1; left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
+  /* Hold at padding while panel scrolls to radius */
+  46% { opacity: 1; left: var(--pad-x); top: var(--pad-y); transform: scale(1); }
+  /* Move to radius field */
+  48% { opacity: 1; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
   /* Click/tweak radius */
-  54% { left: var(--rad-x); top: var(--rad-y); transform: scale(0.8); }
-  55% { left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
-  /* Hold through breathing room */
-  82% { opacity: 1; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
-  /* Fade out with terminal */
-  85% { opacity: 0; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
-  100% { opacity: 0; left: 50%; top: 50%; transform: scale(1); }
+  49.5% { opacity: 1; left: var(--rad-x); top: var(--rad-y); transform: scale(0.8); }
+  50% { opacity: 1; left: var(--rad-x); top: var(--rad-y); transform: scale(1); }
+  /* Move to dock spacer */
+  52.5% { opacity: 1; left: var(--dock-x); top: var(--dock-y); transform: scale(1); }
+  /* Click dock to open terminal */
+  54% { opacity: 1; left: var(--dock-x); top: var(--dock-y); transform: scale(0.8); }
+  54.5% { opacity: 1; left: var(--dock-x); top: var(--dock-y); transform: scale(1); }
+  /* Hold at dock while terminal genies open */
+  60% { opacity: 1; left: var(--dock-x); top: var(--dock-y); transform: scale(1); }
+  /* Move to terminal area after it opens */
+  64% { opacity: 1; left: 50%; top: 65%; transform: scale(1); }
+  /* Idle while terminal content appears */
+  84% { opacity: 1; left: 50%; top: 65%; transform: scale(1); }
+  /* Move to terminal yellow (minimize) dot */
+  88% { opacity: 1; left: 38%; top: 65%; transform: scale(1); }
+  /* Click minimize */
+  89% { opacity: 1; left: 38%; top: 65%; transform: scale(0.8); }
+  89.5% { opacity: 1; left: 38%; top: 65%; transform: scale(1); }
+  /* Hold while terminal genies closed */
+  95% { opacity: 1; left: 38%; top: 65%; transform: scale(1); }
+  /* Move back to center before loop restarts */
+  98% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
+  100% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
 }
 
 @keyframes mock-cursor-move-mobile {
@@ -2029,7 +1998,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .hero-visual.animation-paused .mock-toolbar-btn.enables-on-change,
 .hero-visual.animation-paused .mock-toolbar-btn.always-disabled,
 .hero-visual.animation-paused .mock-panel,
-.hero-visual.animation-paused .mock-card-target,
+.hero-visual.animation-paused .mock-bento-card,
 .hero-visual.animation-paused .mock-card-target ~ .mock-selection-overlay,
 .hero-visual.animation-paused .mock-card-target ~ .mock-selection-label,
 .hero-visual.animation-paused .mock-edit-count-wrap,
@@ -2046,7 +2015,11 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .hero-visual.animation-paused .mock-val-after,
 .hero-visual.animation-paused .mock-terminal,
 .hero-visual.animation-paused .mock-terminal-line,
-.hero-visual.animation-paused .mock-dock-spacer {
+.hero-visual.animation-paused .mock-dock-spacer,
+.hero-visual.animation-paused .dot-red,
+.hero-visual.animation-paused .dot-yellow,
+.hero-visual.animation-paused .dot-green,
+.hero-visual.animation-paused .mock-term-dot {
   animation-play-state: paused;
 }
 
@@ -2059,7 +2032,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   .mock-toolbar-btn.enables-on-change,
   .mock-toolbar-btn.always-disabled,
   .mock-panel,
-  .mock-card-target,
+  .mock-bento-card,
   .mock-card-target ~ .mock-selection-overlay,
   .mock-card-target ~ .mock-selection-label,
   .mock-value-animate,
@@ -2073,7 +2046,11 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   .mock-panel-inner,
   .mock-terminal,
   .mock-terminal-line,
-  .mock-dock-spacer {
+  .mock-dock-spacer,
+  .dot-red,
+  .dot-yellow,
+  .dot-green,
+  .mock-term-dot {
     animation: none;
   }
   .animation-pause-btn { display: none; }

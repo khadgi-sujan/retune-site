@@ -173,8 +173,8 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
       // Terminal's open position (CSS: bottom: 56px, left: 88px in .desktop-bg)
       const termWidth = 240;
       const termHeight = termEl.scrollHeight;
-      const termCssLeft = 88; // 80px padding + 8px offset
-      const termCssBottom = 56; // 48px padding + 8px offset
+      const termCssLeft = bgRect.width / 2 - 120; // centered: 50% - half of 240px
+      const termCssBottom = 80; // 48px padding + 32px offset
 
       // Terminal center in .desktop-bg coords
       const termCx = termCssLeft + termWidth / 2;
@@ -194,6 +194,7 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
       genieDx = `${dx}px`;
       genieDy = `${dy}px`;
       genieScale = `${dockScale}`;
+
     }
 
     // ── Generate precise genie keyframes (Harshil Shah's two-phase algorithm) ──
@@ -259,31 +260,57 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     }
     genieStyleEl.textContent = kf;
 
-    const apply = (cw: number) => {
-      hero.style.setProperty("--tb-x", `${((cw - tbFromRight) / cw) * 100}%`);
-      hero.style.setProperty("--tb-y", `${tbY}%`);
+    // Cursor is in .desktop-bg — convert browser-content % → desktop-bg %
+    const apply = () => {
+      if (!desktopBg) return;
+      const bcRect = container.getBoundingClientRect();
+      const bgRect = desktopBg.getBoundingClientRect();
+      const cw = container.clientWidth;
+      const bgW = bgRect.width;
+      const bgH = bgRect.height;
+      const offX = bcRect.left + borderL - bgRect.left;
+      const offY = bcRect.top + borderT - bgRect.top;
 
-      const cardX = cardRatio * 100;
-      hero.style.setProperty("--card-x", `${cardX}%`);
-      hero.style.setProperty("--card-y", `${cardY}%`);
+      const toBg = (xPct: number, yPct: number) => ({
+        x: ((offX + cw * xPct / 100) / bgW) * 100,
+        y: ((offY + ch * yPct / 100) / bgH) * 100,
+      });
+
+      const tb = toBg(((cw - tbFromRight) / cw) * 100, tbY);
+      hero.style.setProperty("--tb-x", `${tb.x}%`);
+      hero.style.setProperty("--tb-y", `${tb.y}%`);
+
+      const card = toBg(cardRatio * 100, cardY);
+      hero.style.setProperty("--card-x", `${card.x}%`);
+      hero.style.setProperty("--card-y", `${card.y}%`);
 
       if (padMeasure) {
-        hero.style.setProperty("--pad-x", `${((cw - padMeasure.fromRight) / cw) * 100}%`);
-        hero.style.setProperty("--pad-y", `${padMeasure.y}%`);
+        const pad = toBg(((cw - padMeasure.fromRight) / cw) * 100, padMeasure.y);
+        hero.style.setProperty("--pad-x", `${pad.x}%`);
+        hero.style.setProperty("--pad-y", `${pad.y}%`);
       }
       if (radMeasure) {
-        hero.style.setProperty("--rad-x", `${((cw - radMeasure.fromRight) / cw) * 100}%`);
-        hero.style.setProperty("--rad-y", `${radMeasure.y}%`);
+        const rad = toBg(((cw - radMeasure.fromRight) / cw) * 100, radMeasure.y);
+        hero.style.setProperty("--rad-x", `${rad.x}%`);
+        hero.style.setProperty("--rad-y", `${rad.y}%`);
+      }
+
+      // Dock spacer center — cursor clicks here to trigger genie
+      if (dockThumb) {
+        const dr = dockThumb.getBoundingClientRect();
+        hero.style.setProperty("--dock-x", `${((dr.left + dr.width / 2 - bgRect.left) / bgW) * 100}%`);
+        hero.style.setProperty("--dock-y", `${((dr.top + dr.height / 2 - bgRect.top) / bgH) * 100}%`);
       }
 
       hero.style.setProperty("--genie-dx", genieDx);
       hero.style.setProperty("--genie-dy", genieDy);
       hero.style.setProperty("--genie-scale", genieScale);
+
     };
 
-    apply(cw0);
+    apply();
 
-    const onResize = () => apply(container.clientWidth);
+    const onResize = () => apply();
     window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("resize", onResize);
