@@ -599,28 +599,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Compatibility ── */}
-        <section className="section" id="compatibility">
-          <h2 className="section-heading">Works with your stack</h2>
-          <p className="section-desc">
-            No config files. No build plugins. Drop one component in and go.
-          </p>
-          <div className="compat-grid">
-            <div className="compat-group">
-              <span className="compat-label">Frameworks</span>
-              <span className="compat-list">Next.js · Vite · Remix</span>
-            </div>
-            <div className="compat-group">
-              <span className="compat-label">Styling</span>
-              <span className="compat-list">Tailwind CSS · CSS Modules · Plain CSS</span>
-            </div>
-            <div className="compat-group">
-              <span className="compat-label">AI Tools</span>
-              <span className="compat-list">Claude Code · Cursor · Any MCP client</span>
-            </div>
-          </div>
-        </section>
-
         {/* ── Install ── */}
         <section className="section" id="install">
           <h2 className="section-heading">Get started</h2>
@@ -669,6 +647,9 @@ export default function Home() {
             </div>
           </div>
 
+          <p className="install-compat">
+            Works with Next.js, Vite, and Remix. Tailwind, CSS Modules, and plain CSS. Claude Code and Cursor via MCP.
+          </p>
         </section>
 
         {/* ── FAQ ── */}
