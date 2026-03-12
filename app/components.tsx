@@ -242,21 +242,21 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     const genieDocked = `translate(${dxVal.toFixed(2)}px, ${dyVal.toFixed(2)}px) scale(${scVal})`;
 
     let kf = '@keyframes mock-terminal-toggle {\n';
-    kf += `  0%, 55.9% { transform: ${genieDocked}; clip-path: ${genieRect}; }\n`;
+    kf += `  0%, 53.9% { transform: ${genieDocked}; clip-path: ${genieRect}; }\n`;
 
     for (let i = 0; i <= GF; i++) {
       const gp = 1 - i / GF;
-      const pct = (56 + (i / GF) * 4).toFixed(2);
-      kf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.4) / 0.6))}; clip-path: ${geniePoly(Math.min(1, gp / 0.5))}; }\n`;
+      const pct = (54 + (i / GF) * 3).toFixed(2);
+      kf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))}; clip-path: ${geniePoly(Math.min(1, gp / 0.4))}; }\n`;
     }
 
     for (let i = 0; i <= GF; i++) {
       const gp = i / GF;
-      const pct = (91 + (i / GF) * 4).toFixed(2);
-      kf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.4) / 0.6))}; clip-path: ${geniePoly(Math.min(1, gp / 0.5))}; }\n`;
+      const pct = (89 + (i / GF) * 3).toFixed(2);
+      kf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))}; clip-path: ${geniePoly(Math.min(1, gp / 0.4))}; }\n`;
     }
 
-    kf += `  95.1%, 100% { transform: ${genieDocked}; clip-path: ${genieRect}; }\n`;
+    kf += `  92.1%, 100% { transform: ${genieDocked}; clip-path: ${genieRect}; }\n`;
     kf += '}';
 
     let genieStyleEl = document.querySelector('style[data-genie]') as HTMLStyleElement;
