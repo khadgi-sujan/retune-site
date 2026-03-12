@@ -62,6 +62,24 @@ export function FaqItem({ question, children }: { question: string; children: Re
   );
 }
 
+export function MenuBarTime() {
+  const [time, setTime] = useState("");
+  useEffect(() => {
+    const fmt = () => {
+      const d = new Date();
+      let h = d.getHours();
+      const m = d.getMinutes().toString().padStart(2, "0");
+      const ampm = h >= 12 ? "PM" : "AM";
+      h = h % 12 || 12;
+      setTime(`${h}:${m} ${ampm}`);
+    };
+    fmt();
+    const id = setInterval(fmt, 60000);
+    return () => clearInterval(id);
+  }, []);
+  return <span className="menu-bar-time">{time}</span>;
+}
+
 export function TryItButton() {
   return (
     <button
@@ -331,6 +349,38 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     };
 
     apply();
+
+    // Detect wallpaper brightness and set menu bar color
+    if (desktopBg) {
+      const bgStyle = getComputedStyle(desktopBg);
+      const bgUrl = bgStyle.backgroundImage.match(/url\(["']?(.+?)["']?\)/)?.[1];
+      if (bgUrl) {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const w = 100;
+          const h = Math.round((img.height / img.width) * w);
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return;
+          ctx.drawImage(img, 0, 0, w, h);
+          // Sample top 10% strip where menu bar sits
+          const strip = ctx.getImageData(0, 0, w, Math.max(1, Math.round(h * 0.1)));
+          let sum = 0;
+          for (let i = 0; i < strip.data.length; i += 4) {
+            sum += strip.data[i] * 0.299 + strip.data[i + 1] * 0.587 + strip.data[i + 2] * 0.114;
+          }
+          const avg = sum / (strip.data.length / 4);
+          const menuBar = desktopBg.querySelector(".menu-bar") as HTMLElement;
+          if (menuBar) {
+            menuBar.setAttribute("data-theme", avg > 128 ? "light" : "dark");
+          }
+        };
+        img.src = bgUrl;
+      }
+    }
 
     const onResize = () => apply();
     window.addEventListener("resize", onResize);

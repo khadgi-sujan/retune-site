@@ -6,6 +6,7 @@ import {
   TryItButton,
   HeroCursorPositioner,
   Sidebar,
+  MenuBarTime,
 } from "./components";
 
 const retuneVersion = process.env.RETUNE_VERSION ?? "0.0.0";
@@ -36,6 +37,29 @@ export default function Home() {
 
           <HeroCursorPositioner>
             <div className="desktop-bg" aria-hidden="true">
+            {/* macOS menu bar */}
+            <div className="menu-bar">
+              <div className="menu-bar-left menu-bar-safari-ctx">
+                <svg className="menu-bar-apple" width="10" height="12" viewBox="0 0 17 20" fill="currentColor"><path d="M12.15 0c.09.95-.28 1.9-.82 2.58-.57.68-1.47 1.2-2.36 1.13-.1-.92.33-1.88.85-2.5C10.38.53 11.38.05 12.15 0zm3.08 6.83c-.08.04-1.87 1.08-1.85 3.22.02 2.56 2.24 3.44 2.27 3.46-.02.06-.35 1.22-1.17 2.42-.7 1.04-1.43 2.08-2.58 2.1-1.12.02-1.49-.67-2.77-.67-1.29 0-1.69.65-2.75.69-1.11.04-1.95-1.12-2.66-2.16-1.45-2.12-2.56-5.98-1.07-8.59.74-1.29 2.05-2.11 3.48-2.13 1.09-.02 2.11.73 2.77.73.67 0 1.92-.9 3.23-.77.55.02 2.1.22 3.09 1.7z"/></svg>
+                <span className="menu-bar-app">Safari</span>
+                <span className="menu-bar-item">File</span>
+                <span className="menu-bar-item">Edit</span>
+                <span className="menu-bar-item">View</span>
+              </div>
+              <div className="menu-bar-left menu-bar-terminal-ctx">
+                <svg className="menu-bar-apple" width="10" height="12" viewBox="0 0 17 20" fill="currentColor"><path d="M12.15 0c.09.95-.28 1.9-.82 2.58-.57.68-1.47 1.2-2.36 1.13-.1-.92.33-1.88.85-2.5C10.38.53 11.38.05 12.15 0zm3.08 6.83c-.08.04-1.87 1.08-1.85 3.22.02 2.56 2.24 3.44 2.27 3.46-.02.06-.35 1.22-1.17 2.42-.7 1.04-1.43 2.08-2.58 2.1-1.12.02-1.49-.67-2.77-.67-1.29 0-1.69.65-2.75.69-1.11.04-1.95-1.12-2.66-2.16-1.45-2.12-2.56-5.98-1.07-8.59.74-1.29 2.05-2.11 3.48-2.13 1.09-.02 2.11.73 2.77.73.67 0 1.92-.9 3.23-.77.55.02 2.1.22 3.09 1.7z"/></svg>
+                <span className="menu-bar-app">Terminal</span>
+                <span className="menu-bar-item">Shell</span>
+                <span className="menu-bar-item">Edit</span>
+                <span className="menu-bar-item">View</span>
+                <span className="menu-bar-item">Window</span>
+              </div>
+              <div className="menu-bar-right">
+                <svg className="menu-bar-icon" width="13" height="10" viewBox="0 0 16 12" fill="currentColor"><path d="M8 11.5a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5z"/><path d="M4.93 7.89a4.48 4.48 0 0 1 6.14 0 .75.75 0 0 0 1.03-1.09 5.98 5.98 0 0 0-8.2 0 .75.75 0 1 0 1.03 1.09z"/><path d="M2.1 5.06a8.46 8.46 0 0 1 11.8 0 .75.75 0 1 0 1.05-1.07 9.96 9.96 0 0 0-13.9 0A.75.75 0 1 0 2.1 5.06z"/></svg>
+                <svg className="menu-bar-icon menu-bar-battery" width="18" height="9" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="currentColor" strokeWidth="1" fill="none"/><rect x="22" y="3.5" width="2.5" height="5" rx="1" fill="currentColor" opacity="0.4"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="currentColor"/></svg>
+                <MenuBarTime />
+              </div>
+            </div>
             <div className="browser-chrome">
               <div className="browser-dots">
                 <span className="dot dot-red" />

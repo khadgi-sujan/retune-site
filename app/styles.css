@@ -348,6 +348,89 @@ p { text-wrap: pretty; }
   position: relative;
 }
 
+/* macOS Tahoe menu bar — transparent, no frosted glass */
+.menu-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.06) 40%, transparent 100%);
+  z-index: 5;
+  font-size: 8.5px;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+}
+
+.menu-bar-left,
+.menu-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-bar-apple {
+  opacity: 0.9;
+  color: white;
+}
+
+.menu-bar-app {
+  font-weight: 600;
+}
+
+.menu-bar-item {
+  opacity: 0.75;
+}
+
+.menu-bar-icon {
+  opacity: 0.75;
+  width: 11px;
+  height: 11px;
+  color: white;
+}
+
+.menu-bar-time {
+  font-variant-numeric: tabular-nums;
+}
+
+.menu-bar-terminal-ctx {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  height: 100%;
+  opacity: 0;
+  animation: menu-bar-terminal-toggle 10s step-end infinite;
+}
+
+.menu-bar-safari-ctx {
+  animation: menu-bar-safari-toggle 10s step-end infinite;
+}
+
+@keyframes menu-bar-safari-toggle {
+  0% { opacity: 1; }
+  57% { opacity: 0; }
+  90% { opacity: 1; }
+}
+
+@keyframes menu-bar-terminal-toggle {
+  0% { opacity: 0; }
+  57% { opacity: 1; }
+  90% { opacity: 0; }
+}
+
+/* Adaptive: light wallpaper = dark text */
+.menu-bar[data-theme="light"] {
+  color: rgba(0, 0, 0, 0.85);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.60) 40%, transparent 100%);
+}
+.menu-bar[data-theme="light"] .menu-bar-apple,
+.menu-bar[data-theme="light"] .menu-bar-icon { color: rgba(0, 0, 0, 0.85); }
+
 /* macOS dock */
 .mock-dock {
   position: absolute;
@@ -2682,6 +2765,7 @@ p { text-wrap: pretty; }
 
 @media (max-width: 847px) {
   .desktop-bg { aspect-ratio: 10 / 8; padding: 0; max-width: 640px; margin: 0 auto; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.08); }
+  .menu-bar { display: none; }
   .mock-dock { display: none; }
   .cursor-pointer { animation-name: mock-cursor-move-mobile; }
 }
