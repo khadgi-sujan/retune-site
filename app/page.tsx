@@ -7,6 +7,7 @@ import {
   HeroCursorPositioner,
   Sidebar,
   MenuBarTime,
+  CalendarIcon,
 } from "./components";
 
 const retuneVersion = process.env.RETUNE_VERSION ?? "0.0.0";
@@ -505,7 +506,7 @@ export default function Home() {
                 <img className="mock-dock-icon" src="/dock/terminal.png" alt="" />
                 <img className="mock-dock-icon" src="/dock/safari.png" alt="" />
                 <img className="mock-dock-icon" src="/dock/settings.png" alt="" />
-                <img className="mock-dock-icon" src="/dock/calendar.png" alt="" />
+                <CalendarIcon />
                 <img className="mock-dock-icon" src="/dock/notes.png" alt="" />
                 <div className="mock-dock-sep" />
                 <div className="mock-dock-spacer" />

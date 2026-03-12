@@ -463,6 +463,53 @@ p { text-wrap: pretty; }
   display: block;
 }
 
+.dock-calendar-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dock-calendar-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.dock-calendar-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding-top: 1px;
+  gap: 0px;
+  box-sizing: border-box;
+}
+
+.dock-calendar-day {
+  font-size: 4px;
+  font-weight: 700;
+  color: #fc3d39;
+  letter-spacing: -0.3px;
+  text-transform: none;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+.dock-calendar-num {
+  font-size: 12px;
+  font-weight: 400;
+  color: #1d1d1f;
+  line-height: 1;
+  letter-spacing: -0.6px;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
 /* Dots row — sits below the glass pill, aligned to running apps */
 .mock-dock-dots {
   position: absolute;

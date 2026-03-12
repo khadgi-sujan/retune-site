@@ -62,6 +62,74 @@ export function FaqItem({ question, children }: { question: string; children: Re
   );
 }
 
+export function CalendarIcon() {
+  const [date, setDate] = useState<{ day: string; num: number } | null>(null);
+  useEffect(() => {
+    const d = new Date();
+    setDate({
+      day: d.toLocaleDateString("en-US", { weekday: "short" }),
+      num: d.getDate(),
+    });
+  }, []);
+  if (!date) return <div className="mock-dock-icon dock-calendar-wrap" />;
+  return (
+    <div className="mock-dock-icon dock-calendar-wrap">
+      <svg className="dock-calendar-bg" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="cal-f0" x="86" y="96" width="851.461" height="851.461" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+            <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feOffset dy="11"/>
+            <feGaussianBlur stdDeviation="11"/>
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.28 0"/>
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+          </filter>
+          <filter id="cal-f1" x="97.431" y="96.4307" width="828.6" height="828.6" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+            <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+            <feGaussianBlur stdDeviation="1.15" result="effect1_foregroundBlur"/>
+          </filter>
+          <filter id="cal-f2" x="97.1" y="96.1" width="829.261" height="832.961" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+            <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feOffset dy="11"/>
+            <feGaussianBlur stdDeviation="1.8"/>
+            <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.28 0"/>
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+            <feGaussianBlur stdDeviation="5.45" result="effect2_foregroundBlur"/>
+          </filter>
+          <linearGradient id="cal-g0" x1="267.605" y1="252.381" x2="733.929" y2="856.618" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#EFEFEF" stopOpacity="0.76"/>
+            <stop offset="0.327" stopColor="white"/>
+            <stop offset="0.779" stopColor="#F5F5F5"/>
+            <stop offset="1" stopColor="white" stopOpacity="0.52"/>
+          </linearGradient>
+          <linearGradient id="cal-g1" x1="432.113" y1="253.108" x2="811.655" y2="880.091" gradientUnits="userSpaceOnUse">
+            <stop stopColor="white"/>
+            <stop offset="0.828" stopColor="#F5F5F5"/>
+            <stop offset="1" stopColor="white" stopOpacity="0.54"/>
+          </linearGradient>
+        </defs>
+        <g filter="url(#cal-f0)">
+          <path d="M701.461 107H322C203.811 107 108 202.811 108 321V700.461C108 818.65 203.811 914.461 322 914.461H701.461C819.65 914.461 915.461 818.65 915.461 700.461V321C915.461 202.811 819.65 107 701.461 107Z" fill="white" fillOpacity="0.14"/>
+        </g>
+        <g filter="url(#cal-f1)">
+          <path d="M709.731 109.231H313.731C201.341 109.231 110.231 200.341 110.231 312.731V708.731C110.231 821.121 201.341 912.231 313.731 912.231H709.731C822.121 912.231 913.231 821.121 913.231 708.731V312.731C913.231 200.341 822.121 109.231 709.731 109.231Z" stroke="url(#cal-g0)" strokeWidth="21" fill="none"/>
+        </g>
+        <g filter="url(#cal-f2)">
+          <path d="M701.461 107H322C203.811 107 108 202.811 108 321V700.461C108 818.65 203.811 914.461 322 914.461H701.461C819.65 914.461 915.461 818.65 915.461 700.461V321C915.461 202.811 819.65 107 701.461 107Z" fill="url(#cal-g1)"/>
+        </g>
+      </svg>
+      <div className="dock-calendar-content">
+        <span className="dock-calendar-day">{date.day}</span>
+        <span className="dock-calendar-num">{date.num}</span>
+      </div>
+    </div>
+  );
+}
+
 export function MenuBarTime() {
   const [time, setTime] = useState("");
   useEffect(() => {
