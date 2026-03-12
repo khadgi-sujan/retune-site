@@ -61,6 +61,7 @@ export default function Home() {
                 <MenuBarTime />
               </div>
             </div>
+            <div className="browser-window">
             <div className="browser-chrome">
               <div className="browser-dots">
                 <span className="dot dot-red" />
@@ -494,6 +495,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            </div>
             {/* Animated cursor — in desktop-bg so it can reach the dock */}
             <div className="mock-cursor">
               <svg className="cursor-pointer" width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
@@ -534,9 +536,9 @@ export default function Home() {
                     <rect x="3" y="0" width="12" height="2"/>
                     {/* Eye row */}
                     <rect x="3" y="2" width="2" height="2"/>
-                    <rect x="5" y="2" width="1" height="2" fill="currentColor"/>
+                    <rect x="5" y="2" width="1" height="2" fill="#1c1917"/>
                     <rect x="6" y="2" width="6" height="2"/>
-                    <rect x="12" y="2" width="1" height="2" fill="currentColor"/>
+                    <rect x="12" y="2" width="1" height="2" fill="#1c1917"/>
                     <rect x="13" y="2" width="2" height="2"/>
                     {/* Body (wider) */}
                     <rect x="2" y="4" width="15" height="2"/>

@@ -214,8 +214,25 @@ p { text-wrap: pretty; }
   gap: 2px;
   padding: 2px;
   background: var(--color-bg-input);
-  border-radius: 6px;
+  border-radius: 999px;
   margin-top: auto;
+  align-self: flex-start;
+  width: auto;
+  position: relative;
+}
+
+.theme-toggle::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 40px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--color-bg-surface);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  transform: translateX(calc(var(--active-idx) * (40px + 2px)));
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .theme-toggle button {
@@ -223,22 +240,24 @@ p { text-wrap: pretty; }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 24px;
-  border-radius: 4px;
-  color: var(--color-text-tertiary);
+  width: 40px;
+  height: 28px;
+  border-radius: 999px;
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: color 150ms ease, background 150ms ease;
+  position: relative;
+  z-index: 1;
+  opacity: 0.3;
+  transition: opacity 200ms ease;
 }
 
 .theme-toggle button:hover {
-  color: var(--color-text-secondary);
+  opacity: 0.5;
 }
 
 .theme-toggle button.active {
-  background: var(--color-bg-surface);
   color: var(--color-text-primary);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  opacity: 1;
 }
 
 /* ── Content ── */
@@ -417,7 +436,8 @@ p { text-wrap: pretty; }
   display: flex;
   flex-direction: column;
   background: url('https://images.unsplash.com/photo-1578926375605-eaf7559b1458?w=1200&q=80&fm=webp') center / cover no-repeat;
-  overflow: hidden;
+  overflow: clip;
+  overflow-clip-margin: 30px;
   position: relative;
 }
 
@@ -673,6 +693,17 @@ p { text-wrap: pretty; }
   --genie-scale: 0.1;
 }
 
+.browser-window {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0px;
+  max-height: 420px;
+  border-radius: 8px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.15), 0px 6px 20px 4px rgba(0, 0, 0, 0.15);
+}
+
 .browser-chrome {
   background: #f6f6f6;
   border-radius: 8px 8px 0 0;
@@ -681,19 +712,6 @@ p { text-wrap: pretty; }
   align-items: center;
   gap: 8px;
   border: none;
-  position: relative;
-  z-index: 2;
-}
-
-.browser-chrome::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  bottom: -999px;
-  border-radius: 8px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(0, 0, 0, 0.12);
-  pointer-events: none;
-  z-index: -1;
 }
 
 .browser-dots {
@@ -795,7 +813,6 @@ p { text-wrap: pretty; }
   flex: 1;
   overflow: hidden;
   position: relative;
-  z-index: 2;
 }
 
 /* Mock layout — landing page */
@@ -2016,7 +2033,7 @@ p { text-wrap: pretty; }
   line-height: 1.7;
   color: #1c1917;
   z-index: 10;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.15), 0px 6px 20px 4px rgba(0, 0, 0, 0.15);
   /* Genie: JS sets --genie-dx/dy (translation to dock) and --genie-scale (thumbnail/terminal ratio) */
   will-change: transform, clip-path;
   transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
@@ -2918,10 +2935,12 @@ p { text-wrap: pretty; }
 }
 
 @media (max-width: 847px) {
-  .desktop-bg { aspect-ratio: 10 / 8; padding: 0; max-width: 640px; margin: 0 auto; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.08); }
+  .desktop-bg { aspect-ratio: unset; padding: 0; max-width: 640px; margin: 0 auto; background: none; overflow-clip-margin: 0px; }
+  .desktop-bg::before { display: none; }
+  .browser-window { max-height: 420px; }
   .menu-bar { display: none; }
   .mock-dock { display: none; }
-  .cursor-pointer { animation-name: mock-cursor-move-mobile; }
+  .mock-cursor { display: none; }
 }
 
 @media (max-width: 768px) {
@@ -3042,8 +3061,8 @@ p { text-wrap: pretty; }
   .browser-chrome {
     background: #2d2d2d;
   }
-  .browser-chrome::before {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(255, 255, 255, 0.08);
+  .browser-window {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 0 2px rgb(27, 25, 23), 0px 6px 20px 4px rgba(0, 0, 0, 0.26);
   }
   .safari-pill {
     background: rgba(255, 255, 255, 0.08);
@@ -3200,7 +3219,7 @@ p { text-wrap: pretty; }
   .mock-terminal {
     background: #0c0a09;
     color: #d6d3d1;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 0 2px rgba(0, 0, 0, 0.4), 0px 6px 20px 4px rgba(0, 0, 0, 0.26);
   }
   .mock-term-titlebar {
     background: #1c1917;
@@ -3239,9 +3258,9 @@ p { text-wrap: pretty; }
   .output-new { color: #34d399; }
   .output-hint { color: #34d399; }
 
-  /* Desktop bg shadow for mobile */
+  /* Browser window shadow for mobile */
   @media (max-width: 847px) {
-    .desktop-bg {
+    .browser-window {
       box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.3);
     }
   }
