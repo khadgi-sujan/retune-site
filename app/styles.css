@@ -573,6 +573,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   /* no page scroll — target cards are already in view */
 }
 
+
 /* Nav */
 .mock-nav {
   display: flex;
@@ -586,8 +587,6 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-nav-logo {
   width: 14px;
   height: 14px;
-  background: #1c1917;
-  border-radius: 999px;
   flex-shrink: 0;
 }
 
@@ -611,7 +610,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .mock-nav-cta {
   padding: 3px 8px;
-  background: #1c1917;
+  background: #00983F;
   color: #fff;
   border-radius: 4px;
   flex-shrink: 0;
@@ -632,12 +631,12 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-hero-badge {
   font-size: 5px;
   font-weight: 500;
-  color: #6366f1;
-  background: #eef2ff;
-  border: 1px solid #e0e7ff;
+  color: #00983F;
+  background: rgba(0, 152, 63, 0.10);
+  border: none;
   border-radius: 999px;
-  padding: 2px 8px;
-  margin-bottom: 10px;
+  padding: 4px 7px;
+  margin-bottom: 8px;
 }
 
 .mock-hero-heading {
@@ -675,8 +674,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 
 .mock-hero-btn.primary {
-  background: #1c1917;
-  border-color: #1c1917;
+  background: #00983F;
+  border-color: #00983F;
   color: #fff;
 }
 
@@ -781,7 +780,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .mock-chart-bar {
   flex: 1;
-  background: linear-gradient(180deg, #3b82f6 0%, #93c5fd 100%);
+  background: linear-gradient(180deg, #00983F 0%, #4cd886 100%);
   border-radius: 2px 2px 0 0;
   min-height: 4px;
 }

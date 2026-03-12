@@ -71,8 +71,8 @@ export default function Home() {
               <div className="mock-main">
                 {/* Nav */}
                 <div className="mock-nav">
-                  <div className="mock-nav-logo" />
-                  <span className="mock-nav-brand">Acme</span>
+                  <svg className="mock-nav-logo" width="14" height="14" viewBox="0 0 32 32" fill="none"><path d="M19.2002 0C23.6805 0 25.9206.0001 27.6318.872 29.1371 1.639 30.3609 2.863 31.1279 4.368 31.9999 6.08 32 8.32 32 12.8V19.2c0 4.48 0 6.72-.872 8.432a7.99 7.99 0 01-3.496 3.496C25.92 32 23.68 32 19.2 32H12.8C8.32 32 6.08 32 4.368 31.128a7.99 7.99 0 01-3.496-3.496C0 25.92 0 23.68 0 19.2V12.8C0 8.32 0 6.08.872 4.368A7.99 7.99 0 014.368.872C6.08 0 8.32 0 12.8 0h6.4zM25.977 4.392c.347-.309.147-.8-.297-.663C20.17 5.428 8.932 16.296 5.469 26.878c-.155.473.417.819.799.498C12.962 21.747 16.678 23.5 19 17c2.37-6.637 1.145-7.43 6.977-12.608z" fill="#00983F"/></svg>
+                  <span className="mock-nav-brand">Pied Piper</span>
                   <div className="mock-nav-links">
                     <span className="mock-nav-link">Features</span>
                     <span className="mock-nav-link">Pricing</span>
@@ -82,44 +82,44 @@ export default function Home() {
                 </div>
                 {/* Hero */}
                 <div className="mock-hero">
-                  <div className="mock-hero-badge">New: AI Workflows</div>
-                  <h2 className="mock-hero-heading">Build better products, ship them faster</h2>
-                  <p className="mock-hero-sub">The modern platform for teams who move fast. Start free, scale when you're ready.</p>
+                  <div className="mock-hero-badge">New: Middle Out</div>
+                  <h2 className="mock-hero-heading">A better internet, through compression</h2>
+                  <p className="mock-hero-sub">Lossless compression with a Weissman score of 5.2. Making the world a better place.</p>
                   <div className="mock-hero-buttons">
-                    <div className="mock-hero-btn primary">Get started</div>
-                    <div className="mock-hero-btn">Learn more</div>
+                    <div className="mock-hero-btn primary">Compress now</div>
+                    <div className="mock-hero-btn">Watch demo</div>
                   </div>
                 </div>
                 {/* Logos */}
                 <div className="mock-logos">
-                  <span className="mock-logos-label">Trusted by teams at</span>
+                  <span className="mock-logos-label">Backed by</span>
                   <div className="mock-logos-row">
-                    <span className="mock-logo">Wavelength</span>
-                    <span className="mock-logo">Koda</span>
-                    <span className="mock-logo">Novexa</span>
-                    <span className="mock-logo">Arcline</span>
-                    <span className="mock-logo">Pylon</span>
+                    <span className="mock-logo">Raviga Capital</span>
+                    <span className="mock-logo">Bream-Hall</span>
+                    <span className="mock-logo">Coleman Blair</span>
+                    <span className="mock-logo">Laurie Bream</span>
                   </div>
                 </div>
                 {/* Bento feature grid */}
                 <div className="mock-features-header">
-                  <h3 className="mock-section-title">Everything you need to ship</h3>
-                  <p className="mock-section-sub">Powerful features to help your team move faster</p>
+                  <h3 className="mock-section-title">Everything you need to compress</h3>
+                  <p className="mock-section-sub">Middle out compression for the decentralized internet</p>
                 </div>
                 <div className="mock-bento">
                   <div className="mock-bento-slot">
                     <div className="mock-bento-card mock-card-target">
-                      <span className="mock-bento-title">Analytics</span>
-                      <span className="mock-bento-sub">Real-time metrics and insights</span>
+                      <span className="mock-bento-title">Weissman Score</span>
+                      <span className="mock-bento-sub">Real-time compression metrics</span>
                       <div className="mock-bento-visual">
                         <div className="mock-bento-chart">
-                          <div className="mock-chart-bar" style={{height: '40%'}} />
-                          <div className="mock-chart-bar" style={{height: '65%'}} />
-                          <div className="mock-chart-bar" style={{height: '45%'}} />
-                          <div className="mock-chart-bar" style={{height: '80%'}} />
-                          <div className="mock-chart-bar" style={{height: '60%'}} />
-                          <div className="mock-chart-bar" style={{height: '90%'}} />
-                          <div className="mock-chart-bar" style={{height: '70%'}} />
+                          {/* Nucleus: 2.1 → PP iterations → 5.2 at Disrupt */}
+                          <div className="mock-chart-bar" style={{height: '38%'}} />
+                          <div className="mock-chart-bar" style={{height: '42%'}} />
+                          <div className="mock-chart-bar" style={{height: '41%'}} />
+                          <div className="mock-chart-bar" style={{height: '54%'}} />
+                          <div className="mock-chart-bar" style={{height: '58%'}} />
+                          <div className="mock-chart-bar" style={{height: '72%'}} />
+                          <div className="mock-chart-bar" style={{height: '98%'}} />
                         </div>
                       </div>
                     </div>
@@ -127,20 +127,20 @@ export default function Home() {
                     <div className="mock-selection-label">div.card 180×120</div>
                   </div>
                   <div className="mock-bento-card">
-                    <span className="mock-bento-title">Links</span>
-                    <span className="mock-bento-sub">Short links with tracking</span>
+                    <span className="mock-bento-title">Network</span>
+                    <span className="mock-bento-sub">Decentralized nodes</span>
                     <div className="mock-bento-visual">
                       <div className="mock-bento-links">
                         <div className="mock-link-row">
-                          <span className="mock-link-url">acme.co/launch</span>
+                          <span className="mock-link-url">piedpiper.com/download</span>
                           <span className="mock-link-count">2.4k</span>
                         </div>
                         <div className="mock-link-row">
-                          <span className="mock-link-url">acme.co/demo</span>
+                          <span className="mock-link-url">piedpiper.com/compress</span>
                           <span className="mock-link-count">1.8k</span>
                         </div>
                         <div className="mock-link-row">
-                          <span className="mock-link-url">acme.co/pricing</span>
+                          <span className="mock-link-url">piedpiper.com/pricing</span>
                           <span className="mock-link-count">956</span>
                         </div>
                       </div>
@@ -148,13 +148,13 @@ export default function Home() {
                   </div>
                   <div className="mock-bento-card">
                     <span className="mock-bento-title">API</span>
-                    <span className="mock-bento-sub">Developer-first platform</span>
+                    <span className="mock-bento-sub">Middle out SDK</span>
                     <div className="mock-bento-visual">
                       <div className="mock-bento-code">
-                        <div className="mock-code-line"><span className="mock-code-kw">const</span> res = <span className="mock-code-kw">await</span> acme</div>
-                        <div className="mock-code-line">  .<span className="mock-code-fn">analytics</span>.<span className="mock-code-fn">query</span>({"{"}</div>
-                        <div className="mock-code-line">    event: <span className="mock-code-str">"click"</span>,</div>
-                        <div className="mock-code-line">  {"}"})</div>
+                        <div className="mock-code-line"><span className="mock-code-kw">const</span> ratio = <span className="mock-code-fn">weissman</span>(5.2)</div>
+                        <div className="mock-code-line"><span className="mock-code-kw">if</span> (ratio {">"} nucleus) {"{"}</div>
+                        <div className="mock-code-line">  piedPiper.<span className="mock-code-fn">compress</span>(data)</div>
+                        <div className="mock-code-line">{"}"}</div>
                       </div>
                     </div>
                   </div>
@@ -162,48 +162,48 @@ export default function Home() {
                 {/* Stats row */}
                 <div className="mock-stats">
                   <div className="mock-stat">
-                    <span className="mock-stat-num">10k+</span>
-                    <span className="mock-stat-label">Teams</span>
+                    <span className="mock-stat-num">5.2</span>
+                    <span className="mock-stat-label">Weissman</span>
                   </div>
                   <div className="mock-stat">
                     <span className="mock-stat-num">99.9%</span>
-                    <span className="mock-stat-label">Uptime</span>
+                    <span className="mock-stat-label">Lossless</span>
                   </div>
                   <div className="mock-stat">
-                    <span className="mock-stat-num">2M+</span>
-                    <span className="mock-stat-label">Events / day</span>
+                    <span className="mock-stat-num">8B+</span>
+                    <span className="mock-stat-label">Files / day</span>
                   </div>
                   <div className="mock-stat">
-                    <span className="mock-stat-num">150ms</span>
-                    <span className="mock-stat-label">Avg latency</span>
+                    <span className="mock-stat-num">3ms</span>
+                    <span className="mock-stat-label">Compress time</span>
                   </div>
                 </div>
                 {/* Second bento row — wider cards */}
                 <div className="mock-bento mock-bento-2col">
                   <div className="mock-bento-card">
-                    <span className="mock-bento-title">Integrations</span>
-                    <span className="mock-bento-sub">Connect with 50+ tools your team already uses</span>
+                    <span className="mock-bento-title">Platform</span>
+                    <span className="mock-bento-sub">The new decentralized internet</span>
                     <div className="mock-bento-visual">
                       <div className="mock-integrations">
-                        <div className="mock-integration-pill">Slack</div>
-                        <div className="mock-integration-pill">GitHub</div>
-                        <div className="mock-integration-pill">Figma</div>
-                        <div className="mock-integration-pill">Linear</div>
-                        <div className="mock-integration-pill">Notion</div>
-                        <div className="mock-integration-pill">Vercel</div>
+                        <div className="mock-integration-pill">PiperNet</div>
+                        <div className="mock-integration-pill">PiperChat</div>
+                        <div className="mock-integration-pill">PiperStore</div>
+                        <div className="mock-integration-pill">SeeFood</div>
+                        <div className="mock-integration-pill">PiperCoin</div>
+                        <div className="mock-integration-pill">Octopipe</div>
                       </div>
                     </div>
                   </div>
                   <div className="mock-bento-card">
-                    <span className="mock-bento-title">Team Collaboration</span>
-                    <span className="mock-bento-sub">Real-time multiplayer editing for your whole team</span>
+                    <span className="mock-bento-title">Team</span>
+                    <span className="mock-bento-sub">The guys who built the new internet</span>
                     <div className="mock-bento-visual">
                       <div className="mock-avatars">
-                        <div className="mock-avatar" style={{background: '#3b82f6'}}>S</div>
-                        <div className="mock-avatar" style={{background: '#8b5cf6'}}>A</div>
-                        <div className="mock-avatar" style={{background: '#ec4899'}}>M</div>
+                        <div className="mock-avatar" style={{background: '#3b82f6'}}>R</div>
+                        <div className="mock-avatar" style={{background: '#8b5cf6'}}>G</div>
+                        <div className="mock-avatar" style={{background: '#ec4899'}}>D</div>
                         <div className="mock-avatar" style={{background: '#f59e0b'}}>J</div>
-                        <div className="mock-avatar mock-avatar-more">+5</div>
+                        <div className="mock-avatar mock-avatar-more">+E</div>
                       </div>
                     </div>
                   </div>
@@ -211,43 +211,43 @@ export default function Home() {
                 {/* Testimonials */}
                 <div className="mock-testimonials">
                   <div className="mock-testimonial">
-                    <p className="mock-testimonial-text">"Acme cut our deploy time in half. The analytics alone are worth it."</p>
+                    <p className="mock-testimonial-text">"This is the best compression I have ever seen. This guy fucks."</p>
                     <div className="mock-testimonial-author">
                       <div className="mock-testimonial-avatar" style={{background: '#3b82f6'}} />
                       <div>
-                        <span className="mock-testimonial-name">Sarah Chen</span>
-                        <span className="mock-testimonial-role">CTO, Wavelength</span>
+                        <span className="mock-testimonial-name">Russ Hanneman</span>
+                        <span className="mock-testimonial-role">Billionaire, Tres Commas</span>
                       </div>
                     </div>
                   </div>
                   <div className="mock-testimonial">
-                    <p className="mock-testimonial-text">"The API is incredibly well-designed. Our team was productive on day one."</p>
+                    <p className="mock-testimonial-text">"I have been known to fuck myself."</p>
                     <div className="mock-testimonial-author">
                       <div className="mock-testimonial-avatar" style={{background: '#8b5cf6'}} />
                       <div>
-                        <span className="mock-testimonial-name">Alex Rivera</span>
-                        <span className="mock-testimonial-role">Eng Lead, Koda</span>
+                        <span className="mock-testimonial-name">Richard Hendricks</span>
+                        <span className="mock-testimonial-role">CEO, Pied Piper</span>
                       </div>
                     </div>
                   </div>
                   <div className="mock-testimonial">
-                    <p className="mock-testimonial-text">"Switched from three different tools. Acme does it all, beautifully."</p>
+                    <p className="mock-testimonial-text">"JIAN-YANG!"</p>
                     <div className="mock-testimonial-author">
                       <div className="mock-testimonial-avatar" style={{background: '#059669'}} />
                       <div>
-                        <span className="mock-testimonial-name">Priya Patel</span>
-                        <span className="mock-testimonial-role">PM, Novexa</span>
+                        <span className="mock-testimonial-name">Erlich Bachman</span>
+                        <span className="mock-testimonial-role">Visionary, Aviato</span>
                       </div>
                     </div>
                   </div>
                 </div>
                 {/* CTA section */}
                 <div className="mock-bottom-cta">
-                  <h3 className="mock-bottom-heading">Ready to get started?</h3>
-                  <p className="mock-bottom-sub">Free for individuals. Team plans for organizations.</p>
+                  <h3 className="mock-bottom-heading">Ready to compress?</h3>
+                  <p className="mock-bottom-sub">Free for individuals. This guy fucks.</p>
                   <div className="mock-hero-buttons">
-                    <div className="mock-hero-btn primary">Start for free</div>
-                    <div className="mock-hero-btn">Talk to sales</div>
+                    <div className="mock-hero-btn primary">Start compressing</div>
+                    <div className="mock-hero-btn">Talk to Jared</div>
                   </div>
                 </div>
                 {/* Footer */}
@@ -275,7 +275,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="mock-footer-bottom">
-                    <span className="mock-footer-copy">&copy; 2025 Acme Inc.</span>
+                    <span className="mock-footer-copy">&copy; 2025 Pied Piper Inc.</span>
                   </div>
                 </div>
               </div>
@@ -523,7 +523,7 @@ export default function Home() {
                   </svg>
                   <div className="mock-term-meta">
                     <span className="mock-term-badge">Claude Code</span>
-                    <span className="mock-term-dim">Opus 4.6 · /acme</span>
+                    <span className="mock-term-dim">Opus 4.6 · /piedpiper</span>
                   </div>
                 </div>
                 <div className="mock-terminal-line mock-term-line-2">
