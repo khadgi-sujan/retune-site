@@ -2201,6 +2201,35 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   .mock-val-after { animation: none; }
 }
 
+/* ── Pain Section ── */
+
+.pain-section {
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
+  padding: 48px 0 0;
+}
+
+.pain-statement {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #57534e;
+  margin: 0;
+}
+
+.pain-statement em {
+  font-style: italic;
+  color: #1c1917;
+}
+
+.pain-resolution {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #1c1917;
+  font-weight: 500;
+  margin: 16px 0 0;
+}
+
 /* ── Steps Grid ── */
 
 .steps-grid {
@@ -2349,6 +2378,43 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .code-keyword { color: #7c3aed; }
 .code-string { color: #059669; }
 .code-component { color: #0891b2; }
+
+/* ── Compatibility Grid ── */
+
+.compat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.compat-group {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.compat-group:not(:last-child) {
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.compat-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a8a29e;
+}
+
+.compat-list {
+  font-size: 14px;
+  color: #1c1917;
+  line-height: 1.6;
+}
 
 /* ── Install Steps ── */
 
@@ -2692,6 +2758,14 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   .section-desc { font-size: 13px; line-height: 20px; }
 
   .steps-grid { grid-template-columns: 1fr; }
+
+  .pain-section { padding-top: 32px; }
+  .pain-statement { font-size: 13px; }
+  .pain-resolution { font-size: 13px; }
+
+  .compat-grid { grid-template-columns: 1fr; }
+  .compat-group:not(:last-child) { border-right: none; border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+  .compat-group { padding: 16px 20px; }
 
   .install-steps { gap: 24px; }
   .install-step { flex-direction: column; gap: 8px; }

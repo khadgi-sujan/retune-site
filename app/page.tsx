@@ -26,13 +26,13 @@ export default function Home() {
             The visual layer for vibe coding.
           </h1>
           <p className="hero-sub">
-            Click any element in your running app, adjust spacing, colors, typography, and more, and your AI agent writes the changes to source. No more prompting for pixels.
+            Select any element in your running app. Adjust spacing, colors, typography, and see changes live. Your AI agent writes the exact values to source. No more prompting for pixels.
           </p>
           <div className="cta-row desktop-only">
             <TryItButton />
             <HeroInstallCopy />
           </div>
-          <p className="mobile-callout">Retune is a desktop tool — try it on a larger screen to see the live demo.</p>
+          <p className="mobile-callout">Retune is a desktop tool. Try it on a larger screen to see the live demo.</p>
 
           <HeroCursorPositioner>
             <div className="desktop-bg" aria-hidden="true">
@@ -544,29 +544,29 @@ export default function Home() {
           </HeroCursorPositioner>
         </section>
 
-        {/* ── How It Works ── */}
+{/* ── How It Works ── */}
         <section className="section" id="how-it-works">
           <h2 className="section-heading">How it works</h2>
           <p className="section-desc">
-            Three steps from visual change to committed code.
+            From visual tweak to committed code in seconds.
           </p>
           <div className="steps-grid">
             <div className="step-card">
               <h3 className="step-title">Select an element</h3>
               <p className="step-card-desc">
-                Click anything on your page — Retune identifies the component, its styles, and where it lives in code.
+                Click anything on your page. Retune identifies the component, its styles, and where it lives in your codebase.
               </p>
             </div>
             <div className="step-card">
               <h3 className="step-title">Tweak visually</h3>
               <p className="step-card-desc">
-                Adjust spacing, colors, typography, and layout. Changes preview instantly in the browser.
+                Adjust spacing, colors, typography, and layout in the browser. Changes preview instantly. What you see is what your agent gets.
               </p>
             </div>
             <div className="step-card">
-              <h3 className="step-title">Apply via AI</h3>
+              <h3 className="step-title">Your agent writes it</h3>
               <p className="step-card-desc">
-                Your AI tool (Claude Code, Cursor) picks up exact before/after values and applies them to your source files.
+                Retune sends structured before/after values to your AI tool via MCP. Exact properties, exact values. No interpretation needed.
               </p>
             </div>
           </div>
@@ -576,9 +576,8 @@ export default function Home() {
         <section className="section" id="output">
           <h2 className="section-heading">What your agent sees</h2>
           <p className="section-desc">
-            Not just what changed — exactly where to find it. Component names,
-            selector paths, styling approach (Tailwind, CSS Modules, plain CSS),
-            and exact values.
+            Not vague descriptions, structured data. Component names, selector paths,
+            styling approach, and exact before/after values your agent can act on immediately.
           </p>
           <div className="output-block">
             <div className="output-chrome">retune output</div>
@@ -596,6 +595,28 @@ export default function Home() {
               {"| "}<span className="output-prop">border-radius</span>{"  | "}<span className="output-old">8px</span>{"         | "}<span className="output-new">12px</span>{"        |"}{"\n"}
               {"| "}<span className="output-prop">font-size</span>{"      | "}<span className="output-old">14px</span>{"        | "}<span className="output-new">16px</span>{"        |"}{"\n\n"}
               <span className="output-hint">{"> Suggested Tailwind: px-8 py-4 rounded-xl text-base"}</span>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Compatibility ── */}
+        <section className="section" id="compatibility">
+          <h2 className="section-heading">Works with your stack</h2>
+          <p className="section-desc">
+            No config files. No build plugins. Drop one component in and go.
+          </p>
+          <div className="compat-grid">
+            <div className="compat-group">
+              <span className="compat-label">Frameworks</span>
+              <span className="compat-list">Next.js · Vite · Remix</span>
+            </div>
+            <div className="compat-group">
+              <span className="compat-label">Styling</span>
+              <span className="compat-list">Tailwind CSS · CSS Modules · Plain CSS</span>
+            </div>
+            <div className="compat-group">
+              <span className="compat-label">AI Tools</span>
+              <span className="compat-list">Claude Code · Cursor · Any MCP client</span>
             </div>
           </div>
         </section>
@@ -648,9 +669,6 @@ export default function Home() {
             </div>
           </div>
 
-          <p className="install-compat">
-            Next.js, Vite, and Remix. Tailwind, CSS Modules, and plain CSS. Claude Code and Cursor via MCP.
-          </p>
         </section>
 
         {/* ── FAQ ── */}
@@ -673,7 +691,7 @@ export default function Home() {
               Yes. Changes are previewed live in the browser regardless. If no MCP server is connected, you can copy the structured diff to your clipboard and paste it into any tool.
             </FaqItem>
             <FaqItem question="How does it detect my styling approach?">
-              It analyzes your actual stylesheet rules at runtime — not class names. It walks <code>document.styleSheets</code> to count CSS properties per rule and check selector complexity. Single-property, single-class rules are identified as utility CSS. This works for Tailwind, Bootstrap, Tachyons, UnoCSS, or any atomic framework without hardcoded patterns.
+              It analyzes your actual stylesheet rules at runtime, not class names. It walks <code>document.styleSheets</code> to count CSS properties per rule and check selector complexity. Single-property, single-class rules are identified as utility CSS. This works for Tailwind, Bootstrap, Tachyons, UnoCSS, or any atomic framework without hardcoded patterns.
             </FaqItem>
             <FaqItem question="Does it detect React components?">
               Yes. It traverses the React fiber tree to find the component hierarchy and identifies the nearest component name for the selected element. This context helps your AI agent locate the right file without a build plugin.
@@ -682,7 +700,7 @@ export default function Home() {
               Yes. Retune is a client-side component that hydrates after page load. It works with Next.js App Router, Pages Router, Remix, and other SSR/SSG frameworks without affecting server rendering.
             </FaqItem>
             <FaqItem question="Does it affect performance?">
-              Minimal impact. It only activates when you enter edit mode — no overhead during normal development. Style analysis runs once per element selection, not continuously.
+              Minimal impact. It only activates when you enter edit mode, so there's no overhead during normal development. Style analysis runs once per element selection, not continuously.
             </FaqItem>
             <FaqItem question="Can it inspect iframes or shadow DOM?">
               Not currently. Only elements in the main document are accessible due to browser security restrictions. Shadow DOM support is planned.

@@ -3,7 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { Retune } from "retune";
 
 export const metadata: Metadata = {
-  title: "Retune — The visual layer for vibe coding",
+  title: "Retune - The visual layer for vibe coding",
   description:
     "Select any element in your running app, tweak it visually, and let your AI coding tool write the changes. The visual layer for vibe coding.",
   metadataBase: new URL("https://retune.dev"),
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Retune — The visual layer for vibe coding",
+    title: "Retune - The visual layer for vibe coding",
     description:
       "Select any element in your running app, tweak it visually, and let your AI coding tool write the changes to source.",
     siteName: "Retune",
@@ -22,13 +22,13 @@ export const metadata: Metadata = {
         url: "/opengraph-image.png",
         width: 1200,
         height: 630,
-        alt: "Retune — The visual layer for vibe coding",
+        alt: "Retune - The visual layer for vibe coding",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Retune — The visual layer for vibe coding",
+    title: "Retune - The visual layer for vibe coding",
     description:
       "Select any element in your running app, tweak it visually, and let your AI coding tool write the changes to source.",
     images: ["/opengraph-image.png"],
