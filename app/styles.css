@@ -364,17 +364,18 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   align-items: center;
   gap: 2px;
   padding: 4px 4px;
-  background: rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .mock-dock-icon {
   width: 26px;
   height: 26px;
-  border-radius: 6px;
+  border-radius: 7px;
   display: block;
 }
 
@@ -405,9 +406,9 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 
 .mock-dock-sep {
   width: 1px;
-  height: 22px;
-  background: rgba(255, 255, 255, 0.15);
-  margin: 0 2px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 3px;
 }
 
 /* Dock spacer — holds room for the minimized terminal, collapses when open */
@@ -441,6 +442,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   --rad-y: 71%;
   --dock-x: 59%;
   --dock-y: 96%;
+  --min-x: 34%;
+  --min-y: 65%;
   /* Panel scroll distances */
   --scroll-pad: -80px;
   --scroll-rad: -250px;
@@ -451,13 +454,13 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 
 .browser-chrome {
-  background: #ffffff;
+  background: #f6f6f6;
   border-radius: 8px 8px 0 0;
   padding: 6px 12px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  gap: 8px;
+  border: none;
 }
 
 .browser-dots {
@@ -471,29 +474,85 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   border-radius: 50%;
 }
 
-.dot-red { background: #f87171; }
-.dot-yellow { background: #fbbf24; }
-.dot-green { background: #4ade80; }
-.dot-red, .dot-yellow, .dot-green {
-  animation: mock-dot-unfocus 10s ease infinite;
+.dot-red { animation: mock-dot-red-unfocus 10s ease infinite; }
+.dot-yellow { animation: mock-dot-yellow-unfocus 10s ease infinite; }
+.dot-green { animation: mock-dot-green-unfocus 10s ease infinite; }
+@keyframes mock-dot-red-unfocus {
+  0%, 58% { background: #f87171; }
+  60% { background: #d4d4d4; }
+  95% { background: #d4d4d4; }
+  97% { background: #f87171; }
+  100% { background: #f87171; }
 }
-@keyframes mock-dot-unfocus {
-  0%, 58% { filter: saturate(1); }
-  60% { filter: saturate(0) brightness(0.7); }
-  95% { filter: saturate(0) brightness(0.7); }
-  97% { filter: saturate(1); }
-  100% { filter: saturate(1); }
+@keyframes mock-dot-yellow-unfocus {
+  0%, 58% { background: #fbbf24; }
+  60% { background: #d4d4d4; }
+  95% { background: #d4d4d4; }
+  97% { background: #fbbf24; }
+  100% { background: #fbbf24; }
+}
+@keyframes mock-dot-green-unfocus {
+  0%, 58% { background: #4ade80; }
+  60% { background: #d4d4d4; }
+  95% { background: #d4d4d4; }
+  97% { background: #4ade80; }
+  100% { background: #4ade80; }
 }
 
-.browser-url {
+.safari-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  background: rgba(255, 255, 255, 0.50);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 100px;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.03);
+  flex-shrink: 0;
+}
+.safari-pill-sep {
+  width: 1px;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.1);
+}
+.safari-btn {
+  color: #1c1917;
+  opacity: 0.55;
+  display: block;
+}
+.safari-chevron {
+  margin-left: -3px;
+  opacity: 0.3;
+}
+.safari-back {
+  opacity: 0.28;
+}
+.safari-fwd {
+  opacity: 0.55;
+}
+.safari-url-wrap {
   flex: 1;
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 6px;
-  padding: 5px 10px;
+  display: flex;
+  justify-content: center;
+}
+.browser-url.safari-pill {
+  width: 100%;
+  max-width: 280px;
+  position: relative;
+  padding: 3px 10px;
   font-size: 9px;
   font-family: system-ui;
-  color: #78716c;
+  color: #3c3c43;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.02);
+}
+.safari-reload {
+  color: #3c3c43;
+  opacity: 0.35;
+  position: absolute;
+  right: 8px;
 }
 
 .browser-content {
@@ -1718,7 +1777,7 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   background: #0c0a09;
   border-radius: 8px;
   font-family: 'SF Mono', 'Fira Code', Menlo, monospace;
-  font-size: 9.5px;
+  font-size: 9px;
   line-height: 1.7;
   color: #d6d3d1;
   z-index: 10;
@@ -1857,9 +1916,17 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-term-dim {
   color: #57534e;
 }
-.mock-term-check {
-  color: #22c55e;
+.mock-term-marker {
+  color: #D4775B;
   margin-right: 2px;
+}
+.mock-term-tool {
+  color: #D4775B;
+  font-weight: 600;
+}
+.mock-term-indent {
+  display: inline-block;
+  width: 14px;
 }
 
 /* Animated cursor */
@@ -1937,12 +2004,12 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   /* Idle while terminal content appears */
   84% { opacity: 1; left: 50%; top: 65%; transform: scale(1); }
   /* Move to terminal yellow (minimize) dot */
-  88% { opacity: 1; left: 34%; top: 65%; transform: scale(1); }
+  88% { opacity: 1; left: var(--min-x); top: var(--min-y); transform: scale(1); }
   /* Click minimize */
-  89% { opacity: 1; left: 34%; top: 65%; transform: scale(0.8); }
-  89.5% { opacity: 1; left: 34%; top: 65%; transform: scale(1); }
+  89% { opacity: 1; left: var(--min-x); top: var(--min-y); transform: scale(0.8); }
+  89.5% { opacity: 1; left: var(--min-x); top: var(--min-y); transform: scale(1); }
   /* Hold while terminal genies closed */
-  95% { opacity: 1; left: 34%; top: 65%; transform: scale(1); }
+  95% { opacity: 1; left: var(--min-x); top: var(--min-y); transform: scale(1); }
   /* Move back to center before loop restarts */
   98% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
   100% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }

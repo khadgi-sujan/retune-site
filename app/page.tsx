@@ -42,7 +42,30 @@ export default function Home() {
                 <span className="dot dot-yellow" />
                 <span className="dot dot-green" />
               </div>
-              <div className="browser-url">localhost:3000</div>
+              {/* Tab overview pill */}
+              <div className="safari-pill">
+                <svg className="safari-btn" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></svg>
+                <svg className="safari-btn safari-chevron" width="6" height="6" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2.5 4L5 6.5L7.5 4"/></svg>
+              </div>
+              {/* Nav pill */}
+              <div className="safari-pill safari-nav-pill">
+                <svg className="safari-btn safari-back" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                <span className="safari-pill-sep" />
+                <svg className="safari-btn safari-fwd" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
+              {/* URL pill */}
+              <div className="safari-url-wrap">
+                <div className="browser-url safari-pill">
+                  <span>localhost:3000</span>
+                  <svg className="safari-reload" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                </div>
+              </div>
+              {/* Actions pill */}
+              <div className="safari-pill">
+                <svg className="safari-btn" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                <svg className="safari-btn" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg className="safari-btn" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+              </div>
             </div>
             <div className="browser-content">
               <div className="mock-main">
@@ -477,7 +500,7 @@ export default function Home() {
                 <span className="mock-term-dot" />
                 <span className="mock-term-dot" />
                 <span className="mock-term-dot" />
-                <span className="mock-term-title">claude</span>
+                <span className="mock-term-title">Claude Code</span>
               </div>
               <div className="mock-term-body">
                 <div className="mock-terminal-line mock-term-line-1">
@@ -504,16 +527,16 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="mock-terminal-line mock-term-line-2">
-                  Editing <span className="mock-term-file">Card.tsx</span>
+                  <span className="mock-term-marker">⏺</span> <span className="mock-term-tool">retune_get_formatted_changes</span>()
                 </div>
                 <div className="mock-terminal-line mock-term-line-3">
-                  <span className="mock-term-dim">  padding: </span>8px → 16px
+                  <span className="mock-term-indent" /><span className="mock-term-dim">⎿</span> padding: <span className="mock-term-dim">8px →</span> 16px, border-radius: <span className="mock-term-dim">0px →</span> 8px
                 </div>
                 <div className="mock-terminal-line mock-term-line-4">
-                  <span className="mock-term-dim">  border-radius: </span>0px → 8px
+                  <span className="mock-term-indent" /><span className="mock-term-tool">Edit</span> <span className="mock-term-file">Card.tsx</span>
                 </div>
                 <div className="mock-terminal-line mock-term-line-5">
-                  <span className="mock-term-check">✓</span> Changes applied
+                  <span className="mock-term-indent" /><span className="mock-term-dim">⎿</span> Applied 2 changes
                 </div>
               </div>
             </div>

@@ -302,6 +302,14 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
         hero.style.setProperty("--dock-y", `${((dr.top + dr.height / 2 - bgRect.top) / bgH) * 100}%`);
       }
 
+      // Terminal yellow (minimize) dot — cursor clicks here to close
+      const termDots = desktopBg?.querySelectorAll('.mock-term-dot');
+      if (termDots && termDots.length >= 2) {
+        const dot = termDots[1].getBoundingClientRect();
+        hero.style.setProperty("--min-x", `${((dot.left + dot.width / 2 - bgRect.left) / bgW) * 100}%`);
+        hero.style.setProperty("--min-y", `${((dot.top + dot.height / 2 - bgRect.top) / bgH) * 100}%`);
+      }
+
       hero.style.setProperty("--genie-dx", genieDx);
       hero.style.setProperty("--genie-dy", genieDy);
       hero.style.setProperty("--genie-scale", genieScale);
