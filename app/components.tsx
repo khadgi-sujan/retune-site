@@ -142,7 +142,7 @@ export function MenuBarTime() {
       setTime(`${h}:${m} ${ampm}`);
     };
     fmt();
-    const id = setInterval(fmt, 60000);
+    const id = setInterval(fmt, 1000);
     return () => clearInterval(id);
   }, []);
   return <span className="menu-bar-time">{time}</span>;

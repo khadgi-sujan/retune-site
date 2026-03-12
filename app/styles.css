@@ -473,8 +473,9 @@ p { text-wrap: pretty; }
   z-index: 5;
   font-size: 8.5px;
   font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  color: rgba(255, 255, 255, 0.9);
+  color: #fff;
   font-weight: 400;
+  letter-spacing: -0.5px;
 }
 
 .menu-bar-left,
@@ -487,6 +488,7 @@ p { text-wrap: pretty; }
 .menu-bar-apple {
   opacity: 0.9;
   color: white;
+  margin-top: -1px;
 }
 
 .menu-bar-app {
@@ -506,6 +508,7 @@ p { text-wrap: pretty; }
 
 .menu-bar-time {
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
 }
 
 .menu-bar-terminal-ctx {
@@ -538,7 +541,7 @@ p { text-wrap: pretty; }
   color: rgba(0, 0, 0, 0.85);
 }
 .menu-bar[data-theme="light"] .menu-bar-apple,
-.menu-bar[data-theme="light"] .menu-bar-icon { color: rgba(0, 0, 0, 0.85); }
+.menu-bar[data-theme="light"] .menu-bar-icon { color: #000; }
 
 /* macOS dock */
 .mock-dock {
