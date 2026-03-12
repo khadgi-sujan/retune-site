@@ -480,8 +480,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 @keyframes mock-dot-unfocus {
   0%, 58% { filter: saturate(1); }
   60% { filter: saturate(0) brightness(0.7); }
-  91% { filter: saturate(0) brightness(0.7); }
-  93% { filter: saturate(1); }
+  95% { filter: saturate(0) brightness(0.7); }
+  97% { filter: saturate(1); }
   100% { filter: saturate(1); }
 }
 
@@ -1713,8 +1713,8 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   position: absolute;
   /* Centered over the browser-content area, raised slightly */
   bottom: calc(48px + 32px);
-  left: calc(50% - 120px); /* center: 50% minus half of 240px width */
-  width: 240px;
+  left: calc(50% - 150px); /* center: 50% minus half of 300px width */
+  width: 300px;
   background: #0c0a09;
   border-radius: 8px;
   font-family: 'SF Mono', 'Fira Code', Menlo, monospace;
@@ -1750,22 +1750,22 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 @keyframes mock-term-dot-red {
   0%, 59% { background: rgba(255, 255, 255, 0.12); }
   60% { background: #ff5f57; }
-  91% { background: #ff5f57; }
-  92% { background: rgba(255, 255, 255, 0.12); }
+  95% { background: #ff5f57; }
+  95.1% { background: rgba(255, 255, 255, 0.12); }
   100% { background: rgba(255, 255, 255, 0.12); }
 }
 @keyframes mock-term-dot-yellow {
   0%, 59% { background: rgba(255, 255, 255, 0.12); }
   60% { background: #febc2e; }
-  91% { background: #febc2e; }
-  92% { background: rgba(255, 255, 255, 0.12); }
+  95% { background: #febc2e; }
+  95.1% { background: rgba(255, 255, 255, 0.12); }
   100% { background: rgba(255, 255, 255, 0.12); }
 }
 @keyframes mock-term-dot-green {
   0%, 59% { background: rgba(255, 255, 255, 0.12); }
   60% { background: #28c840; }
-  91% { background: #28c840; }
-  92% { background: rgba(255, 255, 255, 0.12); }
+  95% { background: #28c840; }
+  95.1% { background: rgba(255, 255, 255, 0.12); }
   100% { background: rgba(255, 255, 255, 0.12); }
 }
 .mock-term-title {
@@ -1776,6 +1776,21 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 }
 .mock-term-body {
   padding: 8px 10px;
+}
+.mock-term-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.mock-term-badge {
+  background: #D4775B;
+  color: #0c0a09;
+  font-size: 7.5px;
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: 3px;
+  width: fit-content;
+  line-height: 1.4;
 }
 /* Genie keyframes are generated dynamically in JS (components.tsx)
    using Harshil Shah's two-phase algorithm with 20 frames per transition
@@ -1788,43 +1803,49 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
 .mock-term-line-1 {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-bottom: 2px;
+  gap: 6px;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   animation: mock-term-reveal 10s ease infinite;
 }
 .mock-term-line-2 { animation: mock-term-reveal-2 10s ease infinite; }
 .mock-term-line-3 { animation: mock-term-reveal-3 10s ease infinite; }
-.mock-term-line-4 {
+.mock-term-line-4 { animation: mock-term-reveal-4 10s ease infinite; }
+.mock-term-line-5 {
   margin-top: 4px;
-  animation: mock-term-reveal-4 10s ease infinite;
+  animation: mock-term-reveal-5 10s ease infinite;
 }
 
 @keyframes mock-term-reveal {
-  0%, 60% { opacity: 0; }
-  62% { opacity: 1; }
-  90% { opacity: 1; }
-  91% { opacity: 0; }
-  100% { opacity: 0; }
+  0%, 100% { opacity: 1; }
 }
 @keyframes mock-term-reveal-2 {
-  0%, 62% { opacity: 0; }
-  64% { opacity: 1; }
-  90% { opacity: 1; }
-  91% { opacity: 0; }
+  0%, 63% { opacity: 0; }
+  65% { opacity: 1; }
+  95% { opacity: 1; }
+  95.1% { opacity: 0; }
   100% { opacity: 0; }
 }
 @keyframes mock-term-reveal-3 {
-  0%, 64% { opacity: 0; }
-  66% { opacity: 1; }
-  90% { opacity: 1; }
-  91% { opacity: 0; }
+  0%, 65% { opacity: 0; }
+  67% { opacity: 1; }
+  95% { opacity: 1; }
+  95.1% { opacity: 0; }
   100% { opacity: 0; }
 }
 @keyframes mock-term-reveal-4 {
-  0%, 66% { opacity: 0; }
-  68% { opacity: 1; }
-  90% { opacity: 1; }
-  91% { opacity: 0; }
+  0%, 67% { opacity: 0; }
+  69% { opacity: 1; }
+  95% { opacity: 1; }
+  95.1% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes mock-term-reveal-5 {
+  0%, 71% { opacity: 0; }
+  73% { opacity: 1; }
+  95% { opacity: 1; }
+  95.1% { opacity: 0; }
   100% { opacity: 0; }
 }
 .mock-term-mascot {
@@ -1916,12 +1937,12 @@ body { background: #fafaf9; letter-spacing: -0.045px; }
   /* Idle while terminal content appears */
   84% { opacity: 1; left: 50%; top: 65%; transform: scale(1); }
   /* Move to terminal yellow (minimize) dot */
-  88% { opacity: 1; left: 38%; top: 65%; transform: scale(1); }
+  88% { opacity: 1; left: 34%; top: 65%; transform: scale(1); }
   /* Click minimize */
-  89% { opacity: 1; left: 38%; top: 65%; transform: scale(0.8); }
-  89.5% { opacity: 1; left: 38%; top: 65%; transform: scale(1); }
+  89% { opacity: 1; left: 34%; top: 65%; transform: scale(0.8); }
+  89.5% { opacity: 1; left: 34%; top: 65%; transform: scale(1); }
   /* Hold while terminal genies closed */
-  95% { opacity: 1; left: 38%; top: 65%; transform: scale(1); }
+  95% { opacity: 1; left: 34%; top: 65%; transform: scale(1); }
   /* Move back to center before loop restarts */
   98% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }
   100% { opacity: 1; left: 50%; top: 50%; transform: scale(1); }

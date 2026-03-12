@@ -170,10 +170,10 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
       const bgRect = desktopBg.getBoundingClientRect();
       const thumbRect = dockThumb.getBoundingClientRect();
 
-      // Terminal's open position (CSS: bottom: 56px, left: 88px in .desktop-bg)
-      const termWidth = 240;
+      // Terminal's open position (CSS: centered, bottom: 80px in .desktop-bg)
+      const termWidth = 300;
       const termHeight = termEl.scrollHeight;
-      const termCssLeft = bgRect.width / 2 - 120; // centered: 50% - half of 240px
+      const termCssLeft = bgRect.width / 2 - 150; // centered: 50% - half of 300px
       const termCssBottom = 80; // 48px padding + 32px offset
 
       // Terminal center in .desktop-bg coords

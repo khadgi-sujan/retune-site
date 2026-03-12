@@ -498,15 +498,21 @@ export default function Home() {
                     <rect x="11" y="8" width="1" height="2"/>
                     <rect x="13" y="8" width="1" height="2"/>
                   </svg>
-                  <span>Editing <span className="mock-term-file">Card.tsx</span></span>
+                  <div className="mock-term-meta">
+                    <span className="mock-term-badge">Claude Code</span>
+                    <span className="mock-term-dim">Opus 4.6 · /acme</span>
+                  </div>
                 </div>
                 <div className="mock-terminal-line mock-term-line-2">
-                  <span className="mock-term-dim">    padding: </span>12px → 16px
+                  Editing <span className="mock-term-file">Card.tsx</span>
                 </div>
                 <div className="mock-terminal-line mock-term-line-3">
-                  <span className="mock-term-dim">    border-radius: </span>8px → 12px
+                  <span className="mock-term-dim">  padding: </span>8px → 16px
                 </div>
                 <div className="mock-terminal-line mock-term-line-4">
+                  <span className="mock-term-dim">  border-radius: </span>0px → 8px
+                </div>
+                <div className="mock-terminal-line mock-term-line-5">
                   <span className="mock-term-check">✓</span> Changes applied
                 </div>
               </div>
