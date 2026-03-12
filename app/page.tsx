@@ -532,9 +532,11 @@ export default function Home() {
                   <svg className="mock-term-mascot" width="27" height="18" viewBox="0 0 18 12" fill="#D4775B" shapeRendering="crispEdges">
                     {/* Head */}
                     <rect x="3" y="0" width="12" height="2"/>
-                    {/* Eyes (negative space) */}
+                    {/* Eye row */}
                     <rect x="3" y="2" width="2" height="2"/>
+                    <rect x="5" y="2" width="1" height="2" fill="#1c1917"/>
                     <rect x="6" y="2" width="6" height="2"/>
+                    <rect x="12" y="2" width="1" height="2" fill="#1c1917"/>
                     <rect x="13" y="2" width="2" height="2"/>
                     {/* Body (wider) */}
                     <rect x="2" y="4" width="15" height="2"/>

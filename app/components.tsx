@@ -441,9 +441,11 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
             sum += strip.data[i] * 0.299 + strip.data[i + 1] * 0.587 + strip.data[i + 2] * 0.114;
           }
           const avg = sum / (strip.data.length / 4);
+          const theme = avg > 128 ? "light" : "dark";
+          desktopBg.setAttribute("data-theme", theme);
           const menuBar = desktopBg.querySelector(".menu-bar") as HTMLElement;
           if (menuBar) {
-            menuBar.setAttribute("data-theme", avg > 128 ? "light" : "dark");
+            menuBar.setAttribute("data-theme", theme);
           }
         };
         img.src = bgUrl;
