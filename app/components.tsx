@@ -106,10 +106,9 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
           return cx / cw0;
         })()
       : 0.35;
-    // Card is below the fold; mock-page-scroll shifts mock-main by -180px before cursor reaches it
-    const mockPageScrollY = 180;
+    // Card position — no page scroll, cards are already in view
     const cardY = cardEl
-      ? ((cardEl.getBoundingClientRect().top + cardEl.getBoundingClientRect().height / 2 - oy0 - mockPageScrollY) / ch) * 100
+      ? ((cardEl.getBoundingClientRect().top + cardEl.getBoundingClientRect().height / 2 - oy0) / ch) * 100
       : 25;
 
     // Panel layout: measure relative positions (transform-independent)
@@ -166,9 +165,8 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     let genieDx = "200px";
     let genieDy = "200px";
     let genieScale = "0.1";
-    if (desktopBg && dockThumb && termEl) {
+    if (desktopBg && termEl) {
       const bgRect = desktopBg.getBoundingClientRect();
-      const thumbRect = dockThumb.getBoundingClientRect();
 
       // Terminal's open position (CSS: centered, bottom: 80px in .desktop-bg)
       const termWidth = 300;
@@ -180,21 +178,30 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
       const termCx = termCssLeft + termWidth / 2;
       const termCy = bgRect.height - termCssBottom - termHeight / 2;
 
-      // Dock thumbnail center in .desktop-bg coords
-      const thumbCx = thumbRect.left + thumbRect.width / 2 - bgRect.left;
-      const thumbCy = thumbRect.top + thumbRect.height / 2 - bgRect.top;
+      // Check if dock is visible (hidden at ≤847px)
+      const dockVisible = dockThumb && dockThumb.offsetParent !== null;
 
-      // Translation delta from terminal open position to dock thumbnail
+      let thumbCx: number, thumbCy: number, dockScale: number;
+      if (dockVisible) {
+        // Genie to dock thumbnail
+        const thumbRect = dockThumb!.getBoundingClientRect();
+        thumbCx = thumbRect.left + thumbRect.width / 2 - bgRect.left;
+        thumbCy = thumbRect.top + thumbRect.height / 2 - bgRect.top;
+        dockScale = thumbRect.width / termWidth;
+      } else {
+        // No dock — genie to bottom center
+        thumbCx = bgRect.width / 2;
+        thumbCy = bgRect.height + 20; // just below the visible area
+        dockScale = 0.15;
+      }
+
+      // Translation delta from terminal open position to target
       const dx = thumbCx - termCx;
       const dy = thumbCy - termCy;
-
-      // Scale: thumbnail width / terminal width
-      const dockScale = thumbRect.width / termWidth;
 
       genieDx = `${dx}px`;
       genieDy = `${dy}px`;
       genieScale = `${dockScale}`;
-
     }
 
     // ── Generate precise genie keyframes (Harshil Shah's two-phase algorithm) ──
@@ -302,13 +309,20 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
         hero.style.setProperty("--dock-y", `${((dr.top + dr.height / 2 - bgRect.top) / bgH) * 100}%`);
       }
 
-      // Terminal yellow (minimize) dot — cursor clicks here to close
-      const termDots = desktopBg?.querySelectorAll('.mock-term-dot');
-      if (termDots && termDots.length >= 2) {
-        const dot = termDots[1].getBoundingClientRect();
-        hero.style.setProperty("--min-x", `${((dot.left + dot.width / 2 - bgRect.left) / bgW) * 100}%`);
-        hero.style.setProperty("--min-y", `${((dot.top + dot.height / 2 - bgRect.top) / bgH) * 100}%`);
-      }
+      // Terminal yellow (minimize) dot — compute from known open-state CSS position
+      // Terminal: left = 50% - 150px, bottom = 80px, width = 300px
+      // Titlebar padding: 6px 10px, dot size: 7px, gap: 4px
+      // Yellow dot (2nd) center X from terminal left: 10 + 7 + 4 + 3.5 = 24.5px
+      // Yellow dot center Y from terminal top: 6 + 3.5 = 9.5px
+      const termLeft = bgW / 2 - 150;
+      const termEl = desktopBg.querySelector('.mock-terminal') as HTMLElement;
+      // offsetHeight gives CSS layout height, unaffected by transforms
+      const termH = termEl ? termEl.offsetHeight : 120;
+      const termTop = bgH - 80 - termH; // bottom: 80px
+      const dotCenterX = termLeft + 24.5;
+      const dotCenterY = termTop + 9.5;
+      hero.style.setProperty("--min-x", `${(dotCenterX / bgW) * 100}%`);
+      hero.style.setProperty("--min-y", `${(dotCenterY / bgH) * 100}%`);
 
       hero.style.setProperty("--genie-dx", genieDx);
       hero.style.setProperty("--genie-dy", genieDy);
