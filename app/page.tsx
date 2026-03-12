@@ -26,7 +26,7 @@ export default function Home() {
             The visual layer for vibe coding.
           </h1>
           <p className="hero-sub">
-            Select any element in your running app. Adjust spacing, colors, typography, and see changes live. Your AI agent writes the exact values to source. No more prompting for pixels.
+            Retune lets you select and tweak any element right in the browser. Your AI agent writes the code. No more prompting for pixels.
           </p>
           <div className="cta-row desktop-only">
             <TryItButton />
@@ -544,7 +544,7 @@ export default function Home() {
           </HeroCursorPositioner>
         </section>
 
-{/* ── How It Works ── */}
+        {/* ── How It Works ── */}
         <section className="section" id="how-it-works">
           <h2 className="section-heading">How it works</h2>
           <p className="section-desc">
@@ -564,9 +564,9 @@ export default function Home() {
               </p>
             </div>
             <div className="step-card">
-              <h3 className="step-title">Your agent writes it</h3>
+              <h3 className="step-title">Apply with your agent</h3>
               <p className="step-card-desc">
-                Retune sends structured before/after values to your AI tool via MCP. Exact properties, exact values. No interpretation needed.
+                Retune connects to Claude Code, Cursor, or any MCP client. Your agent writes the changes to source.
               </p>
             </div>
           </div>
