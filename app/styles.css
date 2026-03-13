@@ -45,6 +45,8 @@
   --color-cta-bg: #1c1917;
   --color-cta-text: #ffffff;
   --color-cta-hover: #292524;
+  --dot-inactive: #d4d4d4;
+  --term-dot-inactive: rgba(0, 0, 0, 0.12);
 }
 
 :root[data-theme="dark"] {
@@ -64,6 +66,8 @@
   --color-cta-bg: #e7e5e4;
   --color-cta-text: #1c1917;
   --color-cta-hover: #d6d3d1;
+  --dot-inactive: #555;
+  --term-dot-inactive: rgba(255, 255, 255, 0.12);
 }
 
 /* ── Reset & Base ── */
@@ -876,22 +880,22 @@ p { text-wrap: pretty; }
 .dot-green { animation: mock-dot-green-unfocus 10s ease infinite; }
 @keyframes mock-dot-red-unfocus {
   0%, 58% { background: #f87171; }
-  60% { background: #d4d4d4; }
-  95% { background: #d4d4d4; }
+  60% { background: var(--dot-inactive); }
+  95% { background: var(--dot-inactive); }
   97% { background: #f87171; }
   100% { background: #f87171; }
 }
 @keyframes mock-dot-yellow-unfocus {
   0%, 58% { background: #fbbf24; }
-  60% { background: #d4d4d4; }
-  95% { background: #d4d4d4; }
+  60% { background: var(--dot-inactive); }
+  95% { background: var(--dot-inactive); }
   97% { background: #fbbf24; }
   100% { background: #fbbf24; }
 }
 @keyframes mock-dot-green-unfocus {
   0%, 58% { background: #4ade80; }
-  60% { background: #d4d4d4; }
-  95% { background: #d4d4d4; }
+  60% { background: var(--dot-inactive); }
+  95% { background: var(--dot-inactive); }
   97% { background: #4ade80; }
   100% { background: #4ade80; }
 }
@@ -2210,31 +2214,31 @@ p { text-wrap: pretty; }
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--term-dot-inactive);
 }
 .mock-term-dot:nth-child(1) { animation: mock-term-dot-red 10s ease infinite; }
 .mock-term-dot:nth-child(2) { animation: mock-term-dot-yellow 10s ease infinite; }
 .mock-term-dot:nth-child(3) { animation: mock-term-dot-green 10s ease infinite; }
 @keyframes mock-term-dot-red {
-  0%, 56% { background: rgba(0, 0, 0, 0.12); }
+  0%, 56% { background: var(--term-dot-inactive); }
   57% { background: #ff5f57; }
   92% { background: #ff5f57; }
-  92.1% { background: rgba(0, 0, 0, 0.12); }
-  100% { background: rgba(0, 0, 0, 0.12); }
+  92.1% { background: var(--term-dot-inactive); }
+  100% { background: var(--term-dot-inactive); }
 }
 @keyframes mock-term-dot-yellow {
-  0%, 56% { background: rgba(0, 0, 0, 0.12); }
+  0%, 56% { background: var(--term-dot-inactive); }
   57% { background: #febc2e; }
   92% { background: #febc2e; }
-  92.1% { background: rgba(0, 0, 0, 0.12); }
-  100% { background: rgba(0, 0, 0, 0.12); }
+  92.1% { background: var(--term-dot-inactive); }
+  100% { background: var(--term-dot-inactive); }
 }
 @keyframes mock-term-dot-green {
-  0%, 56% { background: rgba(0, 0, 0, 0.12); }
+  0%, 56% { background: var(--term-dot-inactive); }
   57% { background: #28c840; }
   92% { background: #28c840; }
-  92.1% { background: rgba(0, 0, 0, 0.12); }
-  100% { background: rgba(0, 0, 0, 0.12); }
+  92.1% { background: var(--term-dot-inactive); }
+  100% { background: var(--term-dot-inactive); }
 }
 .mock-term-title {
   font-size: 7px;
@@ -2641,7 +2645,7 @@ p { text-wrap: pretty; }
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-top: 0;
+  margin-top: 8px;
 }
 
 .step-card {
@@ -2672,7 +2676,7 @@ p { text-wrap: pretty; }
 /* ── Output Block ── */
 
 .output-block {
-  margin-top: 16px;
+  margin-top: 32px;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--color-border-faint);
@@ -2874,17 +2878,18 @@ p { text-wrap: pretty; }
 
 .install-note {
   font-size: 13px;
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
+  line-height: 22px;
   margin: 8px 0 0;
 }
 
 /* ── Tags / Compat ── */
 
 .install-compat {
-  margin: 32px 0 0;
+  margin: 8px 0 0;
   padding-top: 0;
   font-size: 13px;
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
   line-height: 22px;
 }
 
@@ -2917,7 +2922,7 @@ p { text-wrap: pretty; }
   background: none;
   font-size: 14px;
   font-weight: 450;
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
   line-height: 22px;
   text-align: left;
   cursor: pointer;
@@ -2925,7 +2930,7 @@ p { text-wrap: pretty; }
 
 .faq-question:hover,
 .faq-question:focus-visible {
-  color: var(--color-text-muted);
+  color: var(--color-text-primary);
 }
 
 .faq-question:focus-visible {
@@ -3005,7 +3010,7 @@ p { text-wrap: pretty; }
 
 .footer-link {
   color: var(--color-text-secondary);
-  text-decoration: none;
+  text-decoration: underline;
   transition: color 150ms ease;
 }
 
@@ -3251,10 +3256,6 @@ p { text-wrap: pretty; }
     background: #1c1917;
   }
 
-  /* Browser dots — dark unfocused */
-  .dot-red { animation-name: mock-dot-red-unfocus-dark; }
-  .dot-yellow { animation-name: mock-dot-yellow-unfocus-dark; }
-  .dot-green { animation-name: mock-dot-green-unfocus-dark; }
 
   /* Mock website inside browser — dark variant */
   .mock-main {
@@ -3396,12 +3397,6 @@ p { text-wrap: pretty; }
     background: #1c1917;
     border-bottom-color: rgba(255, 255, 255, 0.06);
   }
-  .mock-term-dot {
-    background: rgba(255, 255, 255, 0.12);
-  }
-  .mock-term-dot:nth-child(1) { animation-name: mock-term-dot-red-dark; }
-  .mock-term-dot:nth-child(2) { animation-name: mock-term-dot-yellow-dark; }
-  .mock-term-dot:nth-child(3) { animation-name: mock-term-dot-green-dark; }
   .mock-term-title {
     color: #78716c;
   }
@@ -3437,47 +3432,3 @@ p { text-wrap: pretty; }
   }
 }
 
-/* Dark keyframe variants */
-@keyframes mock-dot-red-unfocus-dark {
-  0%, 58% { background: #f87171; }
-  60% { background: #555; }
-  95% { background: #555; }
-  97% { background: #f87171; }
-  100% { background: #f87171; }
-}
-@keyframes mock-dot-yellow-unfocus-dark {
-  0%, 58% { background: #fbbf24; }
-  60% { background: #555; }
-  95% { background: #555; }
-  97% { background: #fbbf24; }
-  100% { background: #fbbf24; }
-}
-@keyframes mock-dot-green-unfocus-dark {
-  0%, 58% { background: #4ade80; }
-  60% { background: #555; }
-  95% { background: #555; }
-  97% { background: #4ade80; }
-  100% { background: #4ade80; }
-}
-
-@keyframes mock-term-dot-red-dark {
-  0%, 56% { background: rgba(255, 255, 255, 0.12); }
-  57% { background: #ff5f57; }
-  92% { background: #ff5f57; }
-  92.1% { background: rgba(255, 255, 255, 0.12); }
-  100% { background: rgba(255, 255, 255, 0.12); }
-}
-@keyframes mock-term-dot-yellow-dark {
-  0%, 56% { background: rgba(255, 255, 255, 0.12); }
-  57% { background: #febc2e; }
-  92% { background: #febc2e; }
-  92.1% { background: rgba(255, 255, 255, 0.12); }
-  100% { background: rgba(255, 255, 255, 0.12); }
-}
-@keyframes mock-term-dot-green-dark {
-  0%, 56% { background: rgba(255, 255, 255, 0.12); }
-  57% { background: #28c840; }
-  92% { background: #28c840; }
-  92.1% { background: rgba(255, 255, 255, 0.12); }
-  100% { background: rgba(255, 255, 255, 0.12); }
-}
