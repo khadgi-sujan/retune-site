@@ -619,18 +619,18 @@ export function Sidebar({ version }: { version: string }) {
     <aside className={`sidebar${menuOpen ? " menu-open" : ""}`}>
       <a href="#" className="sidebar-logo">
         <svg className="logo-mark" width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="16" y="11" width="4" height="8" fill="currentColor"/>
+          <rect x="4" y="35" width="4" height="8" fill="currentColor"/>
+          <rect x="8" y="27" width="4" height="8" fill="currentColor"/>
+          <rect x="12" y="19" width="4" height="8" fill="currentColor"/>
           <rect x="16" y="3" width="4" height="8" fill="currentColor"/>
+          <rect x="16" y="11" width="4" height="8" fill="currentColor"/>
           <rect x="20" y="19" width="4" height="8" fill="currentColor"/>
-          <rect x="28" y="11" width="4" height="8" fill="currentColor"/>
           <rect x="24" y="19" width="4" height="8" fill="currentColor"/>
+          <rect x="28" y="11" width="4" height="8" fill="currentColor"/>
           <rect x="28" y="27" width="4" height="8" fill="currentColor"/>
           <rect x="32" y="35" width="4" height="8" fill="currentColor"/>
           <rect x="36" y="35" width="4" height="8" fill="currentColor"/>
           <rect x="40" y="27" width="4" height="8" fill="currentColor"/>
-          <rect x="8" y="27" width="4" height="8" fill="currentColor"/>
-          <rect x="4" y="35" width="4" height="8" fill="currentColor"/>
-          <rect x="12" y="19" width="4" height="8" fill="currentColor"/>
         </svg>
         <span className="logo-name">Retune</span>
       </a>
