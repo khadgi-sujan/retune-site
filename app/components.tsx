@@ -484,15 +484,31 @@ function ThemeToggle() {
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
   }, []);
 
+  // Cleanup on unmount: cancel any in-flight animation
+  useEffect(() => {
+    return () => {
+      if (revealAnim.current) {
+        revealAnim.current.cancel();
+        revealAnim.current = null;
+      }
+    };
+  }, []);
+
   function toggle(e: React.MouseEvent) {
     playClick();
     const overlay = overlayRef.current;
     if (!overlay) return;
 
-    // Interrupt: reverse from current position
-    if (revealAnim.current) {
+    // Interrupt: reverse from current position (running or paused via tab-switch)
+    if (revealAnim.current && revealAnim.current.playState !== "finished" && revealAnim.current.playState !== "idle") {
       revealAnim.current.reverse();
       return;
+    }
+    // Clean up any finished/idle animation before starting fresh
+    if (revealAnim.current) {
+      revealAnim.current.cancel();
+      overlay.style.display = "none";
+      revealAnim.current = null;
     }
 
     const next = !appliedDark.current;
@@ -536,6 +552,9 @@ function ThemeToggle() {
     revealAnim.current = anim;
 
     anim.addEventListener("finish", () => {
+      // Guard: ignore stale finish events from a superseded animation
+      if (revealAnim.current !== anim) return;
+
       if (anim.playbackRate < 0) {
         // Reverse completed — hole closed, revert theme
         overlay.style.maskImage = "none";
