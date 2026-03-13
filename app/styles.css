@@ -73,6 +73,10 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 24px;
+  background: var(--color-bg-surface);
+}
+:root[data-theme="dark"] {
+  background: #100d0a;
 }
 
 body { background: var(--color-bg-page); letter-spacing: -0.045px; }
@@ -1708,8 +1712,8 @@ p { text-wrap: pretty; }
 .mock-panel-tabs {
   display: flex;
   position: relative;
-  padding: 6px 8px;
-  gap: 10px;
+  padding: 6px 10px;
+  gap: 13px;
   border-bottom: 1px solid #e7e5e4;
 }
 .mock-panel-tab-pill {
@@ -1724,7 +1728,7 @@ p { text-wrap: pretty; }
 .mock-panel-tab {
   flex: 0 0 auto;
   text-align: center;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 500;
   padding: 4px 0;
   border-radius: 6px;
@@ -3122,6 +3126,11 @@ p { text-wrap: pretty; }
 [data-theme="dark"] {
   /* Hero visual: dark wallpaper — user will provide URL, placeholder for now */
   /* .desktop-bg { background-image: url('DARK_WALLPAPER_URL'); } */
+
+  .layout,
+  .sidebar {
+    background: #100d0a;
+  }
 
   /* Browser chrome — dark Safari */
   .browser-chrome {
