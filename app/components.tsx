@@ -327,20 +327,27 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     const genieRect = geniePoly(0);
     const genieDocked = `translate(${dxVal.toFixed(2)}px, ${dyVal.toFixed(2)}px) scale(${scVal})`;
 
-    // Wrapper keyframes: transform only (translate + scale)
+    // Wrapper keyframes: transform + box-shadow fade
+    const bsFull = '0px 0px 0px 0.25px var(--term-ring-1), 0px 0px 0px 0.5px var(--term-ring-2)';
+    const bsNone = '0px 0px 0px 0px transparent, 0px 0px 0px 0px transparent';
+
     let wrapperKf = '@keyframes mock-terminal-wrapper-toggle {\n';
-    wrapperKf += `  0%, 53.9% { transform: ${genieDocked}; }\n`;
+    wrapperKf += `  0%, 53.9% { transform: ${genieDocked}; box-shadow: ${bsNone}; }\n`;
     for (let i = 0; i <= GF; i++) {
       const gp = 1 - i / GF;
       const pct = (54 + (i / GF) * 3).toFixed(2);
-      wrapperKf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))}; }\n`;
+      // Snap box-shadow on only at the very last step; hold none on second-to-last
+      const bs = i === GF ? ` box-shadow: ${bsFull};` : i === GF - 1 ? ` box-shadow: ${bsNone};` : '';
+      wrapperKf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))};${bs} }\n`;
     }
     for (let i = 0; i <= GF; i++) {
       const gp = i / GF;
       const pct = (89 + (i / GF) * 3).toFixed(2);
-      wrapperKf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))}; }\n`;
+      // Snap box-shadow off at first step; hold full at step 0
+      const bs = i === 0 ? ` box-shadow: ${bsFull};` : i === 1 ? ` box-shadow: ${bsNone};` : '';
+      wrapperKf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))};${bs} }\n`;
     }
-    wrapperKf += `  92.1%, 100% { transform: ${genieDocked}; }\n`;
+    wrapperKf += `  92.1%, 100% { transform: ${genieDocked}; box-shadow: ${bsNone}; }\n`;
     wrapperKf += '}\n\n';
 
     // Terminal keyframes: clip-path only (polygon warping)
