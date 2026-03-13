@@ -496,7 +496,7 @@ p { text-wrap: pretty; }
   max-width: 800px;
   display: flex;
   flex-direction: column;
-  background: url('https://images.unsplash.com/photo-1578926375605-eaf7559b1458?w=1200&q=80&fm=webp') center / cover no-repeat;
+  background: url('https://gefwnmizrwwjultadzml.supabase.co/storage/v1/object/public/Retune/meadow_og.png') center / cover no-repeat;
   overflow: clip;
   overflow-clip-margin: 30px;
   position: relative;
@@ -516,7 +516,7 @@ p { text-wrap: pretty; }
   pointer-events: none;
 }
 
-.desktop-bg[data-theme="light"]::before {
+[data-theme="light"] .desktop-bg::before {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
 }
 
@@ -598,11 +598,11 @@ p { text-wrap: pretty; }
 }
 
 /* Adaptive: light wallpaper = dark text */
-.menu-bar[data-theme="light"] {
+[data-theme="light"] .menu-bar {
   color: rgba(0, 0, 0, 0.85);
 }
-.menu-bar[data-theme="light"] .menu-bar-apple,
-.menu-bar[data-theme="light"] .menu-bar-icon { color: #000; }
+[data-theme="light"] .menu-bar .menu-bar-apple,
+[data-theme="light"] .menu-bar .menu-bar-icon { color: #000; }
 
 /* macOS dock */
 .mock-dock {
@@ -3120,7 +3120,7 @@ p { text-wrap: pretty; }
 
 [data-theme="dark"] {
   /* Hero visual: dark wallpaper — user will provide URL, placeholder for now */
-  /* .desktop-bg { background-image: url('DARK_WALLPAPER_URL'); } */
+  .desktop-bg { background-image: url('https://gefwnmizrwwjultadzml.supabase.co/storage/v1/object/public/Retune/meadow_night.png'); }
 
   .layout,
   .sidebar {
