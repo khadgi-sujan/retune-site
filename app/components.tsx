@@ -418,40 +418,6 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
 
     apply();
 
-    // Detect wallpaper brightness and set menu bar color
-    if (desktopBg) {
-      const bgStyle = getComputedStyle(desktopBg);
-      const bgUrl = bgStyle.backgroundImage.match(/url\(["']?(.+?)["']?\)/)?.[1];
-      if (bgUrl) {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const w = 100;
-          const h = Math.round((img.height / img.width) * w);
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext("2d");
-          if (!ctx) return;
-          ctx.drawImage(img, 0, 0, w, h);
-          // Sample top 10% strip where menu bar sits
-          const strip = ctx.getImageData(0, 0, w, Math.max(1, Math.round(h * 0.1)));
-          let sum = 0;
-          for (let i = 0; i < strip.data.length; i += 4) {
-            sum += strip.data[i] * 0.299 + strip.data[i + 1] * 0.587 + strip.data[i + 2] * 0.114;
-          }
-          const avg = sum / (strip.data.length / 4);
-          const theme = avg > 128 ? "light" : "dark";
-          desktopBg.setAttribute("data-theme", theme);
-          const menuBar = desktopBg.querySelector(".menu-bar") as HTMLElement;
-          if (menuBar) {
-            menuBar.setAttribute("data-theme", theme);
-          }
-        };
-        img.src = bgUrl;
-      }
-    }
-
     const onResize = () => apply();
     window.addEventListener("resize", onResize);
     return () => {

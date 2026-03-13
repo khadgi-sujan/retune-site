@@ -496,7 +496,7 @@ p { text-wrap: pretty; }
   max-width: 800px;
   display: flex;
   flex-direction: column;
-  background: url('https://gefwnmizrwwjultadzml.supabase.co/storage/v1/object/public/Retune/meadow_og.png') center / cover no-repeat;
+  background: url('https://gefwnmizrwwjultadzml.supabase.co/storage/v1/object/public/Retune/meadow_og.webp') center / cover no-repeat;
   overflow: clip;
   overflow-clip-margin: 30px;
   position: relative;
@@ -516,7 +516,7 @@ p { text-wrap: pretty; }
   pointer-events: none;
 }
 
-[data-theme="light"] .desktop-bg::before {
+:root[data-theme="light"] .desktop-bg::before {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
 }
 
@@ -598,11 +598,11 @@ p { text-wrap: pretty; }
 }
 
 /* Adaptive: light wallpaper = dark text */
-[data-theme="light"] .menu-bar {
+:root[data-theme="light"] .menu-bar {
   color: rgba(0, 0, 0, 0.85);
 }
-[data-theme="light"] .menu-bar .menu-bar-apple,
-[data-theme="light"] .menu-bar .menu-bar-icon { color: #000; }
+:root[data-theme="light"] .menu-bar .menu-bar-apple,
+:root[data-theme="light"] .menu-bar .menu-bar-icon { color: #000; }
 
 /* macOS dock */
 .mock-dock {
@@ -3120,7 +3120,7 @@ p { text-wrap: pretty; }
 
 [data-theme="dark"] {
   /* Hero visual: dark wallpaper — user will provide URL, placeholder for now */
-  .desktop-bg { background-image: url('https://gefwnmizrwwjultadzml.supabase.co/storage/v1/object/public/Retune/meadow_night.png'); }
+  .desktop-bg { background-image: url('https://gefwnmizrwwjultadzml.supabase.co/storage/v1/object/public/Retune/meadow_night.webp'); }
 
   .layout,
   .sidebar {
