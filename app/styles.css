@@ -72,6 +72,15 @@
 
 /* ── Reset & Base ── */
 
+::selection {
+  background: #d6d3d1;
+  color: #1c1917;
+}
+[data-theme="dark"] ::selection {
+  background: #44403c;
+  color: #e7e5e4;
+}
+
 * { box-sizing: border-box; }
 
 html {
