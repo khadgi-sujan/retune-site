@@ -2,6 +2,7 @@ import "./styles.css";
 import {
   CopyButton,
   HeroInstallCopy,
+  FaqGroup,
   FaqItem,
   TryItButton,
   HeroCursorPositioner,
@@ -686,38 +687,38 @@ export default function Home() {
         {/* ── FAQ ── */}
         <section className="section" id="faq">
           <h2 className="section-heading">FAQ</h2>
-          <div className="faq-list">
-            <FaqItem question="Does it modify my source code directly?">
+          <FaqGroup>
+            <FaqItem index={0} question="Does it modify my source code directly?">
               No. Retune sends a structured diff of your visual changes to your AI coding tool (Claude Code, Cursor, etc.), which makes the actual code changes. You always review and approve before anything is committed.
             </FaqItem>
-            <FaqItem question="Does it ship to production?">
+            <FaqItem index={1} question="Does it ship to production?">
               No. The <code>&lt;Retune /&gt;</code> component automatically hides itself in production builds. It only activates in development mode unless you explicitly pass the <code>force</code> prop.
             </FaqItem>
-            <FaqItem question="How does it find the right element in my code?">
+            <FaqItem index={2} question="How does it find the right element in my code?">
               It combines CSS selectors, React component hierarchy, class names, and text content to give your AI agent enough context to locate the exact element. No build plugin needed.
             </FaqItem>
-            <FaqItem question="What frameworks and styling approaches are supported?">
+            <FaqItem index={3} question="What frameworks and styling approaches are supported?">
               Next.js, Vite, and Remix for build tools. Tailwind CSS, CSS Modules, and plain CSS for styling. Any AI tool that supports MCP (Claude Code, Cursor), plus clipboard fallback for others.
             </FaqItem>
-            <FaqItem question="Can I use it without an AI tool?">
+            <FaqItem index={4} question="Can I use it without an AI tool?">
               Yes. Changes are previewed live in the browser regardless. If no MCP server is connected, you can copy the structured diff to your clipboard and paste it into any tool.
             </FaqItem>
-            <FaqItem question="How does it detect my styling approach?">
+            <FaqItem index={5} question="How does it detect my styling approach?">
               It analyzes your actual stylesheet rules at runtime, not class names. It walks <code>document.styleSheets</code> to count CSS properties per rule and check selector complexity. Single-property, single-class rules are identified as utility CSS. This works for Tailwind, Bootstrap, Tachyons, UnoCSS, or any atomic framework without hardcoded patterns.
             </FaqItem>
-            <FaqItem question="Does it detect React components?">
+            <FaqItem index={6} question="Does it detect React components?">
               Yes. It traverses the React fiber tree to find the component hierarchy and identifies the nearest component name for the selected element. This context helps your AI agent locate the right file without a build plugin.
             </FaqItem>
-            <FaqItem question="Does it work with SSR and server components?">
+            <FaqItem index={7} question="Does it work with SSR and server components?">
               Yes. Retune is a client-side component that hydrates after page load. It works with Next.js App Router, Pages Router, Remix, and other SSR/SSG frameworks without affecting server rendering.
             </FaqItem>
-            <FaqItem question="Does it affect performance?">
+            <FaqItem index={8} question="Does it affect performance?">
               Minimal impact. It only activates when you enter edit mode, so there's no overhead during normal development. Style analysis runs once per element selection, not continuously.
             </FaqItem>
-            <FaqItem question="Can it inspect iframes or shadow DOM?">
+            <FaqItem index={9} question="Can it inspect iframes or shadow DOM?">
               Not currently. Only elements in the main document are accessible due to browser security restrictions. Shadow DOM support is planned.
             </FaqItem>
-          </div>
+          </FaqGroup>
         </section>
 
         {/* ── Footer ── */}

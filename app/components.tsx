@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useLayoutEffect, useEffect, type ReactNode } from "react";
+import { useState, useCallback, useRef, useLayoutEffect, useEffect, createContext, useContext, type ReactNode } from "react";
 import { playClick, playTick, playTap, playEnable, initSound, setMuted } from "./sounds";
 
 export function CopyButton({ text }: { text: string }) {
@@ -48,11 +48,23 @@ export function HeroInstallCopy() {
   );
 }
 
-export function FaqItem({ question, children }: { question: string; children: ReactNode }) {
-  const [open, setOpen] = useState(false);
+const FaqContext = createContext<{ openIndex: number | null; toggle: (i: number) => void }>({ openIndex: null, toggle: () => {} });
+
+export function FaqGroup({ children }: { children: ReactNode }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  return (
+    <FaqContext.Provider value={{ openIndex, toggle: (i) => { playTap(); setOpenIndex(openIndex === i ? null : i); } }}>
+      {children}
+    </FaqContext.Provider>
+  );
+}
+
+export function FaqItem({ index, question, children }: { index: number; question: string; children: ReactNode }) {
+  const { openIndex, toggle } = useContext(FaqContext);
+  const open = openIndex === index;
   return (
     <div className={`faq-item${open ? " open" : ""}`}>
-      <button className="faq-question" onClick={() => { playTap(); setOpen(!open); }} aria-expanded={open}>
+      <button className="faq-question" onClick={() => toggle(index)} aria-expanded={open}>
         <span>{question}</span>
         <svg className="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6" /></svg>
       </button>
