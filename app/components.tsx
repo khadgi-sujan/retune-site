@@ -478,46 +478,20 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
   );
 }
 
-type Theme = "light" | "dark" | "system";
-
 function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("system");
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    setTheme((localStorage.getItem("theme") as Theme) || "system");
+    const stored = localStorage.getItem("theme");
+    const dark = stored
+      ? stored === "dark"
+      : matchMedia("(prefers-color-scheme: dark)").matches;
+    setIsDark(dark);
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
   }, []);
 
-  function apply(t: Theme) {
-    const dark =
-      t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
-    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-  }
-
-  useEffect(() => {
-    apply(theme);
-    localStorage.setItem("theme", theme);
-
-    if (theme === "system") {
-      const mq = matchMedia("(prefers-color-scheme: dark)");
-      const handler = () => apply("system");
-      mq.addEventListener("change", handler);
-      return () => mq.removeEventListener("change", handler);
-    }
-  }, [theme]);
-
-  function resolve(t: Theme) {
-    return t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches)
-      ? "dark" : "light";
-  }
-
-  function switchTheme(newTheme: Theme, e: React.MouseEvent) {
-    if (newTheme === theme) return;
-
-    // Skip animation if resolved theme doesn't change (e.g. system↔dark when OS is dark)
-    if (resolve(newTheme) === resolve(theme)) {
-      setTheme(newTheme);
-      return;
-    }
+  function toggle(e: React.MouseEvent) {
+    const next = !isDark;
 
     const x = e.clientX;
     const y = e.clientY;
@@ -526,13 +500,13 @@ function ThemeToggle() {
       Math.max(y, window.innerHeight - y)
     );
 
-    // Fallback for browsers without View Transitions API
     if (!document.startViewTransition) {
-      setTheme(newTheme);
+      setIsDark(next);
+      document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
+      localStorage.setItem("theme", next ? "dark" : "light");
       return;
     }
 
-    // Inject dynamic CSS — positions the reveal at the click point
     let styleEl = document.querySelector("style[data-theme-transition]") as HTMLStyleElement;
     if (!styleEl) {
       styleEl = document.createElement("style");
@@ -559,38 +533,17 @@ function ThemeToggle() {
     `;
 
     document.startViewTransition(() => {
-      apply(newTheme);
-      setTheme(newTheme);
+      setIsDark(next);
+      document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
+      localStorage.setItem("theme", next ? "dark" : "light");
     });
   }
 
   return (
-    <div className="theme-toggle" style={{ "--active-idx": theme === "system" ? 0 : theme === "light" ? 1 : 2 } as React.CSSProperties}>
-      <button
-        onClick={(e) => switchTheme("system", e)}
-        className={theme === "system" ? "active" : ""}
-        aria-label="System theme"
-        title="System"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="round"><path d="M8.75 17.25H4.75C3.64543 17.25 2.75 16.3546 2.75 15.25V6.75C2.75 5.64543 3.64543 4.75 4.75 4.75H19.25C20.3546 4.75 21.25 5.64543 21.25 6.75V15.25C21.25 16.3546 20.3546 17.25 19.25 17.25H15.25M8.75 17.25V20.25H15.25V17.25M8.75 17.25H15.25"/></svg>
-      </button>
-      <button
-        onClick={(e) => switchTheme("light", e)}
-        className={theme === "light" ? "active" : ""}
-        aria-label="Light theme"
-        title="Light"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11.9982 3.29083V1.76758M5.83985 18.1586L4.76275 19.2357M11.9982 22.2327V20.7094M19.2334 4.76468L18.1562 5.84179M20.707 12.0001H22.2303M18.1562 18.1586L19.2334 19.2357M1.76562 12.0001H3.28888M4.76267 4.76462L5.83977 5.84173M15.7104 8.28781C17.7606 10.3381 17.7606 13.6622 15.7104 15.7124C13.6601 17.7627 10.336 17.7627 8.28574 15.7124C6.23548 13.6622 6.23548 10.3381 8.28574 8.28781C10.336 6.23756 13.6601 6.23756 15.7104 8.28781Z"/></svg>
-      </button>
-      <button
-        onClick={(e) => switchTheme("dark", e)}
-        className={theme === "dark" ? "active" : ""}
-        aria-label="Dark theme"
-        title="Dark"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.2481 11.8112C20.1889 12.56 18.8958 13 17.5 13C13.9101 13 11 10.0899 11 6.5C11 5.10416 11.44 3.81108 12.1888 2.75189C12.126 2.75063 12.0631 2.75 12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 11.9369 21.2494 11.874 21.2481 11.8112Z"/></svg>
-      </button>
-    </div>
+    <button className="theme-toggle" onClick={toggle} aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}>
+      <svg className={`theme-icon theme-icon-sun${isDark ? " active" : ""}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11.9982 3.29083V1.76758M5.83985 18.1586L4.76275 19.2357M11.9982 22.2327V20.7094M19.2334 4.76468L18.1562 5.84179M20.707 12.0001H22.2303M18.1562 18.1586L19.2334 19.2357M1.76562 12.0001H3.28888M4.76267 4.76462L5.83977 5.84173M15.7104 8.28781C17.7606 10.3381 17.7606 13.6622 15.7104 15.7124C13.6601 17.7627 10.336 17.7627 8.28574 15.7124C6.23548 13.6622 6.23548 10.3381 8.28574 8.28781C10.336 6.23756 13.6601 6.23756 15.7104 8.28781Z"/></svg>
+      <svg className={`theme-icon theme-icon-moon${isDark ? "" : " active"}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.2481 11.8112C20.1889 12.56 18.8958 13 17.5 13C13.9101 13 11 10.0899 11 6.5C11 5.10416 11.44 3.81108 12.1888 2.75189C12.126 2.75063 12.0631 2.75 12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 11.9369 21.2494 11.874 21.2481 11.8112Z"/></svg>
+    </button>
   );
 }
 
@@ -665,9 +618,9 @@ export function Sidebar({ version }: { version: string }) {
           >
             v{version}
           </a>
+          <ThemeToggle />
         </div>
       </nav>
-      <ThemeToggle />
     </aside>
   );
 }
