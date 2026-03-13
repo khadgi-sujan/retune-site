@@ -1833,7 +1833,7 @@ p { text-wrap: pretty; }
 .mock-section:last-child { border-bottom: none; }
 
 .mock-section-header {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 500;
   color: #1c1917;
   padding: 0 5px 0 10px;
