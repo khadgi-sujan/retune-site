@@ -305,12 +305,18 @@ p { text-wrap: pretty; }
   color: var(--color-text-secondary);
   cursor: pointer;
   position: relative;
-  transition: color 150ms ease;
+  transition: color 150ms ease, transform 150ms ease;
 }
 
 .theme-toggle:hover,
 .sound-toggle:hover {
   color: var(--color-text-primary);
+}
+
+.theme-toggle:active,
+.sound-toggle:active {
+  transform: scale(0.92);
+  transition: color 150ms ease, transform 100ms ease-out;
 }
 
 .theme-icon {
@@ -424,6 +430,12 @@ p { text-wrap: pretty; }
   padding: 0;
   cursor: pointer;
   font-family: inherit;
+  transition: transform 150ms ease;
+}
+
+.hero-install:active {
+  transform: scale(0.97);
+  transition: transform 100ms ease-out;
 }
 
 .hero-install-cmd {
@@ -540,7 +552,12 @@ p { text-wrap: pretty; }
   font-weight: 400;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, transform 150ms ease;
+}
+
+.cta-primary:active {
+  transform: scale(0.97);
+  transition: background 0.15s ease, transform 100ms ease-out;
 }
 
 .cta-primary:hover,
@@ -2473,7 +2490,8 @@ p { text-wrap: pretty; }
   background: var(--color-bg-input);
 }
 .animation-pause-btn:active {
-  transform: translateX(-50%) scale(0.9);
+  transform: translateX(-50%) scale(0.92);
+  transition: color 150ms ease, background 150ms ease, transform 100ms ease-out;
 }
 @media (min-width: 848px) {
   .animation-pause-btn {
@@ -2489,15 +2507,9 @@ p { text-wrap: pretty; }
     backdrop-filter: blur(12px);
   }
   .animation-pause-btn:active {
-    transform: scale(0.9);
+    transform: scale(0.92);
+    transition: color 150ms ease, background 150ms ease, transform 100ms ease-out;
   }
-}
-
-.animation-pause-btn svg {
-  transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
-}
-.animation-pause-btn:active svg {
-  transform: scale(0.85);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2721,8 +2733,13 @@ p { text-wrap: pretty; }
   border-radius: 6px;
   color: var(--color-text-tertiary);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, transform 150ms ease;
   flex-shrink: 0;
+}
+
+.copy-btn:active {
+  transform: scale(0.92);
+  transition: background 0.15s ease, color 0.15s ease, transform 100ms ease-out;
 }
 .code-block .copy-btn {
   position: absolute;
