@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useCallback, useRef, useLayoutEffect, useEffect, type ReactNode } from "react";
+import { playClick, playTick, playTap, playEnable, initSound, setMuted } from "./sounds";
 
 export function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = useCallback(() => {
+    playTick();
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -25,6 +27,7 @@ export function CopyButton({ text }: { text: string }) {
 export function HeroInstallCopy() {
   const [copied, setCopied] = useState(false);
   const handleClick = useCallback(() => {
+    playTick();
     navigator.clipboard.writeText("npm install retune").then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -49,7 +52,7 @@ export function FaqItem({ question, children }: { question: string; children: Re
   const [open, setOpen] = useState(false);
   return (
     <div className={`faq-item${open ? " open" : ""}`}>
-      <button className="faq-question" onClick={() => setOpen(!open)} aria-expanded={open}>
+      <button className="faq-question" onClick={() => { playTap(); setOpen(!open); }} aria-expanded={open}>
         <span>{question}</span>
         <svg className="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6" /></svg>
       </button>
@@ -452,7 +455,7 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
       {children}
       <button
         className="animation-pause-btn"
-        onClick={() => setPaused(p => !p)}
+        onClick={() => { playTap(); setPaused(p => !p); }}
         aria-label={paused ? "Resume animation" : "Pause animation"}
       >
         {paused ? (
@@ -478,6 +481,7 @@ function ThemeToggle() {
   }, []);
 
   function toggle(e: React.MouseEvent) {
+    playClick();
     const next = !isDark;
 
     const x = e.clientX;
@@ -530,6 +534,40 @@ function ThemeToggle() {
     <button className="theme-toggle" onClick={toggle} aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}>
       <svg className={`theme-icon theme-icon-sun${isDark ? " active" : ""}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11.9982 3.29083V1.76758M5.83985 18.1586L4.76275 19.2357M11.9982 22.2327V20.7094M19.2334 4.76468L18.1562 5.84179M20.707 12.0001H22.2303M18.1562 18.1586L19.2334 19.2357M1.76562 12.0001H3.28888M4.76267 4.76462L5.83977 5.84173M15.7104 8.28781C17.7606 10.3381 17.7606 13.6622 15.7104 15.7124C13.6601 17.7627 10.336 17.7627 8.28574 15.7124C6.23548 13.6622 6.23548 10.3381 8.28574 8.28781C10.336 6.23756 13.6601 6.23756 15.7104 8.28781Z"/></svg>
       <svg className={`theme-icon theme-icon-moon${isDark ? "" : " active"}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.2481 11.8112C20.1889 12.56 18.8958 13 17.5 13C13.9101 13 11 10.0899 11 6.5C11 5.10416 11.44 3.81108 12.1888 2.75189C12.126 2.75063 12.0631 2.75 12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 11.9369 21.2494 11.874 21.2481 11.8112Z"/></svg>
+    </button>
+  );
+}
+
+function SoundToggle() {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    setEnabled(initSound());
+  }, []);
+
+  function toggle() {
+    const next = !enabled;
+    setMuted(!next);
+    setEnabled(next);
+    if (next) playEnable();
+  }
+
+  return (
+    <button className={`sound-toggle${enabled ? "" : " muted"}`} onClick={toggle} aria-label={enabled ? "Mute sounds" : "Enable sounds"}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <defs>
+          <mask id="speaker-gap">
+            <rect x="0" y="0" width="24" height="24" fill="white" stroke="none"/>
+            <path className="sound-mask-slash" d="M4 4L20 20" stroke="black" strokeWidth="4" fill="none" pathLength={1}/>
+          </mask>
+        </defs>
+        <g className="speaker-body" mask="url(#speaker-gap)">
+          <path d="M3.75 7.75011H5.35491C5.77433 7.75011 6.18314 7.61825 6.52352 7.37318L11.4578 3.82046C11.7886 3.58233 12.25 3.81868 12.25 4.22623V19.774C12.25 20.1815 11.7886 20.4179 11.4578 20.1797L6.52352 16.627C6.18314 16.3819 5.77433 16.2501 5.35491 16.2501H3.75C2.64543 16.2501 1.75 15.3547 1.75 14.2501V9.75011C1.75 8.64554 2.64543 7.75011 3.75 7.75011Z"/>
+        </g>
+        <path className="sound-wave sound-wave-outer" d="M19.2478 4.75206C21.1027 6.60695 22.25 9.16945 22.25 11.9999C22.25 14.8303 21.1027 17.3928 19.2478 19.2477"/>
+        <path className="sound-wave sound-wave-inner" d="M15.8891 8.11144C16.8844 9.10674 17.5 10.4817 17.5 12.0005C17.5 13.5193 16.8844 14.8943 15.8891 15.8896"/>
+        <path className="sound-slash" d="M4 4L20 20" pathLength={1}/>
+      </svg>
     </button>
   );
 }
@@ -605,7 +643,10 @@ export function Sidebar({ version }: { version: string }) {
           >
             v{version}
           </a>
-          <ThemeToggle />
+          <div className="toc-toggles">
+            <SoundToggle />
+            <ThemeToggle />
+          </div>
         </div>
       </nav>
     </aside>

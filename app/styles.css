@@ -286,7 +286,15 @@ p { text-wrap: pretty; }
 
 /* ── Theme Toggle ── */
 
-.theme-toggle {
+.toc-toggles {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: auto;
+}
+
+.theme-toggle,
+.sound-toggle {
   all: unset;
   display: flex;
   align-items: center;
@@ -297,12 +305,11 @@ p { text-wrap: pretty; }
   color: var(--color-text-secondary);
   cursor: pointer;
   position: relative;
-  margin-top: auto;
-  margin-left: 4px;
   transition: color 150ms ease;
 }
 
-.theme-toggle:hover {
+.theme-toggle:hover,
+.sound-toggle:hover {
   color: var(--color-text-primary);
 }
 
@@ -320,6 +327,64 @@ p { text-wrap: pretty; }
 
 .theme-icon-sun { transform-origin: center; }
 .theme-icon-moon { transform-origin: center; }
+
+/* Sound toggle: speaker body shifts right when muted to center without waves */
+.speaker-body {
+  transition: transform 280ms cubic-bezier(0.23, 1, 0.32, 1) 140ms;
+}
+.sound-toggle.muted .speaker-body {
+  transform: translateX(2px);
+  transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1) 60ms;
+}
+
+/* Sound toggle: slash + mask use stroke-dashoffset draw-on, waves use opacity crossfade */
+.sound-slash, .sound-mask-slash {
+  stroke-dasharray: 1;
+}
+
+/* Base state: waves visible, slash + mask hidden */
+.sound-wave { opacity: 1; }
+.sound-slash { stroke-dashoffset: 1; }
+.sound-mask-slash { stroke-dashoffset: 1; }
+
+/* Unmuting choreography: slash+mask retract first, then waves fade in */
+.sound-wave-outer {
+  transition: opacity 200ms ease 260ms;
+}
+.sound-wave-inner {
+  transition: opacity 200ms ease 200ms;
+}
+.sound-slash {
+  transition: stroke-dashoffset 280ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+}
+.sound-mask-slash {
+  transition: stroke-dashoffset 280ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+}
+
+/* Muted state: waves hidden, slash + mask visible */
+.sound-toggle.muted .sound-wave { opacity: 0; }
+.sound-toggle.muted .sound-slash { stroke-dashoffset: 0; }
+.sound-toggle.muted .sound-mask-slash { stroke-dashoffset: 0; }
+
+/* Muting choreography: waves fade out, then slash+mask cut through */
+.sound-toggle.muted .sound-wave-outer {
+  transition: opacity 180ms ease 0ms;
+}
+.sound-toggle.muted .sound-wave-inner {
+  transition: opacity 160ms ease 40ms;
+}
+.sound-toggle.muted .sound-slash {
+  transition: stroke-dashoffset 320ms cubic-bezier(0.19, 1, 0.22, 1) 140ms;
+}
+.sound-toggle.muted .sound-mask-slash {
+  transition: stroke-dashoffset 320ms cubic-bezier(0.19, 1, 0.22, 1) 140ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sound-wave, .sound-slash, .sound-mask-slash, .speaker-body {
+    transition: none;
+  }
+}
 
 /* ── Content ── */
 
@@ -2996,7 +3061,7 @@ p { text-wrap: pretty; }
     padding-right: 0;
   }
 
-  .theme-toggle {
+  .toc-toggles {
     margin-top: 0;
   }
 
