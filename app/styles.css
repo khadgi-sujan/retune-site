@@ -160,50 +160,10 @@ p { text-wrap: pretty; }
   align-self: stretch;
 }
 
-.logo-mark {
-  width: 20px;
-  height: 20px;
+.logo-svg {
+  height: 32px;
+  width: auto;
   flex-shrink: 0;
-}
-
-/* Logo color sweep on hover */
-@keyframes logo-sweep {
-  0%, 100% { fill: #f472b6; }
-  10% { fill: #fb923c; }
-  20% { fill: #facc15; }
-  30% { fill: #4ade80; }
-  40% { fill: #34d399; }
-  50% { fill: #22d3ee; }
-  60% { fill: #60a5fa; }
-  70% { fill: #818cf8; }
-  80% { fill: #a78bfa; }
-  90% { fill: #e879f9; }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .sidebar-logo:hover .logo-mark rect {
-    animation-name: logo-sweep;
-    animation-duration: 2s;
-    animation-timing-function: steps(10);
-    animation-iteration-count: infinite;
-  }
-  .logo-mark rect:nth-child(1)  { animation-delay: -1800ms; }
-  .logo-mark rect:nth-child(2)  { animation-delay: -1600ms; }
-  .logo-mark rect:nth-child(3)  { animation-delay: -1400ms; }
-  .logo-mark rect:nth-child(4),
-  .logo-mark rect:nth-child(5)  { animation-delay: -1200ms; }
-  .logo-mark rect:nth-child(6)  { animation-delay: -1000ms; }
-  .logo-mark rect:nth-child(7)  { animation-delay: -800ms; }
-  .logo-mark rect:nth-child(8),
-  .logo-mark rect:nth-child(9)  { animation-delay: -600ms; }
-  .logo-mark rect:nth-child(10) { animation-delay: -400ms; }
-  .logo-mark rect:nth-child(11) { animation-delay: -200ms; }
-  .logo-mark rect:nth-child(12) { animation-delay: 0ms; }
-}
-
-.logo-name {
-  font-size: 15px;
-  font-weight: 500;
   color: var(--color-text-primary);
 }
 
