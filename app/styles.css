@@ -2083,12 +2083,22 @@ p { text-wrap: pretty; }
   100%    { opacity: 0; }
 }
 
-/* Claude Code terminal — positioned in .desktop-bg so it can genie to/from dock */
-.mock-terminal {
+/* Claude Code terminal — wrapper outside .desktop-bg so drop-shadow isn't clipped */
+.mock-terminal-wrapper {
   position: absolute;
-  /* Centered over the browser-content area, raised slightly */
   bottom: calc(48px + 32px);
-  left: calc(50% - 150px); /* center: 50% minus half of 300px width */
+  left: calc(50% - 150px);
+  width: 300px;
+  z-index: 10;
+  pointer-events: none;
+  filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.12))
+          drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.08));
+  will-change: transform;
+  transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
+  animation: mock-terminal-wrapper-toggle 10s linear infinite;
+}
+
+.mock-terminal {
   width: 300px;
   background: #fff;
   border-radius: 8px;
@@ -2096,13 +2106,10 @@ p { text-wrap: pretty; }
   font-size: 9px;
   line-height: 1.7;
   color: #1c1917;
-  z-index: 10;
-  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.15), 0px 6px 20px 4px rgba(0, 0, 0, 0.15);
-  /* Genie: JS sets --genie-dx/dy (translation to dock) and --genie-scale (thumbnail/terminal ratio) */
-  will-change: transform, clip-path;
-  transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
+  pointer-events: auto;
+  will-change: clip-path;
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-  animation: mock-terminal-toggle 10s linear infinite;
+  animation: mock-terminal-clip 10s linear infinite;
   overflow: hidden;
 }
 .mock-term-titlebar {
@@ -2455,6 +2462,7 @@ p { text-wrap: pretty; }
 .hero-visual.animation-paused .mock-val-radius,
 .hero-visual.animation-paused .mock-val-before,
 .hero-visual.animation-paused .mock-val-after,
+.hero-visual.animation-paused .mock-terminal-wrapper,
 .hero-visual.animation-paused .mock-terminal,
 .hero-visual.animation-paused .mock-terminal-line,
 .hero-visual.animation-paused .mock-dock-spacer,
@@ -2486,6 +2494,7 @@ p { text-wrap: pretty; }
   .cursor-pointer,
   .cursor-crosshair,
   .mock-panel-inner,
+  .mock-terminal-wrapper,
   .mock-terminal,
   .mock-terminal-line,
   .mock-dock-spacer,
@@ -2509,7 +2518,7 @@ p { text-wrap: pretty; }
   .mock-toolbar-btn.enables-on-change { opacity: 1; }
   .mock-toolbar-btn.always-disabled { opacity: 0.2; }
   .mock-cursor { display: none; }
-  .mock-terminal { display: none; }
+  .mock-terminal-wrapper { display: none; }
   .mock-val-pad,
   .mock-val-radius,
   .mock-val-before,
@@ -3286,10 +3295,14 @@ p { text-wrap: pretty; }
   }
 
   /* Terminal — dark mode (revert to pre-light-mode colors) */
+  .mock-terminal-wrapper {
+    filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.3))
+            drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.15));
+  }
   .mock-terminal {
     background: #0c0a09;
     color: #d6d3d1;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 0 2px rgba(0, 0, 0, 0.4), 0px 6px 20px 4px rgba(0, 0, 0, 0.26);
+    box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.15);
   }
   .mock-term-titlebar {
     background: #1c1917;

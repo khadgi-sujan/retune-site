@@ -496,11 +496,6 @@ export default function Home() {
               </div>
             </div>
             </div>
-            {/* Animated cursor — in desktop-bg so it can reach the dock */}
-            <div className="mock-cursor">
-              <svg className="cursor-pointer" width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
-              <svg className="cursor-crosshair" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
-            </div>
             {/* macOS dock */}
             <div className="mock-dock">
               <div className="mock-dock-glass">
@@ -521,54 +516,61 @@ export default function Home() {
                 <span className="mock-dock-dot" />
               </div>
             </div>
-            {/* Claude Code terminal — in desktop-bg so it can genie to/from dock */}
-            <div className="mock-terminal">
-              <div className="mock-term-titlebar">
-                <span className="mock-term-dot" />
-                <span className="mock-term-dot" />
-                <span className="mock-term-dot" />
-                <span className="mock-term-title">Claude Code</span>
-              </div>
-              <div className="mock-term-body">
-                <div className="mock-terminal-line mock-term-line-1">
-                  <svg className="mock-term-mascot" width="27" height="18" viewBox="0 0 18 12" fill="#D4775B" shapeRendering="crispEdges">
-                    {/* Head */}
-                    <rect x="3" y="0" width="12" height="2"/>
-                    {/* Eye row */}
-                    <rect x="3" y="2" width="2" height="2"/>
-                    <rect x="5" y="2" width="1" height="2" fill="#1c1917"/>
-                    <rect x="6" y="2" width="6" height="2"/>
-                    <rect x="12" y="2" width="1" height="2" fill="#1c1917"/>
-                    <rect x="13" y="2" width="2" height="2"/>
-                    {/* Body (wider) */}
-                    <rect x="2" y="4" width="15" height="2"/>
-                    <rect x="1" y="4" width="1" height="2"/>
-                    <rect x="3" y="6" width="12" height="2"/>
-                    {/* Feet */}
-                    <rect x="4" y="8" width="1" height="2"/>
-                    <rect x="6" y="8" width="1" height="2"/>
-                    <rect x="11" y="8" width="1" height="2"/>
-                    <rect x="13" y="8" width="1" height="2"/>
-                  </svg>
-                  <div className="mock-term-meta">
-                    <span className="mock-term-badge">Claude Code</span>
-                    <span className="mock-term-dim">Opus 4.6 · /piedpiper</span>
+            </div>
+            {/* Terminal wrapper — outside desktop-bg so drop-shadow isn't clipped */}
+            <div className="mock-terminal-wrapper">
+              <div className="mock-terminal">
+                <div className="mock-term-titlebar">
+                  <span className="mock-term-dot" />
+                  <span className="mock-term-dot" />
+                  <span className="mock-term-dot" />
+                  <span className="mock-term-title">Claude Code</span>
+                </div>
+                <div className="mock-term-body">
+                  <div className="mock-terminal-line mock-term-line-1">
+                    <svg className="mock-term-mascot" width="27" height="18" viewBox="0 0 18 12" fill="#D4775B" shapeRendering="crispEdges">
+                      {/* Head */}
+                      <rect x="3" y="0" width="12" height="2"/>
+                      {/* Eye row */}
+                      <rect x="3" y="2" width="2" height="2"/>
+                      <rect x="5" y="2" width="1" height="2" fill="#1c1917"/>
+                      <rect x="6" y="2" width="6" height="2"/>
+                      <rect x="12" y="2" width="1" height="2" fill="#1c1917"/>
+                      <rect x="13" y="2" width="2" height="2"/>
+                      {/* Body (wider) */}
+                      <rect x="2" y="4" width="15" height="2"/>
+                      <rect x="1" y="4" width="1" height="2"/>
+                      <rect x="3" y="6" width="12" height="2"/>
+                      {/* Feet */}
+                      <rect x="4" y="8" width="1" height="2"/>
+                      <rect x="6" y="8" width="1" height="2"/>
+                      <rect x="11" y="8" width="1" height="2"/>
+                      <rect x="13" y="8" width="1" height="2"/>
+                    </svg>
+                    <div className="mock-term-meta">
+                      <span className="mock-term-badge">Claude Code</span>
+                      <span className="mock-term-dim">Opus 4.6 · /piedpiper</span>
+                    </div>
                   </div>
-                </div>
-                <div className="mock-terminal-line mock-term-line-2">
-                  <span className="mock-term-marker">⏺</span> <span className="mock-term-tool">retune_get_formatted_changes</span>()
-                </div>
-                <div className="mock-terminal-line mock-term-line-3">
-                  <span className="mock-term-indent" /><span className="mock-term-dim">⎿</span> padding: <span className="mock-term-dim">8px →</span> 16px, border-radius: <span className="mock-term-dim">0px →</span> 8px
-                </div>
-                <div className="mock-terminal-line mock-term-line-4">
-                  <span className="mock-term-indent" /><span className="mock-term-tool">Edit</span> <span className="mock-term-file">Card.tsx</span>
-                </div>
-                <div className="mock-terminal-line mock-term-line-5">
-                  <span className="mock-term-indent" /><span className="mock-term-dim">⎿</span> Applied 2 changes
+                  <div className="mock-terminal-line mock-term-line-2">
+                    <span className="mock-term-marker">⏺</span> <span className="mock-term-tool">retune_get_formatted_changes</span>()
+                  </div>
+                  <div className="mock-terminal-line mock-term-line-3">
+                    <span className="mock-term-indent" /><span className="mock-term-dim">⎿</span> padding: <span className="mock-term-dim">8px →</span> 16px, border-radius: <span className="mock-term-dim">0px →</span> 8px
+                  </div>
+                  <div className="mock-terminal-line mock-term-line-4">
+                    <span className="mock-term-indent" /><span className="mock-term-tool">Edit</span> <span className="mock-term-file">Card.tsx</span>
+                  </div>
+                  <div className="mock-terminal-line mock-term-line-5">
+                    <span className="mock-term-indent" /><span className="mock-term-dim">⎿</span> Applied 2 changes
+                  </div>
                 </div>
               </div>
             </div>
+            {/* Animated cursor — outside desktop-bg */}
+            <div className="mock-cursor">
+              <svg className="cursor-pointer" width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>
+              <svg className="cursor-crosshair" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
             </div>
           </HeroCursorPositioner>
         </section>

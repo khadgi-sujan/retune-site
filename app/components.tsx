@@ -242,11 +242,11 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     const radMeasure = measurePanelItem(".mock-val-radius", scrollRad);
 
     // Measure genie target: the minimized dock thumbnail.
-    // Terminal is in .desktop-bg, positioned via CSS.
+    // Terminal wrapper is a sibling of .desktop-bg, positioned to match.
     // We compute how far it needs to translate to reach the dock thumbnail.
     const desktopBg = hero.querySelector('.desktop-bg') as HTMLElement | null;
     const dockThumb = hero.querySelector('.mock-dock-spacer') as HTMLElement | null;
-    const termEl = desktopBg?.querySelector('.mock-terminal') as HTMLElement | null;
+    const termEl = hero.querySelector('.mock-terminal') as HTMLElement | null;
 
     let genieDx = "200px";
     let genieDy = "200px";
@@ -327,23 +327,37 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
     const genieRect = geniePoly(0);
     const genieDocked = `translate(${dxVal.toFixed(2)}px, ${dyVal.toFixed(2)}px) scale(${scVal})`;
 
-    let kf = '@keyframes mock-terminal-toggle {\n';
-    kf += `  0%, 53.9% { transform: ${genieDocked}; clip-path: ${genieRect}; }\n`;
-
+    // Wrapper keyframes: transform only (translate + scale)
+    let wrapperKf = '@keyframes mock-terminal-wrapper-toggle {\n';
+    wrapperKf += `  0%, 53.9% { transform: ${genieDocked}; }\n`;
     for (let i = 0; i <= GF; i++) {
       const gp = 1 - i / GF;
       const pct = (54 + (i / GF) * 3).toFixed(2);
-      kf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))}; clip-path: ${geniePoly(Math.min(1, gp / 0.4))}; }\n`;
+      wrapperKf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))}; }\n`;
     }
-
     for (let i = 0; i <= GF; i++) {
       const gp = i / GF;
       const pct = (89 + (i / GF) * 3).toFixed(2);
-      kf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))}; clip-path: ${geniePoly(Math.min(1, gp / 0.4))}; }\n`;
+      wrapperKf += `  ${pct}% { transform: ${genieXform(Math.max(0, (gp - 0.2) / 0.8))}; }\n`;
     }
+    wrapperKf += `  92.1%, 100% { transform: ${genieDocked}; }\n`;
+    wrapperKf += '}\n\n';
 
-    kf += `  92.1%, 100% { transform: ${genieDocked}; clip-path: ${genieRect}; }\n`;
-    kf += '}';
+    // Terminal keyframes: clip-path only (polygon warping)
+    let clipKf = '@keyframes mock-terminal-clip {\n';
+    clipKf += `  0%, 53.9% { clip-path: ${genieRect}; }\n`;
+    for (let i = 0; i <= GF; i++) {
+      const gp = 1 - i / GF;
+      const pct = (54 + (i / GF) * 3).toFixed(2);
+      clipKf += `  ${pct}% { clip-path: ${geniePoly(Math.min(1, gp / 0.4))}; }\n`;
+    }
+    for (let i = 0; i <= GF; i++) {
+      const gp = i / GF;
+      const pct = (89 + (i / GF) * 3).toFixed(2);
+      clipKf += `  ${pct}% { clip-path: ${geniePoly(Math.min(1, gp / 0.4))}; }\n`;
+    }
+    clipKf += `  92.1%, 100% { clip-path: ${genieRect}; }\n`;
+    clipKf += '}';
 
     let genieStyleEl = document.querySelector('style[data-genie]') as HTMLStyleElement;
     if (!genieStyleEl) {
@@ -351,7 +365,7 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
       genieStyleEl.setAttribute('data-genie', '');
       document.head.appendChild(genieStyleEl);
     }
-    genieStyleEl.textContent = kf;
+    genieStyleEl.textContent = wrapperKf + clipKf;
 
     // Cursor is in .desktop-bg — convert browser-content % → desktop-bg %
     const apply = () => {
@@ -401,7 +415,7 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
       // Yellow dot (2nd) center X from terminal left: 10 + 7 + 4 + 3.5 = 24.5px
       // Yellow dot center Y from terminal top: 6 + 3.5 = 9.5px
       const termLeft = bgW / 2 - 150;
-      const termEl = desktopBg.querySelector('.mock-terminal') as HTMLElement;
+      const termEl = hero.querySelector('.mock-terminal') as HTMLElement;
       // offsetHeight gives CSS layout height, unaffected by transforms
       const termH = termEl ? termEl.offsetHeight : 120;
       const termTop = bgH - 80 - termH; // bottom: 80px
