@@ -487,13 +487,13 @@ function ThemeToggle() {
     setTheme((localStorage.getItem("theme") as Theme) || "system");
   }, []);
 
-  useEffect(() => {
-    function apply(t: Theme) {
-      const dark =
-        t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
-      document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-    }
+  function apply(t: Theme) {
+    const dark =
+      t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+  }
 
+  useEffect(() => {
     apply(theme);
     localStorage.setItem("theme", theme);
 
@@ -505,10 +505,69 @@ function ThemeToggle() {
     }
   }, [theme]);
 
+  function resolve(t: Theme) {
+    return t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches)
+      ? "dark" : "light";
+  }
+
+  function switchTheme(newTheme: Theme, e: React.MouseEvent) {
+    if (newTheme === theme) return;
+
+    // Skip animation if resolved theme doesn't change (e.g. system↔dark when OS is dark)
+    if (resolve(newTheme) === resolve(theme)) {
+      setTheme(newTheme);
+      return;
+    }
+
+    const x = e.clientX;
+    const y = e.clientY;
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    // Fallback for browsers without View Transitions API
+    if (!document.startViewTransition) {
+      setTheme(newTheme);
+      return;
+    }
+
+    // Inject dynamic CSS — positions the reveal at the click point
+    let styleEl = document.querySelector("style[data-theme-transition]") as HTMLStyleElement;
+    if (!styleEl) {
+      styleEl = document.createElement("style");
+      styleEl.setAttribute("data-theme-transition", "");
+      document.head.appendChild(styleEl);
+    }
+    styleEl.textContent = `
+      ::view-transition-new(root) {
+        mask-image: radial-gradient(
+          circle at ${x}px ${y}px,
+          black 0,
+          black var(--reveal-size),
+          transparent calc(var(--reveal-size) + 150px)
+        );
+        animation: theme-reveal 600ms cubic-bezier(0.19, 1, 0.22, 1) both;
+      }
+      ::view-transition-old(root) {
+        animation: none;
+      }
+      @keyframes theme-reveal {
+        from { --reveal-size: 0px; }
+        to   { --reveal-size: ${endRadius}px; }
+      }
+    `;
+
+    document.startViewTransition(() => {
+      apply(newTheme);
+      setTheme(newTheme);
+    });
+  }
+
   return (
     <div className="theme-toggle" style={{ "--active-idx": theme === "system" ? 0 : theme === "light" ? 1 : 2 } as React.CSSProperties}>
       <button
-        onClick={() => setTheme("system")}
+        onClick={(e) => switchTheme("system", e)}
         className={theme === "system" ? "active" : ""}
         aria-label="System theme"
         title="System"
@@ -516,7 +575,7 @@ function ThemeToggle() {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="round"><path d="M8.75 17.25H4.75C3.64543 17.25 2.75 16.3546 2.75 15.25V6.75C2.75 5.64543 3.64543 4.75 4.75 4.75H19.25C20.3546 4.75 21.25 5.64543 21.25 6.75V15.25C21.25 16.3546 20.3546 17.25 19.25 17.25H15.25M8.75 17.25V20.25H15.25V17.25M8.75 17.25H15.25"/></svg>
       </button>
       <button
-        onClick={() => setTheme("light")}
+        onClick={(e) => switchTheme("light", e)}
         className={theme === "light" ? "active" : ""}
         aria-label="Light theme"
         title="Light"
@@ -524,7 +583,7 @@ function ThemeToggle() {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11.9982 3.29083V1.76758M5.83985 18.1586L4.76275 19.2357M11.9982 22.2327V20.7094M19.2334 4.76468L18.1562 5.84179M20.707 12.0001H22.2303M18.1562 18.1586L19.2334 19.2357M1.76562 12.0001H3.28888M4.76267 4.76462L5.83977 5.84173M15.7104 8.28781C17.7606 10.3381 17.7606 13.6622 15.7104 15.7124C13.6601 17.7627 10.336 17.7627 8.28574 15.7124C6.23548 13.6622 6.23548 10.3381 8.28574 8.28781C10.336 6.23756 13.6601 6.23756 15.7104 8.28781Z"/></svg>
       </button>
       <button
-        onClick={() => setTheme("dark")}
+        onClick={(e) => switchTheme("dark", e)}
         className={theme === "dark" ? "active" : ""}
         aria-label="Dark theme"
         title="Dark"
