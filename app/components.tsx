@@ -470,6 +470,9 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const revealAnim = useRef<Animation | null>(null);
+  const appliedDark = useRef(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("theme");
@@ -477,64 +480,85 @@ function ThemeToggle() {
       ? stored === "dark"
       : matchMedia("(prefers-color-scheme: dark)").matches;
     setIsDark(dark);
+    appliedDark.current = dark;
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
   }, []);
 
   function toggle(e: React.MouseEvent) {
     playClick();
-    const next = !isDark;
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    // Interrupt: reverse from current position
+    if (revealAnim.current) {
+      revealAnim.current.reverse();
+      return;
+    }
+
+    const next = !appliedDark.current;
+
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIsDark(next);
+      appliedDark.current = next;
+      document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
+      localStorage.setItem("theme", next ? "dark" : "light");
+      return;
+    }
 
     const x = e.clientX;
     const y = e.clientY;
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y)
+    ) + 150; // extend past feather zone
+
+    // Capture old bg before switching
+    const oldBg = getComputedStyle(document.documentElement).getPropertyValue("--color-bg-page").trim();
+
+    // Switch theme immediately (new content renders underneath)
+    setIsDark(next);
+    appliedDark.current = next;
+    document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
+    localStorage.setItem("theme", next ? "dark" : "light");
+
+    // Show overlay (old theme bg) with inverted mask — hole at click reveals new content
+    overlay.style.background = oldBg;
+    const mask = `radial-gradient(circle at ${x}px ${y}px, transparent 0, transparent var(--reveal-radius), black calc(var(--reveal-radius) + 150px))`;
+    overlay.style.maskImage = mask;
+    overlay.style.webkitMaskImage = mask;
+    overlay.style.display = "block";
+
+    // Animate hole expanding via registered @property
+    const anim = overlay.animate(
+      { "--reveal-radius": ["0px", `${endRadius}px`] } as PropertyIndexedKeyframes,
+      { duration: 600, easing: "cubic-bezier(0.19, 1, 0.22, 1)", fill: "both" }
     );
+    revealAnim.current = anim;
 
-    if (!document.startViewTransition) {
-      setIsDark(next);
-      document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
-      localStorage.setItem("theme", next ? "dark" : "light");
-      return;
-    }
-
-    let styleEl = document.querySelector("style[data-theme-transition]") as HTMLStyleElement;
-    if (!styleEl) {
-      styleEl = document.createElement("style");
-      styleEl.setAttribute("data-theme-transition", "");
-      document.head.appendChild(styleEl);
-    }
-    styleEl.textContent = `
-      ::view-transition-new(root) {
-        mask-image: radial-gradient(
-          circle at ${x}px ${y}px,
-          black 0,
-          black var(--reveal-size),
-          transparent calc(var(--reveal-size) + 150px)
-        );
-        animation: theme-reveal 600ms cubic-bezier(0.19, 1, 0.22, 1) both;
+    anim.addEventListener("finish", () => {
+      if (anim.playbackRate < 0) {
+        // Reverse completed — hole closed, revert theme
+        overlay.style.maskImage = "none";
+        overlay.style.webkitMaskImage = "none";
+        const old = !appliedDark.current;
+        setIsDark(old);
+        appliedDark.current = old;
+        document.documentElement.setAttribute("data-theme", old ? "dark" : "light");
+        localStorage.setItem("theme", old ? "dark" : "light");
       }
-      ::view-transition-old(root) {
-        animation: none;
-      }
-      @keyframes theme-reveal {
-        from { --reveal-size: 0px; }
-        to   { --reveal-size: ${endRadius}px; }
-      }
-    `;
-
-    document.startViewTransition(() => {
-      setIsDark(next);
-      document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
-      localStorage.setItem("theme", next ? "dark" : "light");
+      overlay.style.display = "none";
+      revealAnim.current = null;
     });
   }
 
   return (
-    <button className="theme-toggle" onClick={toggle} aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}>
-      <svg className={`theme-icon theme-icon-sun${isDark ? " active" : ""}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11.9982 3.29083V1.76758M5.83985 18.1586L4.76275 19.2357M11.9982 22.2327V20.7094M19.2334 4.76468L18.1562 5.84179M20.707 12.0001H22.2303M18.1562 18.1586L19.2334 19.2357M1.76562 12.0001H3.28888M4.76267 4.76462L5.83977 5.84173M15.7104 8.28781C17.7606 10.3381 17.7606 13.6622 15.7104 15.7124C13.6601 17.7627 10.336 17.7627 8.28574 15.7124C6.23548 13.6622 6.23548 10.3381 8.28574 8.28781C10.336 6.23756 13.6601 6.23756 15.7104 8.28781Z"/></svg>
-      <svg className={`theme-icon theme-icon-moon${isDark ? "" : " active"}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.2481 11.8112C20.1889 12.56 18.8958 13 17.5 13C13.9101 13 11 10.0899 11 6.5C11 5.10416 11.44 3.81108 12.1888 2.75189C12.126 2.75063 12.0631 2.75 12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 11.9369 21.2494 11.874 21.2481 11.8112Z"/></svg>
-    </button>
+    <>
+      <div ref={overlayRef} className="theme-reveal" />
+      <button className="theme-toggle" onClick={toggle} aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}>
+        <svg className={`theme-icon theme-icon-sun${isDark ? " active" : ""}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11.9982 3.29083V1.76758M5.83985 18.1586L4.76275 19.2357M11.9982 22.2327V20.7094M19.2334 4.76468L18.1562 5.84179M20.707 12.0001H22.2303M18.1562 18.1586L19.2334 19.2357M1.76562 12.0001H3.28888M4.76267 4.76462L5.83977 5.84173M15.7104 8.28781C17.7606 10.3381 17.7606 13.6622 15.7104 15.7124C13.6601 17.7627 10.336 17.7627 8.28574 15.7124C6.23548 13.6622 6.23548 10.3381 8.28574 8.28781C10.336 6.23756 13.6601 6.23756 15.7104 8.28781Z"/></svg>
+        <svg className={`theme-icon theme-icon-moon${isDark ? "" : " active"}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.2481 11.8112C20.1889 12.56 18.8958 13 17.5 13C13.9101 13 11 10.0899 11 6.5C11 5.10416 11.44 3.81108 12.1888 2.75189C12.126 2.75063 12.0631 2.75 12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 11.9369 21.2494 11.874 21.2481 11.8112Z"/></svg>
+      </button>
+    </>
   );
 }
 
