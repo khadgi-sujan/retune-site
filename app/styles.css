@@ -60,12 +60,16 @@
 /* ── Reset & Base ── */
 
 ::selection {
-  background: #d6d3d1;
+  background: #CCE1EC;
   color: #1c1917;
 }
 [data-theme="dark"] ::selection {
-  background: #44403c;
+  background: #403B33;
   color: #e7e5e4;
+}
+.menu-bar ::selection,
+.mock-dock ::selection {
+  background: transparent;
 }
 
 * { box-sizing: border-box; }
