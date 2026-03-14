@@ -503,6 +503,9 @@ p { text-wrap: pretty; }
   color: var(--color-text-secondary);
   margin: 0;
   width: 100%;
+  max-width: 640px;
+  align-self: center;
+  width: 100%;
 }
 
 .cta-primary {
@@ -3143,7 +3146,8 @@ p { text-wrap: pretty; }
 }
 
 @media (max-width: 847px) {
-  .desktop-bg { aspect-ratio: unset; padding: 0; max-width: 640px; margin: 0 auto; background: none; overflow-clip-margin: 0px; }
+  .desktop-bg { aspect-ratio: unset; padding: 0; max-width: 640px; margin: 0 auto; background: none; overflow-clip-margin: 0px; box-shadow: 0px 6px 20px 20px rgb(0 0 0 / 3%), 0px 1px 17px 3px rgb(0 0 0 / 7%), 0px 0px 0px 1px rgb(0 0 0 / 5%); }
+  :root[data-theme="dark"] .desktop-bg { box-shadow: 0px 6px 20px 20px rgb(0 0 0 / 3%), 0px 1px 17px 3px rgb(0 0 0 / 7%), 0px 0px 0px 1px rgb(255 255 255 / 17%); }
   .desktop-bg::before { display: none; }
   .browser-window { max-height: 420px; }
   .menu-bar { display: none; }
