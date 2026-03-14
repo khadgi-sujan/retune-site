@@ -5,7 +5,7 @@ import { playClick, playTick, playTap, playEnable, initSound, setMuted } from ".
 
 export function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const handleCopy = useCallback(() => {
     playTick();
     navigator.clipboard.writeText(text).then(() => {
@@ -28,7 +28,7 @@ export function CopyButton({ text }: { text: string }) {
 
 export function HeroInstallCopy() {
   const [copied, setCopied] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const handleClick = useCallback(() => {
     playTick();
     navigator.clipboard.writeText("npm install retune").then(() => {
