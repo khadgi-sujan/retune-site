@@ -226,7 +226,7 @@ const defaultParams: Record<ThemeVariantName, ThemeSoundParams> = {
   bubble:   { duration: 0.15, freqStart: 600,  freqPeak: 600,  freqEnd: 200,  gain: 0.10,  attack: 0.05 },
   flutter:  { duration: 0.30, freqStart: 400,  freqPeak: 500,  freqEnd: 350,  gain: 0.06,  attack: 0.15 },
   hum:      { duration: 0.50, freqStart: 80,   freqPeak: 120,  freqEnd: 80,   gain: 0.20,  attack: 0.40 },
-  wash:     { duration: 0.60, freqStart: 190,  freqPeak: 100,  freqEnd: 50,   gain: 0.045, attack: 0.30 },
+  wash:     { duration: 0.60, freqStart: 190,  freqPeak: 100,  freqEnd: 50,   gain: 0.095, attack: 0.30 },
 };
 
 let activeVariant: ThemeVariantName = "wash";

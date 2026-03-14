@@ -154,14 +154,14 @@ p { text-wrap: pretty; }
   text-decoration: none;
   color: var(--color-text-primary);
   margin-bottom: 36px;
-  margin-left: 12px;
+  margin-left: 8px;
   margin-right: 12px;
   width: 100%;
   align-self: stretch;
 }
 
 .logo-svg {
-  height: 12px;
+  height: 24px;
   width: auto;
   flex-shrink: 0;
   color: var(--color-text-primary);
