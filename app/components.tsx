@@ -703,7 +703,7 @@ export function Sidebar({ version }: { version: string }) {
         timers.push(setTimeout(() => {
           if (!hovering) return;
           ids.forEach((id) => {
-            const el = g.querySelector(`#${id}`) as SVGRectElement | null;
+            const el = g!.querySelector(`#${id}`) as SVGRectElement | null;
             if (!el) return;
             el.style.transition = "none";
             el.style.fill = color;
