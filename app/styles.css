@@ -219,7 +219,8 @@ p { text-wrap: pretty; }
 }
 
 .toc-link {
-  display: block;
+  display: flex;
+  align-items: center;
   padding: 7px 12px;
   border-radius: 8px;
   font-size: 12px;
@@ -243,6 +244,11 @@ p { text-wrap: pretty; }
 .toc-link.active {
   color: var(--color-text-primary);
   font-weight: 400;
+}
+
+.external-icon {
+  margin-left: 2px;
+  vertical-align: -1px;
 }
 
 /* ── Theme Toggle ── */
