@@ -246,15 +246,176 @@ export function setThemeParams(p: Partial<ThemeSoundParams>) {
 }
 
 /** Play a preview of the current tweaked sound without toggling theme */
-export function previewThemeSound() {
+export function previewThemeSound(toDark?: boolean) {
   // Temporarily unmute for preview
   const wasMuted = muted;
   if (wasMuted) muted = false;
-  playThemeVariant();
+  playThemeVariant(toDark);
   if (wasMuted) muted = true;
 }
 
-function playThemeVariant() {
+// ── Layered theme sound engine ──
+
+export type WashLayerName = "choir" | "shimmer" | "chime" | "woodwind" | "strings";
+export const washLayerNames: WashLayerName[] = ["choir", "shimmer", "chime", "woodwind", "strings"];
+
+export type WashWaveform = "sine" | "triangle" | "square" | "sawtooth";
+export const washWaveforms: WashWaveform[] = ["sine", "triangle", "square", "sawtooth"];
+
+export interface WashLayer {
+  enabled: boolean;
+  gain: number;       // 0-0.3
+  delay: number;      // seconds offset
+  duration: number;   // seconds
+  freq: number;       // base frequency Hz
+  attack: number;     // 0-1, fraction of duration
+  waveform: WashWaveform;
+  cutoff: number;     // lowpass filter Hz (20-8000)
+  vibRate: number;    // vibrato speed Hz (0-10, 0 = off)
+  vibDepth: number;   // vibrato depth (0-0.02, fraction of freq)
+  drift: number;      // pitch drift over duration (-0.1 to 0.1, negative = down)
+}
+
+export type WashConfig = Record<WashLayerName, WashLayer>;
+
+const defaultWashConfig: WashConfig = {
+  choir:    { enabled: true,  gain: 0.07, delay: 0,    duration: 0.8, freq: 104, attack: 0.4,  waveform: "sine",     cutoff: 800,  vibRate: 4.0, vibDepth: 0.004, drift: -0.02 },
+  shimmer:  { enabled: true,  gain: 0.03, delay: 0.15, duration: 0.7, freq: 312, attack: 0.35, waveform: "sine",     cutoff: 600,  vibRate: 0,   vibDepth: 0,     drift: 0 },
+  chime:    { enabled: true,  gain: 0.04, delay: 0.05, duration: 0.4, freq: 880, attack: 0.02, waveform: "sine",     cutoff: 4000, vibRate: 0,   vibDepth: 0,     drift: -0.05 },
+  woodwind: { enabled: true,  gain: 0.05, delay: 0.08, duration: 0.9, freq: 220, attack: 0.5,  waveform: "triangle", cutoff: 500,  vibRate: 3.5, vibDepth: 0.003, drift: -0.03 },
+  strings:  { enabled: true,  gain: 0.05, delay: 0.1,  duration: 1.0, freq: 156, attack: 0.45, waveform: "sine",     cutoff: 600,  vibRate: 5.0, vibDepth: 0.003, drift: -0.01 },
+};
+
+let washConfig: WashConfig = JSON.parse(JSON.stringify(defaultWashConfig));
+
+export function getWashConfig(): WashConfig { return JSON.parse(JSON.stringify(washConfig)); }
+export function getDefaultWashConfig(): WashConfig { return JSON.parse(JSON.stringify(defaultWashConfig)); }
+export function setWashLayer(name: WashLayerName, updates: Partial<WashLayer>) {
+  washConfig[name] = { ...washConfig[name], ...updates };
+}
+export function resetWashConfig() { washConfig = JSON.parse(JSON.stringify(defaultWashConfig)); }
+
+export function playWashLayer(name: WashLayerName, toDark?: boolean) {
+  const wasMuted = muted;
+  if (wasMuted) muted = false;
+  const c = getContext();
+  if (!c) { if (wasMuted) muted = true; return; }
+  _playLayer(c, c.currentTime, washConfig[name], name, toDark ?? true);
+  if (wasMuted) muted = true;
+}
+
+export function playAllWashLayers(toDark?: boolean) {
+  const wasMuted = muted;
+  if (wasMuted) muted = false;
+  const c = getContext();
+  if (!c) { if (wasMuted) muted = true; return; }
+  const t = c.currentTime;
+  for (const name of washLayerNames) {
+    if (washConfig[name].enabled) _playLayer(c, t, washConfig[name], name, toDark ?? true);
+  }
+  if (wasMuted) muted = true;
+}
+
+export function copyWashConfig() {
+  const out = JSON.stringify(washConfig, null, 2);
+  navigator.clipboard.writeText(out);
+}
+
+function _makeVoice(c: AudioContext, t: number, dur: number, l: WashLayer, freq: number, gainMult: number, onset: number) {
+  const rng = () => 0.94 + Math.random() * 0.12;
+  const osc = c.createOscillator();
+  osc.type = l.waveform;
+  const f = freq * rng();
+  osc.frequency.setValueAtTime(f, t + onset);
+  const driftTarget = f * (1 + l.drift);
+  if (driftTarget > 0) osc.frequency.exponentialRampToValueAtTime(driftTarget, t + dur * 0.8);
+
+  // Vibrato
+  let vib: OscillatorNode | null = null;
+  let vibG: GainNode | null = null;
+  if (l.vibRate > 0 && l.vibDepth > 0) {
+    vib = c.createOscillator();
+    vib.type = "sine";
+    vib.frequency.value = l.vibRate + Math.random() * 1;
+    vibG = c.createGain();
+    vibG.gain.value = f * l.vibDepth;
+    vib.connect(vibG).connect(osc.frequency);
+    vib.start(t); vib.stop(t + dur);
+  }
+
+  // Lowpass
+  const lp = c.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = l.cutoff;
+
+  // Gain envelope
+  const g = c.createGain();
+  const vol = l.gain * gainMult * rng();
+  g.gain.setValueAtTime(0, t + onset);
+  g.gain.linearRampToValueAtTime(vol, t + onset + dur * l.attack);
+  g.gain.setValueAtTime(vol * 0.8, t + onset + dur * 0.55);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+  osc.connect(lp).connect(g).connect(c.destination);
+  osc.start(t + onset);
+  osc.stop(t + dur);
+  osc.onended = () => { osc.disconnect(); lp.disconnect(); g.disconnect(); vib?.disconnect(); vibG?.disconnect(); };
+}
+
+function _playLayer(c: AudioContext, baseTime: number, l: WashLayer, name: WashLayerName, dark: boolean) {
+  const t = baseTime + l.delay;
+  const dur = l.duration;
+  const rng = () => 0.94 + Math.random() * 0.12;
+  const base = dark ? l.freq : l.freq * 1.12;
+
+  if (name === "choir") {
+    // Major chord — root, M3, P5
+    [base, base * 1.25, base * 1.5].forEach((freq, i) => {
+      _makeVoice(c, t, dur, l, freq, 1, i * 0.05);
+    });
+  }
+
+  if (name === "shimmer") {
+    // Detuned pair for gentle beating
+    [0, 2].forEach((detune) => {
+      _makeVoice(c, t, dur, l, base + detune, 1, 0);
+    });
+  }
+
+  if (name === "chime") {
+    // Single percussive tone
+    _makeVoice(c, t, dur, l, base, 1, 0);
+  }
+
+  if (name === "woodwind") {
+    // Tonal voice
+    _makeVoice(c, t, dur, l, base, 1, 0);
+    // Breath noise layer
+    const len = Math.round(c.sampleRate * dur);
+    const buf = c.createBuffer(1, len, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    const src = c.createBufferSource(); src.buffer = buf;
+    const bp = c.createBiquadFilter();
+    bp.type = "bandpass"; bp.frequency.value = base * 1.5; bp.Q.value = 0.3;
+    const ng = c.createGain();
+    ng.gain.setValueAtTime(0, t);
+    ng.gain.linearRampToValueAtTime(l.gain * 0.3, t + dur * 0.3);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.6);
+    src.connect(bp).connect(ng).connect(c.destination);
+    src.start(t); src.stop(t + dur);
+    src.onended = () => { src.disconnect(); bp.disconnect(); ng.disconnect(); };
+  }
+
+  if (name === "strings") {
+    // Root + octave
+    [base, base * 2].forEach((freq, i) => {
+      _makeVoice(c, t, dur, l, freq, i === 0 ? 1 : 0.5, 0);
+    });
+  }
+}
+
+function playThemeVariant(toDark?: boolean) {
   const c = getContext();
   if (!c) return;
   const t = c.currentTime;
@@ -324,29 +485,92 @@ function playThemeVariant() {
   }
 
   if (v === "wash") {
-    // Layered noise at different frequency bands fading in sequence
-    [0, 1, 2].forEach((band) => {
-      const bandFreqs = [p.freqStart, (p.freqStart + p.freqPeak) / 2, p.freqPeak];
-      const len = Math.round(c.sampleRate * p.duration);
-      const buf = c.createBuffer(1, len, c.sampleRate);
-      const d = buf.getChannelData(0);
-      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const bp = c.createBiquadFilter();
-      bp.type = "bandpass";
-      bp.frequency.value = bandFreqs[band];
-      bp.Q.value = 1;
+    // Angelic chord pad — layered voices with vibrato + breath + shimmer
+    const dark = toDark ?? true;
+    const rng = () => 0.94 + Math.random() * 0.12; // +/- 6%
+    const dur = p.duration * 1.4; // longer sustain for choir feel
+
+    // Chord voicing — lower register, no octave doubling
+    // Dark: Ab2 major (mellow, warm) / Light: Bb2 major (slightly brighter)
+    const root = dark ? 104 : 117; // Ab2 vs Bb2
+    const chord = [root, root * 1.25, root * 1.5]; // root, M3, P5 only — no octave
+
+    // Layer 1: Choir voices — sine with lowpass + vibrato
+    chord.forEach((freq, i) => {
+      const osc = c.createOscillator();
+      osc.type = "sine";
+      const f = freq * rng();
+      osc.frequency.setValueAtTime(f, t);
+      osc.frequency.exponentialRampToValueAtTime(dark ? f * 0.98 : f * 1.02, t + dur * 0.8);
+
+      // Vibrato LFO — slower, subtler
+      const vib = c.createOscillator();
+      vib.type = "sine";
+      vib.frequency.value = 3.5 + Math.random() * 1; // slower vibrato
+      const vibGain = c.createGain();
+      vibGain.gain.value = f * 0.004; // gentler wobble
+      vib.connect(vibGain).connect(osc.frequency);
+      vib.start(t);
+      vib.stop(t + dur);
+
+      // Lowpass to round off harshness
+      const lp = c.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 800;
+
       const g = c.createGain();
-      const onset = band * (p.duration * 0.15);
+      const onset = i * 0.06; // slightly more stagger
       g.gain.setValueAtTime(0, t + onset);
-      g.gain.linearRampToValueAtTime(p.gain, t + onset + p.duration * p.attack);
-      g.gain.exponentialRampToValueAtTime(0.001, t + onset + p.duration * 0.8);
-      src.connect(bp).connect(g).connect(c.destination);
-      src.start(t + onset);
-      src.stop(t + onset + p.duration);
-      src.onended = () => { src.disconnect(); bp.disconnect(); g.disconnect(); };
+      g.gain.linearRampToValueAtTime(p.gain * 0.35 * rng(), t + onset + dur * 0.4); // slower attack
+      g.gain.setValueAtTime(p.gain * 0.3 * rng(), t + onset + dur * 0.55);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+      osc.connect(lp).connect(g).connect(c.destination);
+      osc.start(t + onset);
+      osc.stop(t + dur);
+      osc.onended = () => { osc.disconnect(); lp.disconnect(); g.disconnect(); vib.disconnect(); vibGain.disconnect(); };
     });
+
+    // Layer 2: Breathy texture — very soft filtered noise
+    const len = Math.round(c.sampleRate * dur);
+    const buf = c.createBuffer(1, len, c.sampleRate);
+    const noise = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) noise[i] = Math.random() * 2 - 1;
+    const nSrc = c.createBufferSource();
+    nSrc.buffer = buf;
+    const nBp = c.createBiquadFilter();
+    nBp.type = "bandpass";
+    nBp.frequency.value = dark ? 300 : 400;
+    nBp.Q.value = 0.2; // very wide, diffuse
+    const nGain = c.createGain();
+    nGain.gain.setValueAtTime(0, t);
+    nGain.gain.linearRampToValueAtTime(p.gain * 0.08, t + dur * 0.35);
+    nGain.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.7);
+    nSrc.connect(nBp).connect(nGain).connect(c.destination);
+    nSrc.start(t);
+    nSrc.stop(t + dur);
+    nSrc.onended = () => { nSrc.disconnect(); nBp.disconnect(); nGain.disconnect(); };
+
+    // Layer 3: Shimmer — much lower, quieter, rounder
+    const shimBase = dark ? 312 : 350; // octave above root, not two octaves
+    [0, 1.5].forEach((detune) => {
+      const osc = c.createOscillator();
+      osc.type = "sine";
+      const f = shimBase * rng() + detune;
+      osc.frequency.setValueAtTime(f, t);
+      const lp = c.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 600;
+      const g = c.createGain();
+      g.gain.setValueAtTime(0, t + dur * 0.2);
+      g.gain.linearRampToValueAtTime(p.gain * 0.06 * rng(), t + dur * 0.45);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.85);
+      osc.connect(lp).connect(g).connect(c.destination);
+      osc.start(t);
+      osc.stop(t + dur);
+      osc.onended = () => { osc.disconnect(); lp.disconnect(); g.disconnect(); };
+    });
+
     return;
   }
 
@@ -517,8 +741,8 @@ function playThemeVariant() {
 }
 
 /** Theme toggle — plays the currently selected variant */
-export function playClick() {
-  playThemeVariant();
+export function playClick(toDark?: boolean) {
+  playThemeVariant(toDark);
 }
 
 /** Copy button — slightly brighter tick */

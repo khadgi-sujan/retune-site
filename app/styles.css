@@ -255,155 +255,6 @@ p { text-wrap: pretty; }
 
 /* ── Sound Lab (temporary dev panel) ── */
 
-.sound-lab-btn {
-  all: unset;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: var(--color-text-tertiary);
-  transition: color 150ms ease, background-color 150ms ease;
-}
-.sound-lab-btn:hover { color: var(--color-text-primary); background: var(--color-bg-input); }
-
-.sound-lab {
-  position: fixed;
-  bottom: 16px;
-  left: 16px;
-  z-index: 100000;
-  width: 280px;
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  font-size: 12px;
-  color: var(--color-text-primary);
-  font-family: var(--font-mono, ui-monospace, monospace);
-}
-
-.sound-lab-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.sound-lab-title {
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.sound-lab-close {
-  all: unset;
-  cursor: pointer;
-  font-size: 18px;
-  line-height: 1;
-  color: var(--color-text-tertiary);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-.sound-lab-close:hover { color: var(--color-text-primary); background: var(--color-bg-input); }
-
-.sound-lab-variants {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
-}
-
-.sound-lab-variant {
-  all: unset;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  color: var(--color-text-secondary);
-  background: var(--color-bg-input);
-  transition: all 150ms ease;
-  text-transform: capitalize;
-}
-.sound-lab-variant:hover { color: var(--color-text-primary); }
-.sound-lab-variant.active {
-  background: var(--color-cta-bg);
-  color: var(--color-cta-text);
-}
-
-.sound-lab-sliders {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.sound-lab-slider {
-  display: grid;
-  grid-template-columns: 72px 1fr 44px;
-  align-items: center;
-  gap: 8px;
-}
-
-.sound-lab-slider-label {
-  font-size: 11px;
-  color: var(--color-text-secondary);
-}
-
-.sound-lab-slider input[type="range"] {
-  width: 100%;
-  height: 4px;
-  appearance: none;
-  background: var(--color-border);
-  border-radius: 2px;
-  outline: none;
-}
-
-.sound-lab-slider input[type="range"]::-webkit-slider-thumb {
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--color-cta-bg);
-  cursor: pointer;
-  border: 2px solid var(--color-bg-surface);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-}
-
-.sound-lab-slider-value {
-  font-size: 10px;
-  color: var(--color-text-tertiary);
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.sound-lab-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.sound-lab-action {
-  all: unset;
-  cursor: pointer;
-  flex: 1;
-  text-align: center;
-  padding: 6px 0;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 500;
-  background: var(--color-bg-input);
-  color: var(--color-text-secondary);
-  transition: all 150ms ease;
-}
-.sound-lab-action:hover { color: var(--color-text-primary); background: var(--color-border); }
-.sound-lab-action:first-child {
-  background: var(--color-cta-bg);
-  color: var(--color-cta-text);
-}
-.sound-lab-action:first-child:hover {
-  background: var(--color-cta-hover);
-}
 
 .theme-toggle,
 .sound-toggle {
@@ -3090,6 +2941,14 @@ p { text-wrap: pretty; }
 .faq-answer > div {
   overflow: hidden;
   min-height: 0;
+  opacity: 0;
+  filter: blur(4px);
+  transition: opacity 200ms cubic-bezier(0.215, 0.61, 0.355, 1), filter 200ms cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.faq-item.open .faq-answer > div {
+  opacity: 1;
+  filter: blur(0);
 }
 
 .faq-answer > div > p {
@@ -3110,10 +2969,11 @@ p { text-wrap: pretty; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .faq-answer { transition: none; }
+  .faq-answer > div { transition: none; opacity: 1; filter: none; }
   .faq-chevron { transition: none; }
   .hamburger-line { transition: none; }
   .toc { transition: none; }
-  .toc-link { transition: none; }
+  .toc-link { transition: none; opacity: 1; filter: none; }
   .cta-primary { transition: none; }
   .footer-link { transition: none; }
   .hero-install-cmd { transition: none; }
@@ -3214,6 +3074,7 @@ p { text-wrap: pretty; }
 
   .toc-toggles {
     margin-top: 0;
+    margin-left: -8px;
   }
 
   .content {
@@ -3264,7 +3125,7 @@ p { text-wrap: pretty; }
     flex-basis: 100%;
     gap: 0;
     overflow: hidden;
-    transition: grid-template-rows 250ms cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: grid-template-rows 200ms cubic-bezier(0.165, 0.84, 0.44, 1) 60ms;
   }
 
   .toc-inner {
@@ -3276,20 +3137,47 @@ p { text-wrap: pretty; }
 
   .sidebar.menu-open .toc {
     grid-template-rows: 1fr;
+    transition-delay: 0ms;
   }
 
   .sidebar.menu-open .toc-inner {
-    padding-top: 8px;
+    padding-top: 12px;
   }
 
   .toc {
     justify-content: flex-start;
   }
 
+  .toc-link,
+  .toc-toggles {
+    opacity: 0;
+    filter: blur(6px);
+    transition: opacity 80ms cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
   .toc-link {
     padding: 8px 0;
     text-align: left;
+    align-self: flex-start;
+    margin-left: 24px;
   }
+
+  .sidebar.menu-open .toc-link,
+  .sidebar.menu-open .toc-toggles {
+    opacity: 1;
+    filter: blur(0);
+    transition: opacity 250ms cubic-bezier(0.165, 0.84, 0.44, 1), filter 250ms cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  /* Entry: forward stagger (7 links + toggles) */
+  .sidebar.menu-open .toc-inner > :nth-child(1) { transition-delay: 40ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(2) { transition-delay: 80ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(3) { transition-delay: 120ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(4) { transition-delay: 160ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(5) { transition-delay: 200ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(6) { transition-delay: 240ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(7) { transition-delay: 280ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(8) { transition-delay: 320ms; }
 
   .toc-link:last-child {
     padding-right: 0;

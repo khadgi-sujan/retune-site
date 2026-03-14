@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useLayoutEffect, useEffect, createContext, useContext, type ReactNode } from "react";
-import { playClick, playTick, playTap, playEnable, initSound, setMuted, themeVariantNames, getThemeVariant, setThemeVariant, getThemeParams, setThemeParams, getDefaultParams, previewThemeSound, type ThemeVariantName, type ThemeSoundParams } from "./sounds";
+import { playClick, playTick, playTap, playEnable, initSound, setMuted, washLayerNames, washWaveforms, getWashConfig, getDefaultWashConfig, setWashLayer, resetWashConfig, playWashLayer, playAllWashLayers, copyWashConfig, type WashLayerName, type WashLayer, type WashWaveform } from "./sounds";
 
 export function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -476,66 +476,171 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
   );
 }
 
-function SoundLab({ onClose }: { onClose: () => void }) {
-  const [variant, setVariant] = useState<ThemeVariantName>(getThemeVariant());
-  const [params, setParams] = useState<ThemeSoundParams>(getThemeParams());
 
-  function changeVariant(v: ThemeVariantName) {
-    setThemeVariant(v);
-    setVariant(v);
-    setParams(getThemeParams());
-  }
+const fieldDefs: { key: keyof WashLayer; label: string; min: number; max: number; step: number; sensitivity: number; fmt: (v: number) => string }[] = [
+  { key: "gain", label: "Volume", min: 0, max: 0.3, step: 0.001, sensitivity: 0.0005, fmt: v => v.toFixed(3) },
+  { key: "delay", label: "Delay", min: 0, max: 1.0, step: 0.005, sensitivity: 0.003, fmt: v => v.toFixed(2) + "s" },
+  { key: "duration", label: "Duration", min: 0.05, max: 3.0, step: 0.01, sensitivity: 0.005, fmt: v => v.toFixed(2) + "s" },
+  { key: "freq", label: "Freq", min: 20, max: 4000, step: 1, sensitivity: 2, fmt: v => Math.round(v) + " Hz" },
+  { key: "attack", label: "Attack", min: 0.01, max: 0.95, step: 0.01, sensitivity: 0.003, fmt: v => v.toFixed(2) },
+  { key: "cutoff", label: "Cutoff", min: 20, max: 8000, step: 10, sensitivity: 5, fmt: v => Math.round(v) + " Hz" },
+  { key: "vibRate", label: "Vib Rate", min: 0, max: 10, step: 0.1, sensitivity: 0.03, fmt: v => v.toFixed(1) + " Hz" },
+  { key: "vibDepth", label: "Vib Depth", min: 0, max: 0.02, step: 0.0001, sensitivity: 0.00005, fmt: v => v.toFixed(4) },
+  { key: "drift", label: "Drift", min: -0.1, max: 0.1, step: 0.001, sensitivity: 0.0005, fmt: v => (v >= 0 ? "+" : "") + v.toFixed(3) },
+];
 
-  function tweak(key: keyof ThemeSoundParams, val: number) {
-    setThemeParams({ [key]: val });
-    setParams(prev => ({ ...prev, [key]: val }));
-  }
+// Drag-to-scrub number field (like Figma/Blender)
+function DragField({ value, min, max, step, sensitivity, fmt, onChange }: {
+  value: number; min: number; max: number; step: number; sensitivity: number; fmt: (v: number) => string; onChange: (v: number) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const dragState = useRef<{ startX: number; startVal: number } | null>(null);
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  function reset() {
-    const d = getDefaultParams(variant);
-    setThemeParams(d);
-    setParams(d);
-  }
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    if (editing) return;
+    dragState.current = { startX: e.clientX, startVal: value };
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, [value, editing]);
 
-  function copyParams() {
-    const p = getThemeParams();
-    const out = `// Sound: ${variant}\n{ duration: ${p.duration}, freqStart: ${p.freqStart}, freqPeak: ${p.freqPeak}, freqEnd: ${p.freqEnd}, gain: ${p.gain}, attack: ${p.attack} }`;
-    navigator.clipboard.writeText(out);
-  }
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current) return;
+    const dx = e.clientX - dragState.current.startX;
+    const raw = dragState.current.startVal + dx * sensitivity;
+    const clamped = Math.min(max, Math.max(min, raw));
+    const snapped = Math.round(clamped / step) * step;
+    onChange(snapped);
+  }, [min, max, step, sensitivity, onChange]);
 
-  const sliders: { key: keyof ThemeSoundParams; label: string; min: number; max: number; step: number }[] = [
-    { key: "duration", label: "Duration", min: 0.05, max: 0.8, step: 0.01 },
-    { key: "freqStart", label: "Freq Start", min: 50, max: 2000, step: 10 },
-    { key: "freqPeak", label: "Freq Peak", min: 100, max: 4000, step: 10 },
-    { key: "freqEnd", label: "Freq End", min: 50, max: 2000, step: 10 },
-    { key: "gain", label: "Volume", min: 0.01, max: 0.3, step: 0.005 },
-    { key: "attack", label: "Attack", min: 0.05, max: 0.8, step: 0.01 },
-  ];
+  const onPointerUp = useCallback(() => { dragState.current = null; }, []);
+
+  const onWheel = useCallback((e: WheelEvent) => {
+    e.preventDefault();
+    const dir = e.deltaY > 0 ? -1 : 1;
+    const mult = e.shiftKey ? 10 : 1;
+    const raw = value + dir * step * mult;
+    onChange(Math.min(max, Math.max(min, Math.round(raw / step) * step)));
+  }, [value, min, max, step, onChange]);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [onWheel]);
+
+  const onDoubleClick = useCallback(() => {
+    setEditing(true);
+    setTimeout(() => inputRef.current?.select(), 0);
+  }, []);
+
+  const commitEdit = useCallback(() => {
+    setEditing(false);
+    const raw = parseFloat(inputRef.current?.value ?? "");
+    if (!isNaN(raw)) onChange(Math.min(max, Math.max(min, Math.round(raw / step) * step)));
+  }, [min, max, step, onChange]);
 
   return (
-    <div className="sound-lab">
-      <div className="sound-lab-header">
-        <span className="sound-lab-title">Sound Lab</span>
-        <button className="sound-lab-close" onClick={onClose}>&times;</button>
+    <div ref={ref} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onDoubleClick={onDoubleClick}
+      style={{ background: "var(--color-bg-input)", borderRadius: 5, padding: "5px 8px", cursor: editing ? "text" : "ew-resize", userSelect: "none", fontSize: 11, fontVariantNumeric: "tabular-nums", color: "var(--color-text-primary)", minWidth: 0, textAlign: "center" }}>
+      {editing ? (
+        <input ref={inputRef} type="text" defaultValue={value} onBlur={commitEdit} onKeyDown={e => { if (e.key === "Enter") commitEdit(); if (e.key === "Escape") setEditing(false); }}
+          style={{ all: "unset", width: "100%", textAlign: "center", fontSize: 11, fontVariantNumeric: "tabular-nums" }} />
+      ) : (
+        <span>{fmt(value)}</span>
+      )}
+    </div>
+  );
+}
+
+function SoundLab({ onClose }: { onClose: () => void }) {
+  const [config, setConfig] = useState(getWashConfig);
+  const [solo, setSolo] = useState<WashLayerName | null>(null);
+  const [expanded, setExpanded] = useState<WashLayerName | null>(null);
+
+  function tweak(name: WashLayerName, key: keyof WashLayer, val: number | boolean | string) {
+    setWashLayer(name, { [key]: val } as Partial<WashLayer>);
+    setConfig(getWashConfig());
+  }
+
+  function toggleSolo(name: WashLayerName) {
+    if (solo === name) {
+      setSolo(null);
+      for (const n of washLayerNames) setWashLayer(n, { enabled: true });
+    } else {
+      setSolo(name);
+      for (const n of washLayerNames) setWashLayer(n, { enabled: n === name });
+    }
+    setConfig(getWashConfig());
+  }
+
+  function toggleEnabled(name: WashLayerName) {
+    tweak(name, "enabled", !config[name].enabled);
+    if (solo) { setSolo(null); }
+  }
+
+  function reset() { resetWashConfig(); setSolo(null); setExpanded(null); setConfig(getWashConfig()); }
+
+  return (
+    <div style={{ position: "fixed", bottom: 16, left: 16, zIndex: 100000, width: 340, background: "var(--color-bg-surface)", border: "1px solid var(--color-border)", borderRadius: 12, padding: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.12)", fontSize: 12, color: "var(--color-text-primary)", fontFamily: "'Inter', sans-serif", maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+        <span style={{ fontWeight: 600, fontSize: 14 }}>Sound Lab</span>
+        <button onClick={onClose} style={{ all: "unset", cursor: "pointer", fontSize: 18, color: "var(--color-text-tertiary)", padding: "2px 6px", borderRadius: 4 }}>&times;</button>
       </div>
-      <div className="sound-lab-variants">
-        {themeVariantNames.map(v => (
-          <button key={v} className={`sound-lab-variant${v === variant ? " active" : ""}`} onClick={() => changeVariant(v)}>{v}</button>
-        ))}
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {washLayerNames.map(name => {
+          const layer = config[name];
+          const isExpanded = expanded === name;
+          const dimmed = solo !== null && !layer.enabled;
+          return (
+            <div key={name} style={{ opacity: dimmed ? 0.3 : 1, transition: "opacity 150ms ease" }}>
+              {/* Layer header */}
+              <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 0" }}>
+                <button onClick={() => toggleEnabled(name)} style={{ all: "unset", cursor: "pointer", width: 14, height: 14, borderRadius: 3, border: `1.5px solid ${layer.enabled ? "var(--color-text-primary)" : "var(--color-text-tertiary)"}`, background: layer.enabled ? "var(--color-text-primary)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  {layer.enabled && <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.2 5.7L6.5 2.3" stroke="var(--color-bg-surface)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                </button>
+                <button onClick={() => setExpanded(isExpanded ? null : name)} style={{ all: "unset", cursor: "pointer", flex: 1, fontSize: 12, fontWeight: 500, textTransform: "capitalize", color: layer.enabled ? "var(--color-text-primary)" : "var(--color-text-tertiary)" }}>{name}</button>
+                <button onClick={() => toggleSolo(name)} style={{ all: "unset", cursor: "pointer", fontSize: 10, fontWeight: 600, padding: "2px 6px", borderRadius: 4, background: solo === name ? "var(--color-cta-bg)" : "transparent", color: solo === name ? "var(--color-cta-text)" : "var(--color-text-tertiary)", letterSpacing: "0.5px" }}>S</button>
+                <button onClick={() => playWashLayer(name)} style={{ all: "unset", cursor: "pointer", color: "var(--color-text-tertiary)", display: "flex", padding: 2 }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+              </div>
+              {/* Expanded controls */}
+              {isExpanded && (
+                <div style={{ paddingBottom: 10, paddingLeft: 20 }}>
+                  {/* Waveform selector */}
+                  <div style={{ marginBottom: 8 }}>
+                    <span style={{ fontSize: 10, color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.5px", display: "block", marginBottom: 4 }}>Waveform</span>
+                    <div style={{ display: "flex", gap: 3 }}>
+                      {washWaveforms.map(w => (
+                        <button key={w} onClick={() => tweak(name, "waveform", w)} style={{ all: "unset", cursor: "pointer", padding: "4px 8px", borderRadius: 5, fontSize: 10, background: layer.waveform === w ? "var(--color-cta-bg)" : "var(--color-bg-input)", color: layer.waveform === w ? "var(--color-cta-text)" : "var(--color-text-secondary)", textTransform: "capitalize" }}>{w}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Number fields */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
+                    {fieldDefs.map(f => (
+                      <div key={f.key} style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                        <span style={{ fontSize: 10, color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>{f.label}</span>
+                        <DragField value={layer[f.key] as number} min={f.min} max={f.max} step={f.step} sensitivity={f.sensitivity} fmt={f.fmt} onChange={v => tweak(name, f.key, v)} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
-      <div className="sound-lab-sliders">
-        {sliders.map(s => (
-          <label key={s.key} className="sound-lab-slider">
-            <span className="sound-lab-slider-label">{s.label}</span>
-            <input type="range" min={s.min} max={s.max} step={s.step} value={params[s.key]} onChange={e => tweak(s.key, parseFloat(e.target.value))} />
-            <span className="sound-lab-slider-value">{s.key === "gain" ? params[s.key].toFixed(3) : s.key === "duration" || s.key === "attack" ? params[s.key].toFixed(2) : Math.round(params[s.key])}</span>
-          </label>
-        ))}
-      </div>
-      <div className="sound-lab-actions">
-        <button className="sound-lab-action" onClick={() => previewThemeSound()}>Preview</button>
-        <button className="sound-lab-action" onClick={reset}>Reset</button>
-        <button className="sound-lab-action" onClick={copyParams}>Copy</button>
+
+      {/* Actions */}
+      <div style={{ display: "flex", gap: 6, marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--color-border)" }}>
+        <button onClick={() => playAllWashLayers(true)} style={{ all: "unset", cursor: "pointer", flex: 1, textAlign: "center", padding: "7px 0", borderRadius: 6, fontSize: 11, fontWeight: 500, background: "var(--color-cta-bg)", color: "var(--color-cta-text)" }}>Play Dark</button>
+        <button onClick={() => playAllWashLayers(false)} style={{ all: "unset", cursor: "pointer", flex: 1, textAlign: "center", padding: "7px 0", borderRadius: 6, fontSize: 11, fontWeight: 500, background: "var(--color-cta-bg)", color: "var(--color-cta-text)" }}>Play Light</button>
+        <button onClick={reset} style={{ all: "unset", cursor: "pointer", textAlign: "center", padding: "7px 10px", borderRadius: 6, fontSize: 11, fontWeight: 500, background: "var(--color-bg-input)", color: "var(--color-text-secondary)" }}>Reset</button>
+        <button onClick={copyWashConfig} style={{ all: "unset", cursor: "pointer", textAlign: "center", padding: "7px 10px", borderRadius: 6, fontSize: 11, fontWeight: 500, background: "var(--color-bg-input)", color: "var(--color-text-secondary)" }}>Copy</button>
       </div>
     </div>
   );
@@ -568,7 +673,6 @@ function ThemeToggle() {
   }, []);
 
   function toggle(e: React.MouseEvent) {
-    playClick();
     const overlay = overlayRef.current;
     if (!overlay) return;
 
@@ -585,6 +689,7 @@ function ThemeToggle() {
     }
 
     const next = !appliedDark.current;
+    playClick(next);
 
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setIsDark(next);
@@ -713,7 +818,7 @@ export function Sidebar({ version }: { version: string }) {
   return (
     <aside className={`sidebar${menuOpen ? " menu-open" : ""}`}>
       {showSoundLab && <SoundLab onClose={() => setShowSoundLab(false)} />}
-      <a href="#" className="sidebar-logo">
+      <a href="#" className="sidebar-logo" onDoubleClick={(e) => { e.preventDefault(); setShowSoundLab(s => !s); }}>
         <svg className="logo-svg" viewBox="0 0 91 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M6 19H4V7H6V19ZM16 19H14V17H16V19ZM14 17H12V15H14V17ZM18 17H16V15H18V17ZM12 15H10V13H12V15ZM20 15H18V13H20V15ZM16 11H14V7H16V11ZM14 7H6V5H14V7Z" fill="currentColor"/>
           <path d="M24.62 19V18.38L25.52 18.2C26 18.12 26.16 18 26.16 17V7.12C26.16 6.12 26 6.02 25.52 5.92L24.62 5.74V5.14H30.44C33.66 5.14 35.12 6.34 35.12 8.66C35.12 10.14 34 11.52 31.94 12.12V12.18C33.02 14.04 34.44 16.26 35.56 17.7C35.78 17.98 35.98 18.1 36.6 18.26L37.04 18.38V19H34C32.5 17.08 31.12 14.88 30.04 12.74H28.3V17C28.3 18 28.42 18.1 28.98 18.2L29.94 18.38V19H24.62ZM29.5 11.82C31.88 11.82 32.86 10.94 32.86 8.86C32.86 6.42 32.02 6.02 30.18 6.02C29.3 6.02 28.66 6.08 28.3 6.16V11.74C28.3 11.74 28.94 11.82 29.5 11.82ZM41.8591 19.24C38.5391 19.24 36.9191 17.04 36.9191 13.8C36.9191 10.6 39.2191 8.5 41.8591 8.5C44.3991 8.5 45.9391 9.88 45.9391 13.6H39.0391C39.0991 16.64 40.4791 17.96 42.5191 17.96C44.0591 17.96 44.9791 17.48 45.7391 17.12V17.92C45.1991 18.36 43.7791 19.24 41.8591 19.24ZM41.7791 9.34C40.3191 9.34 39.2191 10.4 39.0591 12.76L43.6991 12.52C43.6991 10.22 43.3191 9.34 41.7791 9.34ZM50.2302 19.24C48.9702 19.24 47.9102 18.66 47.9102 17.14V9.88H46.5102V9.3C47.8902 8.92 48.5902 7.98 49.1302 6.36H49.9102V8.82H52.7902L52.5302 9.88H49.9102V16.84C49.9102 17.7 50.3502 18.08 51.2702 18.08C51.8502 18.08 52.4502 17.92 52.8502 17.8V18.44C52.4902 18.78 51.5702 19.24 50.2302 19.24ZM57.2675 19.24C55.5875 19.24 54.5675 18.32 54.5675 16.62V10.74C54.5675 10 54.4875 9.98 54.0275 9.78L53.2075 9.42V8.88L56.2675 8.54L56.5675 8.74V16.16C56.5675 17.32 57.0875 17.94 58.2875 17.94C59.2675 17.94 60.3075 17.52 61.0475 17.2V10.74C61.0475 10 60.9875 9.98 60.5075 9.78L59.7075 9.42V8.88L62.7675 8.54L63.0475 8.74V16.7C63.0475 17.6 63.1675 17.72 63.6475 17.94L64.3875 18.28V18.82L61.2675 19.24L61.0475 19.08L61.1475 17.88H61.0675C60.0075 18.58 58.6675 19.24 57.2675 19.24ZM64.9406 19V18.4L65.7606 18.18C66.1606 18.08 66.3006 17.92 66.3006 17.14V10.94C66.3006 10.14 66.2006 10.1 65.7006 9.86L64.9406 9.48V8.96L68.1006 8.54L68.3006 8.66L68.2006 9.78H68.2806C69.2806 9.14 70.7806 8.52 72.0606 8.52C74.0806 8.52 74.7806 9.38 74.7806 11.18V17.14C74.7806 17.92 74.9406 18.08 75.3206 18.18L76.1206 18.4V19H71.4406V18.4L72.2606 18.18C72.6606 18.08 72.7806 17.98 72.7806 17.14V11.74C72.7806 10.34 72.3206 9.84 71.0406 9.84C70.0606 9.84 68.8806 10.24 68.3006 10.46V17.14C68.3006 17.98 68.4206 18.08 68.8206 18.18L69.6406 18.4V19H64.9406ZM81.87 19.24C78.55 19.24 76.93 17.04 76.93 13.8C76.93 10.6 79.23 8.5 81.87 8.5C84.41 8.5 85.95 9.88 85.95 13.6H79.05C79.11 16.64 80.49 17.96 82.53 17.96C84.07 17.96 84.99 17.48 85.75 17.12V17.92C85.21 18.36 83.79 19.24 81.87 19.24ZM81.79 9.34C80.33 9.34 79.23 10.4 79.07 12.76L83.71 12.52C83.71 10.22 83.33 9.34 81.79 9.34Z" fill="currentColor"/>
@@ -751,9 +856,6 @@ export function Sidebar({ version }: { version: string }) {
             v{version}
           </a>
           <div className="toc-toggles">
-            <button className="sound-lab-btn" onClick={() => setShowSoundLab(!showSoundLab)} aria-label="Sound lab" title="Sound Lab">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 4v16"/></svg>
-            </button>
             <SoundToggle />
             <ThemeToggle />
           </div>
