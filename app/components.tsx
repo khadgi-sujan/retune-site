@@ -626,6 +626,7 @@ function SoundToggle() {
 export function Sidebar({ version }: { version: string }) {
   const [activeSection, setActiveSection] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const markRef = useRef<SVGGElement>(null);
 
   useEffect(() => {
     const sections = document.querySelectorAll<HTMLElement>(".hero, .section[id]");
@@ -644,11 +645,86 @@ export function Sidebar({ version }: { version: string }) {
     return () => observer.disconnect();
   }, []);
 
+  // Logo mark trail animation — random color each cycle
+  useEffect(() => {
+    const g = markRef.current;
+    if (!g) return;
+
+    const seq: string[][] = [
+      ["sq1"], ["sq2"], ["sq3"], ["sq4"], ["sq5"], ["sq6"],
+      ["sq7"], ["sq8"], ["sq9"], ["sq10"], ["sq11"], ["sq12"],
+      ["sq13L", "sq13R"], ["sq14L", "sq14R"],
+    ];
+
+    const stagger = 45;   // ms between steps
+    const flash = 300;     // ms per square flash
+    const pause = 200;     // ms pause between cycles
+    const sweepTime = seq.length * stagger + flash;
+    const cycleTime = sweepTime + pause;
+
+    function randomColor() {
+      const h = Math.random() * 360;
+      const l = 50 + Math.random() * 25;  // 50-75%
+      return `hsl(${h}, 100%, ${l}%)`;
+    }
+
+    let timer: ReturnType<typeof setTimeout>;
+    let cancelled = false;
+
+    function runCycle() {
+      if (cancelled) return;
+      const color = randomColor();
+
+      seq.forEach((ids, i) => {
+        const delay = i * stagger;
+        setTimeout(() => {
+          if (cancelled) return;
+          ids.forEach((id) => {
+            const el = g.querySelector(`#${id}`) as SVGRectElement | null;
+            if (!el) return;
+            // Snap to color (no transition)
+            el.style.transition = "none";
+            el.style.fill = color;
+            // Force reflow so the snap is committed before we transition back
+            el.getBoundingClientRect();
+            // Fade back to currentColor
+            el.style.transition = `fill ${flash}ms ease-out`;
+            el.style.fill = "";
+          });
+        }, delay);
+      });
+
+      timer = setTimeout(runCycle, cycleTime);
+    }
+
+    // Initial delay before first cycle
+    timer = setTimeout(runCycle, 200);
+
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, []);
+
   return (
     <aside className={`sidebar${menuOpen ? " menu-open" : ""}`}>
       <a href="#" className="sidebar-logo">
         <svg className="logo-svg" viewBox="0 0 97 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10.2861 24H8V10.2861H10.2861V24ZM19.4287 24H17.1426L17.1436 21.7139H19.4287V24ZM17.1436 21.7139H14.8574V19.4277H17.1436V21.7139ZM21.7139 21.7139H19.4287V19.4277H21.7139V21.7139ZM14.8574 19.4277H12.5713V17.1426H14.8574V19.4277ZM24 19.4277H21.7139L21.7148 17.1426H24V19.4277ZM19.4287 14.8574H17.1426L17.1436 12.5713H17.1426L17.1436 10.2861H19.4287V14.8574ZM17.1436 10.2861H10.2861V8H17.1436V10.2861Z" fill="currentColor"/>
+          <g ref={markRef} transform="translate(8, 8)">
+            <rect id="sq1" x="0" y="13.714" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq2" x="0" y="11.428" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq3" x="0" y="9.143" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq4" x="0" y="6.857" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq5" x="0" y="4.571" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq6" x="0" y="2.286" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq7" x="2.286" y="0" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq8" x="4.571" y="0" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq9" x="6.857" y="0" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq10" x="9.143" y="2.286" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq11" x="9.143" y="4.571" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq12" x="9.143" y="13.714" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq13L" x="6.857" y="11.428" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq13R" x="11.429" y="11.428" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq14L" x="4.571" y="9.143" width="2.286" height="2.286" fill="currentColor"/>
+            <rect id="sq14R" x="13.714" y="9.143" width="2.286" height="2.286" fill="currentColor"/>
+          </g>
           <path d="M28.522 22V21.352L29.224 21.208C29.728 21.1 29.89 21.01 29.89 20.02V11.506C29.89 10.498 29.728 10.408 29.224 10.3L28.522 10.156V9.526H34.174C37.45 9.526 38.872 10.624 38.872 12.766C38.872 14.188 37.972 15.34 36.208 15.844V15.916C37.072 17.536 38.242 19.462 39.232 20.776C39.43 21.046 39.592 21.082 40.15 21.262L40.51 21.352V22H37.126C35.92 20.452 34.732 18.346 33.886 16.546C33.814 16.546 32.536 16.528 32.5 16.528V20.02C32.5 21.01 32.644 21.1 33.184 21.208L33.922 21.352V22H28.522ZM33.49 15.646C35.362 15.646 36.154 14.908 36.154 12.964C36.154 10.84 35.542 10.408 33.994 10.408C33.292 10.408 32.77 10.462 32.5 10.534V15.574C32.536 15.592 33.022 15.646 33.49 15.646ZM45.2254 22.216C42.1114 22.216 40.5814 20.29 40.5814 17.302C40.5814 14.296 42.8134 12.478 45.2254 12.478C47.6554 12.478 49.1314 13.738 49.1674 17.122H42.9934C43.0834 19.822 44.2894 20.812 46.1254 20.812C47.4034 20.812 48.2314 20.434 48.9334 20.092V20.866C48.3754 21.406 47.0254 22.216 45.2254 22.216ZM45.1174 13.306C44.0014 13.306 43.1194 14.152 43.0114 16.276L46.6834 16.096C46.6834 13.99 46.3774 13.306 45.1174 13.306ZM53.4346 22.216C52.0486 22.216 51.0946 21.586 51.0946 20.02V13.864H49.8886V13.288C51.2386 12.856 51.9766 11.902 52.4806 10.39H53.4886V12.73H56.0266L55.7566 13.864H53.4886V19.75C53.4886 20.596 53.8306 20.938 54.7126 20.938C55.1806 20.938 55.7386 20.812 56.0806 20.722V21.37C55.7026 21.766 54.8206 22.216 53.4346 22.216ZM60.2964 22.216C58.8024 22.216 57.8664 21.406 57.8664 19.84V14.728C57.8664 14.026 57.8124 13.972 57.3444 13.738L56.6424 13.396V12.856L59.9544 12.496L60.2424 12.694V19.264C60.2424 20.308 60.6924 20.776 61.6464 20.776C62.4204 20.776 63.2124 20.452 63.7704 20.236V14.728C63.7704 14.026 63.7164 13.972 63.2304 13.738L62.5644 13.396V12.856L65.8764 12.496L66.1464 12.694V19.768C66.1464 20.614 66.2184 20.722 66.7224 20.92L67.3164 21.19V21.766L64.0224 22.216L63.7884 22.054L63.8964 20.92H63.8244C62.8524 21.586 61.6464 22.216 60.2964 22.216ZM68.0523 22V21.37L68.6823 21.208C69.1683 21.082 69.2583 20.974 69.2583 20.218V14.872C69.2583 14.116 69.1683 14.08 68.6823 13.792L68.0343 13.414V12.892L71.4003 12.496L71.6163 12.64L71.5083 13.684H71.5803C72.5343 13.072 73.8303 12.496 75.0903 12.496C76.7823 12.496 77.5383 13.27 77.5383 14.89V20.218C77.5383 20.974 77.6463 21.1 78.1143 21.208L78.7083 21.37V22H74.0283V21.37L74.6223 21.226C75.0723 21.1 75.1443 21.028 75.1443 20.218V15.556C75.1443 14.368 74.7483 13.954 73.7223 13.954C72.9482 13.954 72.0843 14.242 71.6343 14.386V20.218C71.6343 21.046 71.7063 21.1 72.1562 21.226L72.7683 21.37V22H68.0523ZM84.1786 22.216C81.0646 22.216 79.5346 20.29 79.5346 17.302C79.5346 14.296 81.7666 12.478 84.1786 12.478C86.6086 12.478 88.0846 13.738 88.1206 17.122H81.9466C82.0366 19.822 83.2426 20.812 85.0786 20.812C86.3566 20.812 87.1846 20.434 87.8866 20.092V20.866C87.3286 21.406 85.9786 22.216 84.1786 22.216ZM84.0706 13.306C82.9546 13.306 82.0726 14.152 81.9646 16.276L85.6366 16.096C85.6366 13.99 85.3306 13.306 84.0706 13.306Z" fill="currentColor"/>
         </svg>
       </a>
