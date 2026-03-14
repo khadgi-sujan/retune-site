@@ -3,7 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { Retune } from "retune";
 
 export const metadata: Metadata = {
-  title: "Retune - The visual layer for vibe coding",
+  title: "Retune",
   description:
     "Select any element in your running app, tweak it visually, and let your AI coding tool write the changes. The visual layer for vibe coding.",
   metadataBase: new URL("https://retune.dev"),
