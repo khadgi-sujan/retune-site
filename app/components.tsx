@@ -5,11 +5,13 @@ import { playClick, playTick, playTap, playEnable, initSound, setMuted } from ".
 
 export function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const handleCopy = useCallback(() => {
     playTick();
     navigator.clipboard.writeText(text).then(() => {
+      clearTimeout(timerRef.current);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      timerRef.current = setTimeout(() => setCopied(false), 2000);
     });
   }, [text]);
   return (
@@ -26,11 +28,13 @@ export function CopyButton({ text }: { text: string }) {
 
 export function HeroInstallCopy() {
   const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const handleClick = useCallback(() => {
     playTick();
     navigator.clipboard.writeText("npm install retune").then(() => {
+      clearTimeout(timerRef.current);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      timerRef.current = setTimeout(() => setCopied(false), 2000);
     });
   }, []);
   return (
@@ -645,10 +649,11 @@ export function Sidebar({ version }: { version: string }) {
     return () => observer.disconnect();
   }, []);
 
-  // Logo mark trail animation — random color each cycle
+  // Logo mark trail animation — triggers on hover
   useEffect(() => {
     const g = markRef.current;
-    if (!g) return;
+    const logo = g?.closest(".sidebar-logo");
+    if (!g || !logo) return;
 
     const seq: string[][] = [
       ["sq1"], ["sq2"], ["sq3"], ["sq4"], ["sq5"], ["sq6"],
@@ -656,57 +661,101 @@ export function Sidebar({ version }: { version: string }) {
       ["sq13L", "sq13R"], ["sq14L", "sq14R"],
     ];
 
-    const stagger = 45;   // ms between steps
-    const flash = 300;     // ms per square flash
-    const pause = 200;     // ms pause between cycles
+    const stagger = 45;
+    const flash = 300;
+    const pause = 200;
     const sweepTime = seq.length * stagger + flash;
     const cycleTime = sweepTime + pause;
+    let hovering = false;
+    let timers: ReturnType<typeof setTimeout>[] = [];
+
+    const isP3 = window.matchMedia("(color-gamut: p3)").matches;
 
     function randomColor() {
       const h = Math.random() * 360;
-      const l = 50 + Math.random() * 25;  // 50-75%
-      return `hsl(${h}, 100%, ${l}%)`;
+      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const l = isDark ? 0.7 + Math.random() * 0.15 : 0.6 + Math.random() * 0.1;
+      const c = isP3 ? 0.3 + Math.random() * 0.1 : 0.2 + Math.random() * 0.08;
+      const color = `oklch(${l} ${c} ${h})`;
+      const fallback = `hsl(${h}, 100%, ${isDark ? 50 + Math.random() * 25 : 50 + Math.random() * 15}%)`;
+      return { color: isP3 ? color : fallback };
     }
 
-    let timer: ReturnType<typeof setTimeout>;
-    let cancelled = false;
+    function clearAll() {
+      timers.forEach(clearTimeout);
+      timers = [];
+    }
+
+    function resetRects() {
+      const rects = g.querySelectorAll("rect");
+      rects.forEach((el) => {
+        el.style.transition = "none";
+        el.style.fill = "";
+        el.removeAttribute("filter");
+      });
+    }
 
     function runCycle() {
-      if (cancelled) return;
-      const color = randomColor();
+      if (!hovering) return;
+      const { color } = randomColor();
 
       seq.forEach((ids, i) => {
-        const delay = i * stagger;
-        setTimeout(() => {
-          if (cancelled) return;
+        timers.push(setTimeout(() => {
+          if (!hovering) return;
           ids.forEach((id) => {
             const el = g.querySelector(`#${id}`) as SVGRectElement | null;
             if (!el) return;
-            // Snap to color (no transition)
             el.style.transition = "none";
             el.style.fill = color;
-            // Force reflow so the snap is committed before we transition back
+            el.setAttribute("filter", "url(#bloom)");
             el.getBoundingClientRect();
-            // Fade back to currentColor
             el.style.transition = `fill ${flash}ms ease-out`;
             el.style.fill = "";
+            timers.push(setTimeout(() => { el.removeAttribute("filter"); }, 80));
           });
-        }, delay);
+        }, i * stagger));
       });
 
-      timer = setTimeout(runCycle, cycleTime);
+      timers.push(setTimeout(runCycle, cycleTime));
     }
 
-    // Initial delay before first cycle
-    timer = setTimeout(runCycle, 200);
+    function onEnter() { hovering = true; runCycle(); }
+    function onLeave() { hovering = false; clearAll(); resetRects(); }
 
-    return () => { cancelled = true; clearTimeout(timer); };
+    logo.addEventListener("mouseenter", onEnter);
+    logo.addEventListener("mouseleave", onLeave);
+    return () => {
+      logo.removeEventListener("mouseenter", onEnter);
+      logo.removeEventListener("mouseleave", onLeave);
+      clearAll();
+    };
   }, []);
 
   return (
     <aside className={`sidebar${menuOpen ? " menu-open" : ""}`}>
       <a href="#" className="sidebar-logo">
         <svg className="logo-svg" viewBox="0 0 97 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="bloom" x="-100%" y="-100%" width="300%" height="300%" colorInterpolationFilters="sRGB">
+              {/* Wide soft glow — blurred + color-amplified */}
+              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="wideBlur"/>
+              <feColorMatrix in="wideBlur" type="matrix" result="wideGlow"
+                values="1.8 0 0 0 0  0 1.8 0 0 0  0 0 1.8 0 0  0 0 0 0.6 0"/>
+              {/* Tight bright halo */}
+              <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="tightBlur"/>
+              <feColorMatrix in="tightBlur" type="matrix" result="tightGlow"
+                values="2 0 0 0 0.1  0 2 0 0 0.1  0 0 2 0 0.1  0 0 0 0.9 0"/>
+              {/* White-hot core — push source toward white */}
+              <feColorMatrix in="SourceGraphic" type="matrix" result="hotCore"
+                values="1 0 0 0 0.4  0 1 0 0 0.4  0 0 1 0 0.4  0 0 0 1 0"/>
+              {/* Stack: wide glow → tight glow → hot core */}
+              <feMerge>
+                <feMergeNode in="wideGlow"/>
+                <feMergeNode in="tightGlow"/>
+                <feMergeNode in="hotCore"/>
+              </feMerge>
+            </filter>
+          </defs>
           <g ref={markRef} transform="translate(8, 8)">
             <rect id="sq1" x="0" y="13.714" width="2.286" height="2.286" fill="currentColor"/>
             <rect id="sq2" x="0" y="11.428" width="2.286" height="2.286" fill="currentColor"/>
