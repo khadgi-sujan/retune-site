@@ -276,12 +276,12 @@ function _playLayer(c: AudioContext, baseTime: number, l: WashLayer, name: WashL
   }
 }
 
-/** Theme toggle — gentle exhale, lowpass-filtered noise sweep */
+/** Theme toggle — warm downward wash, lowpass noise sweeping 190→100→50Hz */
 export function playClick(_toDark?: boolean) {
   const c = getContext();
   if (!c) return;
   const t = c.currentTime;
-  const dur = 0.35;
+  const dur = 0.6;
 
   const len = Math.round(c.sampleRate * dur);
   const buf = c.createBuffer(1, len, c.sampleRate);
@@ -293,13 +293,13 @@ export function playClick(_toDark?: boolean) {
 
   const lp = c.createBiquadFilter();
   lp.type = "lowpass";
-  lp.frequency.setValueAtTime(300, t);
-  lp.frequency.exponentialRampToValueAtTime(800, t + dur * 0.4);
-  lp.frequency.exponentialRampToValueAtTime(400, t + dur);
+  lp.frequency.setValueAtTime(190, t);
+  lp.frequency.exponentialRampToValueAtTime(100, t + dur * 0.4);
+  lp.frequency.exponentialRampToValueAtTime(50, t + dur);
 
   const gain = c.createGain();
   gain.gain.setValueAtTime(0, t);
-  gain.gain.linearRampToValueAtTime(0.15, t + dur * 0.35);
+  gain.gain.linearRampToValueAtTime(0.095, t + dur * 0.3);
   gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
 
   src.connect(lp).connect(gain).connect(c.destination);

@@ -556,7 +556,7 @@ function ThemeToggle() {
     // Animate hole expanding via registered @property
     const anim = overlay.animate(
       { "--reveal-radius": ["0px", `${endRadius}px`] } as PropertyIndexedKeyframes,
-      { duration: 600, easing: "cubic-bezier(0.19, 1, 0.22, 1)", fill: "both" }
+      { duration: 800, easing: "cubic-bezier(0.165, 0.84, 0.44, 1)", fill: "both" }
     );
     revealAnim.current = anim;
 
