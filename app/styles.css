@@ -161,7 +161,7 @@ p { text-wrap: pretty; }
 }
 
 .logo-svg {
-  height: 32px;
+  height: 12px;
   width: auto;
   flex-shrink: 0;
   color: var(--color-text-primary);
@@ -251,6 +251,158 @@ p { text-wrap: pretty; }
   align-items: center;
   gap: 2px;
   margin-top: auto;
+}
+
+/* ── Sound Lab (temporary dev panel) ── */
+
+.sound-lab-btn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  transition: color 150ms ease, background-color 150ms ease;
+}
+.sound-lab-btn:hover { color: var(--color-text-primary); background: var(--color-bg-input); }
+
+.sound-lab {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 100000;
+  width: 280px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  font-size: 12px;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+
+.sound-lab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sound-lab-title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.sound-lab-close {
+  all: unset;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--color-text-tertiary);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.sound-lab-close:hover { color: var(--color-text-primary); background: var(--color-bg-input); }
+
+.sound-lab-variants {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.sound-lab-variant {
+  all: unset;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-input);
+  transition: all 150ms ease;
+  text-transform: capitalize;
+}
+.sound-lab-variant:hover { color: var(--color-text-primary); }
+.sound-lab-variant.active {
+  background: var(--color-cta-bg);
+  color: var(--color-cta-text);
+}
+
+.sound-lab-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.sound-lab-slider {
+  display: grid;
+  grid-template-columns: 72px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+}
+
+.sound-lab-slider-label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.sound-lab-slider input[type="range"] {
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  background: var(--color-border);
+  border-radius: 2px;
+  outline: none;
+}
+
+.sound-lab-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-cta-bg);
+  cursor: pointer;
+  border: 2px solid var(--color-bg-surface);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.sound-lab-slider-value {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.sound-lab-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.sound-lab-action {
+  all: unset;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+  padding: 6px 0;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--color-bg-input);
+  color: var(--color-text-secondary);
+  transition: all 150ms ease;
+}
+.sound-lab-action:hover { color: var(--color-text-primary); background: var(--color-border); }
+.sound-lab-action:first-child {
+  background: var(--color-cta-bg);
+  color: var(--color-cta-text);
+}
+.sound-lab-action:first-child:hover {
+  background: var(--color-cta-hover);
 }
 
 .theme-toggle,
@@ -443,7 +595,7 @@ p { text-wrap: pretty; }
   font-weight: 500;
 
   color: var(--color-text-primary);
-  margin: 0 0 0;
+  margin: 0 0 16px;
   line-height: 28px;
 }
 
@@ -793,10 +945,11 @@ p { text-wrap: pretty; }
   /* Panel scroll distances */
   --scroll-pad: -80px;
   --scroll-rad: -250px;
-  /* Genie effect: translation to dock position (overridden by JS) */
-  --genie-dx: 200px;
-  --genie-dy: 200px;
-  --genie-scale: 0.1;
+  /* Genie effect: translation to dock position (overridden by JS).
+     Defaults approximate the dock spacer for a typical viewport. */
+  --genie-dx: 80px;
+  --genie-dy: 130px;
+  --genie-scale: 0.087;
 }
 
 .browser-window {
@@ -2140,7 +2293,7 @@ p { text-wrap: pretty; }
   filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.12))
           drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.08));
   will-change: transform;
-  transform: translate(var(--genie-dx, 200px), var(--genie-dy, 200px)) scale(var(--genie-scale, 0.1));
+  transform: translate(var(--genie-dx, 80px), var(--genie-dy, 130px)) scale(var(--genie-scale, 0.087));
   animation: mock-terminal-wrapper-toggle 10s linear infinite;
 }
 
@@ -2222,8 +2375,32 @@ p { text-wrap: pretty; }
 }
 /* Genie keyframes are generated dynamically in JS (components.tsx)
    using Harshil Shah's two-phase algorithm with 20 frames per transition
-   and 18-point polygons. The @keyframes mock-terminal-toggle rule is
-   injected into a <style data-genie> element at runtime. */
+   and 18-point polygons. The @keyframes rules below are replaced at
+   runtime by precise values injected into a <style data-genie> element.
+   These placeholders ensure the terminal is visible at the dock position
+   immediately on page load, before JS hydrates. */
+@keyframes mock-terminal-wrapper-toggle {
+  0%, 53.9% {
+    transform: translate(var(--genie-dx, 80px), var(--genie-dy, 130px)) scale(var(--genie-scale, 0.087));
+    box-shadow: none;
+  }
+  57%, 89% {
+    transform: none;
+    box-shadow: 0px 0px 0px 0.25px var(--term-ring-1), 0px 0px 0px 0.5px var(--term-ring-2);
+  }
+  92.1%, 100% {
+    transform: translate(var(--genie-dx, 80px), var(--genie-dy, 130px)) scale(var(--genie-scale, 0.087));
+    box-shadow: none;
+  }
+}
+@keyframes mock-terminal-clip {
+  0%, 53.9%, 92.1%, 100% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+  57%, 89% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
 .mock-terminal-line {
   white-space: nowrap;
   opacity: 0;
@@ -2855,12 +3032,8 @@ p { text-wrap: pretty; }
   margin-top: 20px;
 }
 
-.faq-item {
+.faq-item + .faq-item {
   border-top: 1px solid var(--color-border-subtle);
-}
-
-.faq-item:first-child {
-  border-top: none;
 }
 
 .faq-item:last-child {

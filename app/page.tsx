@@ -10,6 +10,7 @@ import {
   MenuBarTime,
   CalendarIcon,
 } from "./components";
+import { DOCK_FINDER, DOCK_TERMINAL, DOCK_SAFARI, DOCK_SETTINGS, DOCK_NOTES, DOCK_TRASH } from "./dock-icons";
 
 const retuneVersion = process.env.RETUNE_VERSION ?? "0.0.0";
 
@@ -60,6 +61,7 @@ export default function Home() {
                 <svg className="menu-bar-icon" width="10" height="10" viewBox="0 0 13 13" fill="currentColor"><path d="M6.42773 11.2812C6.36523 11.2812 6.30078 11.2617 6.23438 11.2227C6.16797 11.1836 6.07812 11.1133 5.96484 11.0117L4.61719 9.71094C4.57031 9.66406 4.54102 9.61523 4.5293 9.56445C4.51758 9.50977 4.52734 9.45898 4.55859 9.41211C4.74219 9.16211 5 8.94727 5.33203 8.76758C5.66406 8.58789 6.0293 8.49805 6.42773 8.49805C6.81836 8.49805 7.17578 8.58594 7.5 8.76172C7.82812 8.93359 8.08594 9.13867 8.27344 9.37695C8.3125 9.42773 8.32812 9.48438 8.32031 9.54688C8.31641 9.60938 8.29102 9.66406 8.24414 9.71094L6.88477 11.0117C6.77539 11.1172 6.6875 11.1875 6.62109 11.2227C6.55859 11.2617 6.49414 11.2812 6.42773 11.2812ZM3.16406 8.24023L2.30273 7.38477C2.24805 7.33008 2.21875 7.27344 2.21484 7.21484C2.21484 7.15625 2.23438 7.09961 2.27344 7.04492C2.55859 6.70117 2.91406 6.39453 3.33984 6.125C3.76953 5.85547 4.24609 5.64258 4.76953 5.48633C5.29688 5.33008 5.84961 5.25195 6.42773 5.25195C7.00586 5.25195 7.55664 5.33008 8.08008 5.48633C8.60742 5.64258 9.08398 5.85547 9.50977 6.125C9.93945 6.39453 10.2949 6.70117 10.5762 7.04492C10.623 7.09961 10.6426 7.1582 10.6348 7.2207C10.6309 7.2832 10.6055 7.33789 10.5586 7.38477L9.69141 8.23438C9.62891 8.29297 9.5625 8.32422 9.49219 8.32812C9.42188 8.32812 9.35938 8.29688 9.30469 8.23438C8.96484 7.86328 8.53906 7.55664 8.02734 7.31445C7.51953 7.07227 6.98633 6.95312 6.42773 6.95703C5.87695 6.95312 5.3457 7.07031 4.83398 7.30859C4.32617 7.54297 3.9043 7.8457 3.56836 8.2168C3.50977 8.2832 3.44336 8.31836 3.36914 8.32227C3.29492 8.32617 3.22656 8.29883 3.16406 8.24023ZM0.855469 5.92578L0.0820312 5.14648C0.03125 5.0918 0.00390625 5.03516 0 4.97656C0 4.91406 0.0214844 4.85547 0.0644531 4.80078C0.501953 4.26172 1.05273 3.78125 1.7168 3.35938C2.38477 2.93359 3.12109 2.60156 3.92578 2.36328C4.73438 2.12109 5.56836 2 6.42773 2C7.2832 2 8.11328 2.12109 8.91797 2.36328C9.72656 2.60156 10.4648 2.93359 11.1328 3.35938C11.8008 3.78125 12.3535 4.26172 12.791 4.80078C12.834 4.85547 12.8535 4.91406 12.8496 4.97656C12.8496 5.03516 12.8242 5.0918 12.7734 5.14648L12 5.91406C11.9414 5.97266 11.877 6.00391 11.8066 6.00781C11.7363 6.00781 11.6738 5.98047 11.6191 5.92578C10.9355 5.20312 10.1523 4.6543 9.26953 4.2793C8.38672 3.90039 7.43945 3.71094 6.42773 3.71094C5.41992 3.71094 4.47461 3.89844 3.5918 4.27344C2.71289 4.64844 1.93359 5.19727 1.25391 5.91992C1.19531 5.97852 1.12695 6.00977 1.04883 6.01367C0.974609 6.01367 0.910156 5.98438 0.855469 5.92578Z"/></svg>
                 <svg className="menu-bar-icon menu-bar-battery" height="10" viewBox="0 0 17 13" fill="currentColor"><path d="M2.60156 8.96484C2.41797 8.96484 2.26953 8.95117 2.15625 8.92383C2.04297 8.89258 1.94922 8.83789 1.875 8.75977C1.80078 8.68945 1.74805 8.59766 1.7168 8.48438C1.68555 8.37109 1.66992 8.22461 1.66992 8.04492V5.60156C1.66992 5.41797 1.68555 5.26953 1.7168 5.15625C1.74805 5.03906 1.80078 4.94141 1.875 4.86328C1.94922 4.79297 2.04297 4.74414 2.15625 4.7168C2.27344 4.68555 2.42383 4.66992 2.60742 4.66992H12.1113C12.291 4.66992 12.4375 4.68555 12.5508 4.7168C12.668 4.74414 12.7617 4.79297 12.832 4.86328C12.9062 4.94141 12.959 5.03711 12.9902 5.15039C13.0215 5.26367 13.0371 5.41016 13.0371 5.58984V8.04492C13.0371 8.38867 12.9688 8.62695 12.832 8.75977C12.7617 8.83789 12.6699 8.89258 12.5566 8.92383C12.4434 8.95117 12.2949 8.96484 12.1113 8.96484H2.60156ZM3.00586 10.6348C2.51758 10.6348 2.07617 10.5938 1.68164 10.5117C1.28711 10.4297 0.947266 10.248 0.662109 9.9668C0.376953 9.68555 0.195312 9.34961 0.117188 8.95898C0.0390625 8.56445 0 8.12305 0 7.63477V5.98828C0 5.50391 0.0390625 5.06836 0.117188 4.68164C0.199219 4.29102 0.380859 3.95312 0.662109 3.66797C0.947266 3.38281 1.28516 3.20117 1.67578 3.12305C2.07031 3.04102 2.50781 3 2.98828 3H11.707C12.1953 3 12.6348 3.04102 13.0254 3.12305C13.4199 3.20117 13.7598 3.38281 14.0449 3.66797C14.3301 3.94922 14.5117 4.28516 14.5898 4.67578C14.668 5.06641 14.707 5.50781 14.707 6V7.63477C14.707 8.12305 14.668 8.5625 14.5898 8.95312C14.5117 9.34375 14.3301 9.68164 14.0449 9.9668C13.7598 10.248 13.4199 10.4297 13.0254 10.5117C12.6348 10.5938 12.1953 10.6348 11.707 10.6348H3.00586ZM2.85352 9.63867H11.8594C12.1445 9.63867 12.418 9.61328 12.6797 9.5625C12.9453 9.50781 13.1582 9.40039 13.3184 9.24023C13.4785 9.08008 13.584 8.86914 13.6348 8.60742C13.6855 8.3457 13.7109 8.07227 13.7109 7.78711V5.84766C13.7109 5.5625 13.6855 5.28906 13.6348 5.02734C13.5879 4.76562 13.4824 4.55469 13.3184 4.39453C13.1582 4.23438 12.9453 4.12891 12.6797 4.07812C12.418 4.02344 12.1445 3.99609 11.8594 3.99609H2.86523C2.57227 3.99609 2.29297 4.02344 2.02734 4.07812C1.76562 4.12891 1.55273 4.23438 1.38867 4.39453C1.22852 4.55469 1.12305 4.76758 1.07227 5.0332C1.02539 5.29492 1.00195 5.57031 1.00195 5.85938V7.78711C1.00195 8.07227 1.02539 8.3457 1.07227 8.60742C1.12305 8.86914 1.22852 9.08008 1.38867 9.24023C1.55273 9.40039 1.76562 9.50781 2.02734 9.5625C2.28906 9.61328 2.56445 9.63867 2.85352 9.63867ZM15.4922 8.28516V5.34961C15.6445 5.35742 15.8008 5.42383 15.9609 5.54883C16.125 5.66992 16.2637 5.83984 16.377 6.05859C16.4902 6.27344 16.5469 6.52539 16.5469 6.81445C16.5469 7.10352 16.4902 7.35742 16.377 7.57617C16.2637 7.79492 16.125 7.9668 15.9609 8.0918C15.8008 8.21289 15.6445 8.27734 15.4922 8.28516Z"/></svg>
                 <MenuBarTime />
+                <script dangerouslySetInnerHTML={{ __html: `(function(){var e=document.getElementById('menu-bar-time');if(e){var d=new Date(),h=d.getHours(),m=d.getMinutes().toString().padStart(2,'0'),a=h>=12?'PM':'AM';h=h%12||12;e.textContent=h+':'+m+' '+a}})()` }} />
               </div>
             </div>
             <div className="browser-window">
@@ -500,15 +502,16 @@ export default function Home() {
             {/* macOS dock */}
             <div className="mock-dock">
               <div className="mock-dock-glass">
-                <img className="mock-dock-icon" src="/dock/finder.png" alt="" />
-                <img className="mock-dock-icon" src="/dock/terminal.png" alt="" />
-                <img className="mock-dock-icon" src="/dock/safari.png" alt="" />
-                <img className="mock-dock-icon" src="/dock/settings.png" alt="" />
+                <img className="mock-dock-icon" src={DOCK_FINDER} alt="" width={26} height={26} decoding="sync" />
+                <img className="mock-dock-icon" src={DOCK_TERMINAL} alt="" width={26} height={26} decoding="sync" />
+                <img className="mock-dock-icon" src={DOCK_SAFARI} alt="" width={26} height={26} decoding="sync" />
+                <img className="mock-dock-icon" src={DOCK_SETTINGS} alt="" width={26} height={26} decoding="sync" />
                 <CalendarIcon />
-                <img className="mock-dock-icon" src="/dock/notes.png" alt="" />
+                <script dangerouslySetInnerHTML={{ __html: `(function(){var d=new Date();var day=document.getElementById('dock-cal-day');var num=document.getElementById('dock-cal-num');if(day)day.textContent=d.toLocaleDateString('en-US',{weekday:'short'});if(num)num.textContent=d.getDate()})()` }} />
+                <img className="mock-dock-icon" src={DOCK_NOTES} alt="" width={26} height={26} decoding="sync" />
                 <div className="mock-dock-sep" />
                 <div className="mock-dock-spacer" />
-                <img className="mock-dock-icon" src="/dock/trash.png" alt="" />
+                <img className="mock-dock-icon" src={DOCK_TRASH} alt="" width={26} height={26} decoding="sync" />
               </div>
               {/* Running app dots — positioned below their respective icons */}
               <div className="mock-dock-dots">
@@ -568,6 +571,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            <script dangerouslySetInnerHTML={{ __html: `(function(){var h=document.querySelector('.hero-visual'),bg=document.querySelector('.desktop-bg'),sp=document.querySelector('.mock-dock-spacer'),t=document.querySelector('.mock-terminal');if(!h||!bg||!sp||!t)return;var br=bg.getBoundingClientRect(),sr=sp.getBoundingClientRect(),th=t.scrollHeight,tcx=br.width/2,tcy=br.height-80-th/2,scx=sr.left+sr.width/2-br.left,scy=sr.top+sr.height/2-br.top,sc=sr.width/300;h.style.setProperty('--genie-dx',(scx-tcx)+'px');h.style.setProperty('--genie-dy',(scy-tcy)+'px');h.style.setProperty('--genie-scale',sc)})()` }} />
             {/* Animated cursor — outside desktop-bg */}
             <div className="mock-cursor">
               <svg className="cursor-pointer" width="18" height="18" viewBox="0 0 24 24" fill="#1c1917" stroke="#fff" strokeWidth="1.5"><path d="M5 3l14 8-6.5 1.5L11 19z"/></svg>

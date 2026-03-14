@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useLayoutEffect, useEffect, createContext, useContext, type ReactNode } from "react";
-import { playClick, playTick, playTap, playEnable, initSound, setMuted } from "./sounds";
+import { playClick, playTick, playTap, playEnable, initSound, setMuted, themeVariantNames, getThemeVariant, setThemeVariant, getThemeParams, setThemeParams, getDefaultParams, previewThemeSound, type ThemeVariantName, type ThemeSoundParams } from "./sounds";
 
 export function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -78,15 +78,11 @@ export function FaqItem({ index, question, children }: { index: number; question
 }
 
 export function CalendarIcon() {
-  const [date, setDate] = useState<{ day: string; num: number } | null>(null);
-  useEffect(() => {
+  const [date] = useState(() => {
+    if (typeof window === "undefined") return { day: "", num: "" };
     const d = new Date();
-    setDate({
-      day: d.toLocaleDateString("en-US", { weekday: "short" }),
-      num: d.getDate(),
-    });
-  }, []);
-  if (!date) return <div className="mock-dock-icon dock-calendar-wrap" />;
+    return { day: d.toLocaleDateString("en-US", { weekday: "short" }), num: String(d.getDate()) };
+  });
   return (
     <div className="mock-dock-icon dock-calendar-wrap">
       <svg className="dock-calendar-bg" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -138,29 +134,29 @@ export function CalendarIcon() {
         </g>
       </svg>
       <div className="dock-calendar-content">
-        <span className="dock-calendar-day">{date.day}</span>
-        <span className="dock-calendar-num">{date.num}</span>
+        <span id="dock-cal-day" className="dock-calendar-day" suppressHydrationWarning>{date.day}</span>
+        <span id="dock-cal-num" className="dock-calendar-num" suppressHydrationWarning>{String(date.num)}</span>
       </div>
     </div>
   );
 }
 
+function fmtTime() {
+  const d = new Date();
+  let h = d.getHours();
+  const m = d.getMinutes().toString().padStart(2, "0");
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return `${h}:${m} ${ampm}`;
+}
+
 export function MenuBarTime() {
-  const [time, setTime] = useState("");
+  const [time, setTime] = useState(() => typeof window !== "undefined" ? fmtTime() : "");
   useEffect(() => {
-    const fmt = () => {
-      const d = new Date();
-      let h = d.getHours();
-      const m = d.getMinutes().toString().padStart(2, "0");
-      const ampm = h >= 12 ? "PM" : "AM";
-      h = h % 12 || 12;
-      setTime(`${h}:${m} ${ampm}`);
-    };
-    fmt();
-    const id = setInterval(fmt, 1000);
+    const id = setInterval(() => setTime(fmtTime()), 1000);
     return () => clearInterval(id);
   }, []);
-  return <span className="menu-bar-time">{time}</span>;
+  return <span id="menu-bar-time" className="menu-bar-time" suppressHydrationWarning>{time}</span>;
 }
 
 export function TryItButton() {
@@ -463,7 +459,7 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div ref={heroRef} className={`hero-visual${paused ? " animation-paused" : ""}`}>
+    <div ref={heroRef} className={`hero-visual${paused ? " animation-paused" : ""}`} suppressHydrationWarning>
       {children}
       <button
         className="animation-pause-btn"
@@ -480,21 +476,86 @@ export function HeroCursorPositioner({ children }: { children: ReactNode }) {
   );
 }
 
+function SoundLab({ onClose }: { onClose: () => void }) {
+  const [variant, setVariant] = useState<ThemeVariantName>(getThemeVariant());
+  const [params, setParams] = useState<ThemeSoundParams>(getThemeParams());
+
+  function changeVariant(v: ThemeVariantName) {
+    setThemeVariant(v);
+    setVariant(v);
+    setParams(getThemeParams());
+  }
+
+  function tweak(key: keyof ThemeSoundParams, val: number) {
+    setThemeParams({ [key]: val });
+    setParams(prev => ({ ...prev, [key]: val }));
+  }
+
+  function reset() {
+    const d = getDefaultParams(variant);
+    setThemeParams(d);
+    setParams(d);
+  }
+
+  function copyParams() {
+    const p = getThemeParams();
+    const out = `// Sound: ${variant}\n{ duration: ${p.duration}, freqStart: ${p.freqStart}, freqPeak: ${p.freqPeak}, freqEnd: ${p.freqEnd}, gain: ${p.gain}, attack: ${p.attack} }`;
+    navigator.clipboard.writeText(out);
+  }
+
+  const sliders: { key: keyof ThemeSoundParams; label: string; min: number; max: number; step: number }[] = [
+    { key: "duration", label: "Duration", min: 0.05, max: 0.8, step: 0.01 },
+    { key: "freqStart", label: "Freq Start", min: 50, max: 2000, step: 10 },
+    { key: "freqPeak", label: "Freq Peak", min: 100, max: 4000, step: 10 },
+    { key: "freqEnd", label: "Freq End", min: 50, max: 2000, step: 10 },
+    { key: "gain", label: "Volume", min: 0.01, max: 0.3, step: 0.005 },
+    { key: "attack", label: "Attack", min: 0.05, max: 0.8, step: 0.01 },
+  ];
+
+  return (
+    <div className="sound-lab">
+      <div className="sound-lab-header">
+        <span className="sound-lab-title">Sound Lab</span>
+        <button className="sound-lab-close" onClick={onClose}>&times;</button>
+      </div>
+      <div className="sound-lab-variants">
+        {themeVariantNames.map(v => (
+          <button key={v} className={`sound-lab-variant${v === variant ? " active" : ""}`} onClick={() => changeVariant(v)}>{v}</button>
+        ))}
+      </div>
+      <div className="sound-lab-sliders">
+        {sliders.map(s => (
+          <label key={s.key} className="sound-lab-slider">
+            <span className="sound-lab-slider-label">{s.label}</span>
+            <input type="range" min={s.min} max={s.max} step={s.step} value={params[s.key]} onChange={e => tweak(s.key, parseFloat(e.target.value))} />
+            <span className="sound-lab-slider-value">{s.key === "gain" ? params[s.key].toFixed(3) : s.key === "duration" || s.key === "attack" ? params[s.key].toFixed(2) : Math.round(params[s.key])}</span>
+          </label>
+        ))}
+      </div>
+      <div className="sound-lab-actions">
+        <button className="sound-lab-action" onClick={() => previewThemeSound()}>Preview</button>
+        <button className="sound-lab-action" onClick={reset}>Reset</button>
+        <button className="sound-lab-action" onClick={copyParams}>Copy</button>
+      </div>
+    </div>
+  );
+}
+
 function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !!(window as unknown as { __INITIAL_DARK__?: boolean }).__INITIAL_DARK__;
+    }
+    return false;
+  });
   const overlayRef = useRef<HTMLDivElement>(null);
   const revealAnim = useRef<Animation | null>(null);
-  const appliedDark = useRef(false);
+  const appliedDark = useRef(isDark);
 
-  useEffect(() => {
-    const stored = localStorage.getItem("theme");
-    const dark = stored
-      ? stored === "dark"
-      : matchMedia("(prefers-color-scheme: dark)").matches;
-    setIsDark(dark);
-    appliedDark.current = dark;
-    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-  }, []);
+  // Ensure data-theme stays set after hydration
+  useLayoutEffect(() => {
+    document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+  }, [isDark]);
 
   // Cleanup on unmount: cancel any in-flight animation
   useEffect(() => {
@@ -585,20 +646,19 @@ function ThemeToggle() {
   return (
     <>
       <div ref={overlayRef} className="theme-reveal" />
-      <button className="theme-toggle" onClick={toggle} aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}>
-        <svg className={`theme-icon theme-icon-sun${isDark ? " active" : ""}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11.9982 3.29083V1.76758M5.83985 18.1586L4.76275 19.2357M11.9982 22.2327V20.7094M19.2334 4.76468L18.1562 5.84179M20.707 12.0001H22.2303M18.1562 18.1586L19.2334 19.2357M1.76562 12.0001H3.28888M4.76267 4.76462L5.83977 5.84173M15.7104 8.28781C17.7606 10.3381 17.7606 13.6622 15.7104 15.7124C13.6601 17.7627 10.336 17.7627 8.28574 15.7124C6.23548 13.6622 6.23548 10.3381 8.28574 8.28781C10.336 6.23756 13.6601 6.23756 15.7104 8.28781Z"/></svg>
-        <svg className={`theme-icon theme-icon-moon${isDark ? "" : " active"}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.2481 11.8112C20.1889 12.56 18.8958 13 17.5 13C13.9101 13 11 10.0899 11 6.5C11 5.10416 11.44 3.81108 12.1888 2.75189C12.126 2.75063 12.0631 2.75 12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 11.9369 21.2494 11.874 21.2481 11.8112Z"/></svg>
+      <button id="theme-btn" className="theme-toggle" onClick={toggle} aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"} suppressHydrationWarning>
+        <svg id="theme-sun" className={`theme-icon theme-icon-sun${isDark ? " active" : ""}`} suppressHydrationWarning width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11.9982 3.29083V1.76758M5.83985 18.1586L4.76275 19.2357M11.9982 22.2327V20.7094M19.2334 4.76468L18.1562 5.84179M20.707 12.0001H22.2303M18.1562 18.1586L19.2334 19.2357M1.76562 12.0001H3.28888M4.76267 4.76462L5.83977 5.84173M15.7104 8.28781C17.7606 10.3381 17.7606 13.6622 15.7104 15.7124C13.6601 17.7627 10.336 17.7627 8.28574 15.7124C6.23548 13.6622 6.23548 10.3381 8.28574 8.28781C10.336 6.23756 13.6601 6.23756 15.7104 8.28781Z"/></svg>
+        <svg id="theme-moon" className={`theme-icon theme-icon-moon${isDark ? "" : " active"}`} suppressHydrationWarning width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.2481 11.8112C20.1889 12.56 18.8958 13 17.5 13C13.9101 13 11 10.0899 11 6.5C11 5.10416 11.44 3.81108 12.1888 2.75189C12.126 2.75063 12.0631 2.75 12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 11.9369 21.2494 11.874 21.2481 11.8112Z"/></svg>
       </button>
     </>
   );
 }
 
 function SoundToggle() {
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
-    setEnabled(initSound());
-  }, []);
+  const [enabled, setEnabled] = useState(() => {
+    if (typeof window !== "undefined") return initSound();
+    return false;
+  });
 
   function toggle() {
     const next = !enabled;
@@ -608,7 +668,7 @@ function SoundToggle() {
   }
 
   return (
-    <button className={`sound-toggle${enabled ? "" : " muted"}`} onClick={toggle} aria-label={enabled ? "Mute sounds" : "Enable sounds"}>
+    <button id="sound-btn" className={`sound-toggle${enabled ? "" : " muted"}`} onClick={toggle} aria-label={enabled ? "Mute sounds" : "Enable sounds"} suppressHydrationWarning>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <defs>
           <mask id="speaker-gap">
@@ -648,13 +708,18 @@ export function Sidebar({ version }: { version: string }) {
     return () => observer.disconnect();
   }, []);
 
+  const [showSoundLab, setShowSoundLab] = useState(false);
+
   return (
     <aside className={`sidebar${menuOpen ? " menu-open" : ""}`}>
+      {showSoundLab && <SoundLab onClose={() => setShowSoundLab(false)} />}
       <a href="#" className="sidebar-logo">
-        <svg className="logo-svg" viewBox="0 0 212 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M49.0882 36.0815C50.4149 34.916 52.4368 35.0465 53.604 36.372C54.7702 37.6979 54.6396 39.7187 53.3133 40.8851C51.2689 42.6828 49.2782 44.5944 47.0194 46.1229C45.4282 47.1996 43.692 48 41.6006 48C39.5091 48 37.773 47.1996 36.1817 46.1229C33.923 44.5944 31.9322 42.6828 29.8878 40.8851C28.5616 39.7187 28.4309 37.6979 29.5972 36.372C30.7643 35.0465 32.7862 34.916 34.1129 36.0815C35.9566 37.6982 37.7383 39.4495 39.7724 40.8258C40.798 41.5196 41.2771 41.6035 41.6006 41.6035C41.9241 41.6035 42.4031 41.5196 43.4287 40.8258C44.5299 40.0807 45.8646 38.9137 47.9413 37.0872L49.0882 36.0815Z" fill="currentColor"/>
-          <path d="M30.4003 16.0206C32.5806 16.0206 34.4569 16.0155 35.9817 16.1705C37.56 16.331 39.1144 16.6899 40.5349 17.6384C41.5822 18.338 42.4818 19.2373 43.1819 20.2839C45.127 23.1929 44.8006 27.0828 44.8006 30.4127V32.0525C44.7999 33.8181 43.3674 35.2507 41.6006 35.2507C39.8338 35.2507 38.4013 33.8181 38.4005 32.0525C38.4005 29.8676 38.5032 27.6565 38.2817 25.481C38.1726 24.4101 37.9893 24.0317 37.8599 23.8382C37.6267 23.4899 37.3272 23.1903 36.9786 22.9574C36.7848 22.8281 36.4063 22.6447 35.3348 22.5358C34.2089 22.4213 32.7142 22.4171 30.4003 22.4171C28.0865 22.4171 26.5917 22.4213 25.4658 22.5358C24.3944 22.6447 24.0159 22.8281 23.8221 22.9574C23.4735 23.1903 23.1739 23.4899 22.9408 23.8382C22.8114 24.0317 22.628 24.4101 22.5189 25.481C22.4044 26.6061 22.4002 28.1007 22.4002 30.4127V44.783C22.4002 46.5493 20.9674 47.9813 19.2001 47.9813C17.4328 47.9813 16 46.5493 16 44.783V30.4127C16 28.2341 15.995 26.3583 16.15 24.8345C16.3107 23.2573 16.6696 21.7034 17.6188 20.2839C18.3188 19.2373 19.2185 18.338 20.2657 17.6384C23.1767 15.6945 27.0683 16.0206 30.4003 16.0206Z" fill="currentColor"/>
-          <path d="M65.16 46V44.56L66.72 44.24C67.84 44 68.2 43.8 68.2 41.6V22.68C68.2 20.44 67.84 20.24 66.72 20L65.16 19.68V18.28H77.72C85 18.28 88.16 20.72 88.16 25.48C88.16 28.64 86.16 31.2 82.24 32.32V32.48C84.16 36.08 86.76 40.36 88.96 43.28C89.4 43.88 89.76 43.96 91 44.36L91.8 44.56V46H84.28C81.6 42.56 78.96 37.88 77.08 33.88C76.92 33.88 74.08 33.84 74 33.84V41.6C74 43.8 74.32 44 75.52 44.24L77.16 44.56V46H65.16ZM76.2 31.88C80.36 31.88 82.12 30.24 82.12 25.92C82.12 21.2 80.76 20.24 77.32 20.24C75.76 20.24 74.6 20.36 74 20.52V31.72C74.08 31.76 75.16 31.88 76.2 31.88ZM101.679 46.48C94.7587 46.48 91.3587 42.2 91.3587 35.56C91.3587 28.88 96.3187 24.84 101.679 24.84C107.079 24.84 110.359 27.64 110.439 35.16H96.7187C96.9187 41.16 99.5988 43.36 103.679 43.36C106.519 43.36 108.359 42.52 109.919 41.76V43.48C108.679 44.68 105.679 46.48 101.679 46.48ZM101.439 26.68C98.9588 26.68 96.9987 28.56 96.7587 33.28L104.919 32.88C104.919 28.2 104.239 26.68 101.439 26.68ZM119.321 46.48C116.241 46.48 114.121 45.08 114.121 41.6V27.92H111.441V26.64C114.441 25.68 116.081 23.56 117.201 20.2H119.441V25.4H125.081L124.481 27.92H119.441V41C119.441 42.88 120.201 43.64 122.161 43.64C123.201 43.64 124.441 43.36 125.201 43.16V44.6C124.361 45.48 122.401 46.48 119.321 46.48ZM133.97 46.48C130.65 46.48 128.57 44.68 128.57 41.2V29.84C128.57 28.28 128.45 28.16 127.41 27.64L125.85 26.88V25.68L133.21 24.88L133.85 25.32V39.92C133.85 42.24 134.85 43.28 136.97 43.28C138.69 43.28 140.45 42.56 141.69 42.08V29.84C141.69 28.28 141.57 28.16 140.49 27.64L139.01 26.88V25.68L146.37 24.88L146.97 25.32V41.04C146.97 42.92 147.13 43.16 148.25 43.6L149.57 44.2V45.48L142.25 46.48L141.73 46.12L141.97 43.6H141.81C139.65 45.08 136.97 46.48 133.97 46.48ZM150.605 46V44.6L152.005 44.24C153.085 43.96 153.285 43.72 153.285 42.04V30.16C153.285 28.48 153.085 28.4 152.005 27.76L150.565 26.92V25.76L158.045 24.88L158.525 25.2L158.285 27.52H158.445C160.565 26.16 163.445 24.88 166.245 24.88C170.005 24.88 171.685 26.6 171.685 30.2V42.04C171.685 43.72 171.925 44 172.965 44.24L174.285 44.6V46H163.885V44.6L165.205 44.28C166.205 44 166.365 43.84 166.365 42.04V31.68C166.365 29.04 165.485 28.12 163.205 28.12C161.485 28.12 159.565 28.76 158.565 29.08V42.04C158.565 43.88 158.725 44 159.725 44.28L161.085 44.6V46H150.605ZM185.841 46.48C178.921 46.48 175.521 42.2 175.521 35.56C175.521 28.88 180.481 24.84 185.841 24.84C191.241 24.84 194.521 27.64 194.601 35.16H180.881C181.081 41.16 183.761 43.36 187.841 43.36C190.681 43.36 192.521 42.52 194.081 41.76V43.48C192.841 44.68 189.841 46.48 185.841 46.48ZM185.601 26.68C183.121 26.68 181.161 28.56 180.921 33.28L189.081 32.88C189.081 28.2 188.401 26.68 185.601 26.68Z" fill="currentColor"/>
+        <svg className="logo-svg" viewBox="0 0 96 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clipPath="url(#logo-clip)">
+            <path d="M20.713 16V15.287L21.748 15.08C22.3 14.988 22.484 14.85 22.484 13.7V2.338C22.484 1.188 22.3 1.073 21.748 0.957999L20.713 0.750999V0.0609996H27.406C31.109 0.0609996 32.788 1.441 32.788 4.109C32.788 5.811 31.5 7.398 29.131 8.088V8.157C30.373 10.296 32.006 12.849 33.294 14.505C33.547 14.827 33.777 14.965 34.49 15.149L34.996 15.287V16H31.5C29.775 13.792 28.188 11.262 26.946 8.801H24.945V13.7C24.945 14.85 25.083 14.965 25.727 15.08L26.831 15.287V16H20.713ZM26.325 7.743C29.062 7.743 30.189 6.731 30.189 4.339C30.189 1.533 29.223 1.073 27.107 1.073C26.095 1.073 25.359 1.142 24.945 1.234V7.651C24.945 7.651 25.681 7.743 26.325 7.743ZM40.5379 16.276C36.7199 16.276 34.8569 13.746 34.8569 10.02C34.8569 6.34 37.5019 3.925 40.5379 3.925C43.4589 3.925 45.2299 5.512 45.2299 9.79H37.2949C37.3639 13.286 38.9509 14.804 41.2969 14.804C43.0679 14.804 44.1259 14.252 44.9999 13.838V14.758C44.3789 15.264 42.7459 16.276 40.5379 16.276ZM40.4459 4.891C38.7669 4.891 37.5019 6.11 37.3179 8.824L42.6539 8.548C42.6539 5.903 42.2169 4.891 40.4459 4.891ZM50.1647 16.276C48.7157 16.276 47.4967 15.609 47.4967 13.861V5.512H45.8867V4.845C47.4737 4.408 48.2787 3.327 48.8997 1.464H49.7967V4.293H53.1087L52.8097 5.512H49.7967V13.516C49.7967 14.505 50.3027 14.942 51.3607 14.942C52.0277 14.942 52.7177 14.758 53.1777 14.62V15.356C52.7637 15.747 51.7057 16.276 50.1647 16.276ZM58.2576 16.276C56.3256 16.276 55.1526 15.218 55.1526 13.263V6.501C55.1526 5.65 55.0606 5.627 54.5316 5.397L53.5886 4.983V4.362L57.1076 3.971L57.4526 4.201V12.734C57.4526 14.068 58.0506 14.781 59.4306 14.781C60.5576 14.781 61.7536 14.298 62.6046 13.93V6.501C62.6046 5.65 62.5356 5.627 61.9836 5.397L61.0636 4.983V4.362L64.5826 3.971L64.9046 4.201V13.355C64.9046 14.39 65.0426 14.528 65.5946 14.781L66.4456 15.172V15.793L62.8576 16.276L62.6046 16.092L62.7196 14.712H62.6276C61.4086 15.517 59.8676 16.276 58.2576 16.276ZM67.0817 16V15.31L68.0247 15.057C68.4847 14.942 68.6457 14.758 68.6457 13.861V6.731C68.6457 5.811 68.5307 5.765 67.9557 5.489L67.0817 5.052V4.454L70.7157 3.971L70.9457 4.109L70.8307 5.397H70.9227C72.0727 4.661 73.7977 3.948 75.2697 3.948C77.5927 3.948 78.3977 4.937 78.3977 7.007V13.861C78.3977 14.758 78.5817 14.942 79.0187 15.057L79.9387 15.31V16H74.5567V15.31L75.4997 15.057C75.9597 14.942 76.0977 14.827 76.0977 13.861V7.651C76.0977 6.041 75.5687 5.466 74.0967 5.466C72.9697 5.466 71.6127 5.926 70.9457 6.179V13.861C70.9457 14.827 71.0837 14.942 71.5437 15.057L72.4867 15.31V16H67.0817ZM86.5505 16.276C82.7325 16.276 80.8695 13.746 80.8695 10.02C80.8695 6.34 83.5145 3.925 86.5505 3.925C89.4715 3.925 91.2425 5.512 91.2425 9.79H83.3075C83.3765 13.286 84.9635 14.804 87.3095 14.804C89.0805 14.804 90.1385 14.252 91.0125 13.838V14.758C90.3915 15.264 88.7585 16.276 86.5505 16.276ZM86.4585 4.891C84.7795 4.891 83.5145 6.11 83.3305 8.824L88.6665 8.548C88.6665 5.903 88.2295 4.891 86.4585 4.891Z" fill="currentColor"/>
+            <path d="M2 16H0V2H2V16ZM12 16H10V14H12V16ZM10 14H8V12H10V14ZM14 14H12V12H14V14ZM8 12H6V10H8V12ZM16 12H14V10H16V12ZM12 8H10V2H12V8ZM10 2H2V0H10V2Z" fill="currentColor"/>
+          </g>
+          <defs><clipPath id="logo-clip"><rect width="96" height="16" fill="white"/></clipPath></defs>
         </svg>
       </a>
 
@@ -689,11 +754,26 @@ export function Sidebar({ version }: { version: string }) {
             v{version}
           </a>
           <div className="toc-toggles">
+            <button className="sound-lab-btn" onClick={() => setShowSoundLab(!showSoundLab)} aria-label="Sound lab" title="Sound Lab">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 4v16"/></svg>
+            </button>
             <SoundToggle />
             <ThemeToggle />
           </div>
         </div>
       </nav>
+      <script dangerouslySetInnerHTML={{ __html: `(function(){
+var d=window.__INITIAL_DARK__;
+var sun=document.getElementById('theme-sun');
+var moon=document.getElementById('theme-moon');
+var btn=document.getElementById('theme-btn');
+if(sun)sun.setAttribute('class','theme-icon theme-icon-sun'+(d?' active':''));
+if(moon)moon.setAttribute('class','theme-icon theme-icon-moon'+(d?'':' active'));
+if(btn)btn.setAttribute('aria-label',d?'Switch to light mode':'Switch to dark mode');
+var snd=localStorage.getItem('sound')==='on';
+var sbtn=document.getElementById('sound-btn');
+if(sbtn)sbtn.setAttribute('class','sound-toggle'+(snd?'':' muted'));
+})()` }} />
     </aside>
   );
 }
