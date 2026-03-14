@@ -3062,7 +3062,9 @@ p { text-wrap: pretty; }
     gap: 0;
     overflow: hidden;
     justify-content: flex-start;
-    transition: grid-template-rows 200ms cubic-bezier(0.165, 0.84, 0.44, 1) 60ms;
+    will-change: grid-template-rows;
+    /* Close: collapse after items fade (total stagger spread ~105ms + 100ms fade) */
+    transition: grid-template-rows 160ms cubic-bezier(0.165, 0.84, 0.44, 1) 100ms;
   }
 
   .toc-inner {
@@ -3073,23 +3075,31 @@ p { text-wrap: pretty; }
     gap: 0;
     width: auto;
     align-self: stretch;
+    padding-top: 12px;
   }
 
   .sidebar.menu-open .toc {
     grid-template-rows: 1fr;
-    transition-delay: 0ms;
-  }
-
-  .sidebar.menu-open .toc-inner {
-    padding-top: 12px;
+    transition: grid-template-rows 250ms cubic-bezier(0.165, 0.84, 0.44, 1);
   }
 
   .toc-link,
   .toc-toggles {
     opacity: 0;
-    filter: blur(6px);
-    transition: opacity 80ms cubic-bezier(0.165, 0.84, 0.44, 1);
+    filter: blur(3px);
+    /* Close: opacity only — no blur transition on exit (cheaper, more decisive) */
+    transition: opacity 100ms ease-out;
   }
+
+  /* Exit: reverse stagger — 15ms apart, last item first */
+  .toc-inner > :nth-child(1) { transition-delay: 105ms; }
+  .toc-inner > :nth-child(2) { transition-delay: 90ms; }
+  .toc-inner > :nth-child(3) { transition-delay: 75ms; }
+  .toc-inner > :nth-child(4) { transition-delay: 60ms; }
+  .toc-inner > :nth-child(5) { transition-delay: 45ms; }
+  .toc-inner > :nth-child(6) { transition-delay: 30ms; }
+  .toc-inner > :nth-child(7) { transition-delay: 15ms; }
+  .toc-inner > :nth-child(8) { transition-delay: 0ms; }
 
   .toc-link {
     white-space: nowrap;
@@ -3109,18 +3119,18 @@ p { text-wrap: pretty; }
   .sidebar.menu-open .toc-toggles {
     opacity: 1;
     filter: blur(0);
-    transition: opacity 250ms cubic-bezier(0.165, 0.84, 0.44, 1), filter 250ms cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: opacity 200ms ease-out, filter 200ms ease-out;
   }
 
-  /* Entry: forward stagger (7 links + toggles) */
-  .sidebar.menu-open .toc-inner > :nth-child(1) { transition-delay: 40ms; }
-  .sidebar.menu-open .toc-inner > :nth-child(2) { transition-delay: 80ms; }
-  .sidebar.menu-open .toc-inner > :nth-child(3) { transition-delay: 120ms; }
-  .sidebar.menu-open .toc-inner > :nth-child(4) { transition-delay: 160ms; }
-  .sidebar.menu-open .toc-inner > :nth-child(5) { transition-delay: 200ms; }
-  .sidebar.menu-open .toc-inner > :nth-child(6) { transition-delay: 240ms; }
-  .sidebar.menu-open .toc-inner > :nth-child(7) { transition-delay: 280ms; }
-  .sidebar.menu-open .toc-inner > :nth-child(8) { transition-delay: 320ms; }
+  /* Entry: forward stagger — 30ms apart */
+  .sidebar.menu-open .toc-inner > :nth-child(1) { transition-delay: 30ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(2) { transition-delay: 60ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(3) { transition-delay: 90ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(4) { transition-delay: 120ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(5) { transition-delay: 150ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(6) { transition-delay: 180ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(7) { transition-delay: 210ms; }
+  .sidebar.menu-open .toc-inner > :nth-child(8) { transition-delay: 240ms; }
 
   .toc-toggles {
     margin-top: 0;
