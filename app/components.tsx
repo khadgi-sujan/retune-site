@@ -687,7 +687,7 @@ export function Sidebar({ version }: { version: string }) {
     }
 
     function resetRects() {
-      const rects = g.querySelectorAll("rect");
+      const rects = g!.querySelectorAll("rect");
       rects.forEach((el) => {
         el.style.transition = "none";
         el.style.fill = "";
