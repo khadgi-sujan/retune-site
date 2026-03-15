@@ -19,7 +19,7 @@
 
 /* Suppress element-level CSS transitions during theme reveal so the
    live ::view-transition-new layer doesn't animate individual elements */
-:root[data-vt] * {
+:root[data-vt] *:not(.theme-icon) {
   transition-duration: 0s !important;
 }
 
