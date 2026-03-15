@@ -557,9 +557,13 @@ function ThemeToggle() {
       animatingRef.current = true;
 
       const transition = document.startViewTransition(() => {
-        // Suppress element CSS transitions in the new live layer only
+        // Suppress element CSS transitions, apply theme, force reflow to
+        // settle all styles, then re-enable transitions. This ensures the
+        // live ::view-transition-new layer has no in-progress transitions.
         document.documentElement.setAttribute("data-vt", "");
         flushSync(() => applyTheme(next));
+        getComputedStyle(document.documentElement).opacity;
+        document.documentElement.removeAttribute("data-vt");
       });
 
       transition.ready.then(() => {
@@ -607,12 +611,11 @@ function ThemeToggle() {
         anim.onfinish = () => {
           if (anim.playbackRate < 0) {
             // Reverse completed — revert the DOM theme
+            document.documentElement.setAttribute("data-vt", "");
             flushSync(() => applyTheme(!appliedDark.current));
+            getComputedStyle(document.documentElement).opacity;
+            document.documentElement.removeAttribute("data-vt");
           }
-          document.documentElement.removeAttribute("data-vt");
-          // Don't remove styleEl — it targets ::view-transition-new(root) which
-          // doesn't exist outside a transition, so it's harmless. Removing it
-          // would flash the default hiding mask before pseudo-element cleanup.
           animatingRef.current = false;
           revealAnim.current = null;
         };
