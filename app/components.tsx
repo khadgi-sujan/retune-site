@@ -598,6 +598,7 @@ function ThemeToggle() {
             duration: 800,
             easing: "cubic-bezier(0.165, 0.84, 0.44, 1)",
             pseudoElement: "::view-transition-new(root)",
+            fill: "both",
           }
         );
         revealAnim.current = anim;
@@ -609,7 +610,9 @@ function ThemeToggle() {
             flushSync(() => applyTheme(!appliedDark.current));
           }
           document.documentElement.removeAttribute("data-vt");
-          styleEl.remove();
+          // Don't remove styleEl — it targets ::view-transition-new(root) which
+          // doesn't exist outside a transition, so it's harmless. Removing it
+          // would flash the default hiding mask before pseudo-element cleanup.
           animatingRef.current = false;
           revealAnim.current = null;
         };
