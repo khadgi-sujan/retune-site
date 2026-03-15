@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useLayoutEffect, useEffect, createContext, useContext, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { playClick, playTick, playTap, playEnable, initSound, setMuted } from "./sounds";
 
 export function CopyButton({ text }: { text: string }) {
@@ -491,15 +492,30 @@ function ThemeToggle() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const revealAnim = useRef<Animation | null>(null);
   const appliedDark = useRef(isDark);
+  const animatingRef = useRef(false);
 
   // Ensure data-theme stays set after hydration
   useLayoutEffect(() => {
     document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
   }, [isDark]);
 
-  // Cleanup on unmount: cancel any in-flight animation
+  // Capture clicks during view transition (real DOM is paint-suppressed, so
+  // React's onClick won't fire — use native pointerdown on document instead)
   useEffect(() => {
+    function onPointerDown(e: PointerEvent) {
+      if (!animatingRef.current || !revealAnim.current) return;
+      const btn = document.getElementById("theme-btn");
+      if (!btn) return;
+      const r = btn.getBoundingClientRect();
+      if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+        e.stopPropagation();
+        playClick(!appliedDark.current);
+        revealAnim.current.reverse();
+      }
+    }
+    document.addEventListener("pointerdown", onPointerDown, true);
     return () => {
+      document.removeEventListener("pointerdown", onPointerDown, true);
       if (revealAnim.current) {
         revealAnim.current.cancel();
         revealAnim.current = null;
@@ -507,30 +523,19 @@ function ThemeToggle() {
     };
   }, []);
 
+  function applyTheme(dark: boolean) {
+    setIsDark(dark);
+    appliedDark.current = dark;
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    localStorage.setItem("theme", dark ? "dark" : "light");
+  }
+
   function toggle(e: React.MouseEvent) {
-    const overlay = overlayRef.current;
-    if (!overlay) return;
-
-    // Interrupt: reverse from current position (running or paused via tab-switch)
-    if (revealAnim.current && revealAnim.current.playState !== "finished" && revealAnim.current.playState !== "idle") {
-      revealAnim.current.reverse();
-      return;
-    }
-    // Clean up any finished/idle animation before starting fresh
-    if (revealAnim.current) {
-      revealAnim.current.cancel();
-      overlay.style.display = "none";
-      revealAnim.current = null;
-    }
-
     const next = !appliedDark.current;
     playClick(next);
 
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setIsDark(next);
-      appliedDark.current = next;
-      document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
-      localStorage.setItem("theme", next ? "dark" : "light");
+      applyTheme(next);
       return;
     }
 
@@ -539,44 +544,113 @@ function ThemeToggle() {
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y)
-    ) + 150; // extend past feather zone
+    );
 
-    // Capture old bg before switching
+    // View Transitions API path
+    if (document.startViewTransition) {
+      // Interrupt: toggle direction on running animation
+      if (animatingRef.current) {
+        if (revealAnim.current) revealAnim.current.reverse();
+        return;
+      }
+
+      animatingRef.current = true;
+
+      const transition = document.startViewTransition(() => {
+        // Suppress element CSS transitions in the new live layer only
+        document.documentElement.setAttribute("data-vt", "");
+        flushSync(() => applyTheme(next));
+      });
+
+      transition.ready.then(() => {
+        // Eased feather stops (smoothstep curve to avoid banding)
+        const f = 150; // feather zone px
+        const stops = [
+          [0, 1], [0.1, 0.972], [0.2, 0.896], [0.3, 0.784], [0.4, 0.648],
+          [0.5, 0.5], [0.6, 0.352], [0.7, 0.216], [0.8, 0.104], [0.9, 0.028], [1, 0],
+        ].map(([t, a]) =>
+          a === 0
+            ? `transparent calc(var(--reveal-radius) + ${Math.round(t * f)}px)`
+            : `rgba(0,0,0,${a}) calc(var(--reveal-radius) + ${Math.round(t * f)}px)`
+        ).join(",\n              ");
+
+        // Override the default hiding mask with the real radial-gradient
+        let styleEl = document.querySelector("style[data-theme-reveal]") as HTMLStyleElement;
+        if (!styleEl) {
+          styleEl = document.createElement("style");
+          styleEl.setAttribute("data-theme-reveal", "");
+          document.head.appendChild(styleEl);
+        }
+        styleEl.textContent = `
+          ::view-transition-new(root) {
+            mask-image: radial-gradient(
+              circle at ${x}px ${y}px,
+              black 0,
+              black var(--reveal-radius),
+              ${stops}
+            );
+          }
+        `;
+
+        const anim = document.documentElement.animate(
+          { "--reveal-radius": ["0px", `${endRadius + f}px`] } as PropertyIndexedKeyframes,
+          {
+            duration: 800,
+            easing: "cubic-bezier(0.165, 0.84, 0.44, 1)",
+            pseudoElement: "::view-transition-new(root)",
+          }
+        );
+        revealAnim.current = anim;
+
+        // Use onfinish (not .finished promise) — survives .reverse() calls
+        anim.onfinish = () => {
+          if (anim.playbackRate < 0) {
+            // Reverse completed — revert the DOM theme
+            flushSync(() => applyTheme(!appliedDark.current));
+          }
+          document.documentElement.removeAttribute("data-vt");
+          styleEl.remove();
+          animatingRef.current = false;
+          revealAnim.current = null;
+        };
+      });
+      return;
+    }
+
+    // Fallback: overlay approach for browsers without View Transitions
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    if (revealAnim.current && revealAnim.current.playState !== "finished" && revealAnim.current.playState !== "idle") {
+      revealAnim.current.reverse();
+      return;
+    }
+    if (revealAnim.current) {
+      revealAnim.current.cancel();
+      overlay.style.display = "none";
+      revealAnim.current = null;
+    }
+
     const oldBg = getComputedStyle(document.documentElement).getPropertyValue("--color-bg-page").trim();
+    applyTheme(next);
 
-    // Switch theme immediately (new content renders underneath)
-    setIsDark(next);
-    appliedDark.current = next;
-    document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
-    localStorage.setItem("theme", next ? "dark" : "light");
-
-    // Show overlay (old theme bg) with inverted mask — hole at click reveals new content
     overlay.style.background = oldBg;
     const mask = `radial-gradient(circle at ${x}px ${y}px, transparent 0, transparent var(--reveal-radius), black calc(var(--reveal-radius) + 150px))`;
     overlay.style.maskImage = mask;
     overlay.style.webkitMaskImage = mask;
     overlay.style.display = "block";
 
-    // Animate hole expanding via registered @property
     const anim = overlay.animate(
-      { "--reveal-radius": ["0px", `${endRadius}px`] } as PropertyIndexedKeyframes,
+      { "--reveal-radius": ["0px", `${endRadius + 150}px`] } as PropertyIndexedKeyframes,
       { duration: 800, easing: "cubic-bezier(0.165, 0.84, 0.44, 1)", fill: "both" }
     );
     revealAnim.current = anim;
 
     anim.addEventListener("finish", () => {
-      // Guard: ignore stale finish events from a superseded animation
       if (revealAnim.current !== anim) return;
-
       if (anim.playbackRate < 0) {
-        // Reverse completed — hole closed, revert theme
-        overlay.style.maskImage = "none";
-        overlay.style.webkitMaskImage = "none";
         const old = !appliedDark.current;
-        setIsDark(old);
-        appliedDark.current = old;
-        document.documentElement.setAttribute("data-theme", old ? "dark" : "light");
-        localStorage.setItem("theme", old ? "dark" : "light");
+        applyTheme(old);
       }
       overlay.style.display = "none";
       revealAnim.current = null;

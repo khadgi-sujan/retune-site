@@ -1,5 +1,29 @@
-/* ── Theme Reveal (interruptible) ── */
+/* ── Theme Reveal (View Transitions API) ── */
 
+::view-transition,
+::view-transition-group(*),
+::view-transition-image-pair(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  pointer-events: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  /* Start fully hidden until JS injects the real radial-gradient mask */
+  mask-image: linear-gradient(transparent, transparent);
+}
+
+/* Suppress element-level CSS transitions during theme reveal so the
+   live ::view-transition-new layer doesn't animate individual elements */
+:root[data-vt] * {
+  transition-duration: 0s !important;
+}
+
+/* Fallback overlay for browsers without View Transitions */
 @property --reveal-radius {
   syntax: "<length>";
   inherits: false;
