@@ -710,7 +710,7 @@ p { text-wrap: pretty; }
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.08);
 }
 
 .mock-dock-icon {
@@ -1689,7 +1689,7 @@ p { text-wrap: pretty; }
   height: 20px;
   padding: 0 6px;
   border-radius: 999px;
-  background: #3b82f6;
+  background: #0D99FF;
   color: #fff;
   font-size: 8px;
   font-weight: 500;
@@ -1825,7 +1825,7 @@ p { text-wrap: pretty; }
   border-bottom: 1px solid #e7e5e4;
 }
 .mock-el-tag {
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 600;
   color: #1c1917;
 }
@@ -1838,7 +1838,7 @@ p { text-wrap: pretty; }
 }
 .mock-row-label {
   font-size: 7px;
-  font-weight: 400;
+  font-weight: 450;
   color: #78716c;
 }
 .mock-input.mock-state-select {
@@ -1987,8 +1987,8 @@ p { text-wrap: pretty; }
 }
 
 .mock-input-value {
-  font-size: 8px;
-  font-weight: 450;
+  font-size: 7px;
+  font-weight: 400;
   color: #1c1917;
 }
 
