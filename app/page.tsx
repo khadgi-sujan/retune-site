@@ -667,17 +667,10 @@ export default function Home() {
             <div className="install-step">
               <div className="install-step-content">
                 <h3 className="install-step-title">Connect your AI tool</h3>
-                <p className="install-step-desc">Add to <code>.mcp.json</code> (Claude Code) or MCP settings (Cursor):</p>
+                <p className="install-step-desc">Auto-detects Claude Code and Cursor. Configures the MCP server and installs the Retune skill that teaches your agent how to resolve design tokens, utility classes, and CSS variables.</p>
                 <div className="code-block">
-                  <CopyButton text={`{\n  "mcpServers": {\n    "retune": {\n      "command": "npx",\n      "args": ["-y", "retune"]\n    }\n  }\n}`} />
-                  <div className="code-line">{"{"}</div>
-                  <div className="code-line">{"  "}<span className="code-string">"mcpServers"</span>: {"{"}</div>
-                  <div className="code-line">{"    "}<span className="code-string">"retune"</span>: {"{"}</div>
-                  <div className="code-line">{"      "}<span className="code-string">"command"</span>: <span className="code-string">"npx"</span>,</div>
-                  <div className="code-line">{"      "}<span className="code-string">"args"</span>: [<span className="code-string">"-y"</span>, <span className="code-string">"retune"</span>]</div>
-                  <div className="code-line">{"    }"}</div>
-                  <div className="code-line">{"  }"}</div>
-                  <div className="code-line">{"}"}</div>
+                  <CopyButton text="npx retune setup" />
+                  <div className="code-line">npx retune setup</div>
                 </div>
               </div>
             </div>
@@ -707,8 +700,8 @@ export default function Home() {
             <FaqItem index={4} question="Can I use it without an AI tool?">
               Yes. Changes are previewed live in the browser regardless. If no MCP server is connected, you can copy the structured diff to your clipboard and paste it into any tool.
             </FaqItem>
-            <FaqItem index={5} question="How does it detect my styling approach?">
-              It analyzes your actual stylesheet rules at runtime, not class names. It walks <code>document.styleSheets</code> to count CSS properties per rule and check selector complexity. Single-property, single-class rules are identified as utility CSS. This works for Tailwind, Bootstrap, Tachyons, UnoCSS, or any atomic framework without hardcoded patterns.
+            <FaqItem index={5} question="How does it detect my styling approach and design variables?">
+              It walks <code>document.styleSheets</code> at runtime to detect utility CSS vs semantic CSS without hardcoded framework patterns. It also scans for CSS custom properties and categorizes them by which CSS properties actually use each variable, not by naming convention.
             </FaqItem>
             <FaqItem index={6} question="Does it detect React components?">
               Yes. It traverses the React fiber tree to find the component hierarchy and identifies the nearest component name for the selected element. This context helps your AI agent locate the right file without a build plugin.
@@ -727,7 +720,7 @@ export default function Home() {
 
         {/* ── Footer ── */}
         <footer className="footer">
-          <p className="footer-text">MIT License. Created by <a href="https://x.com/___sujan" className="footer-link" target="_blank" rel="noopener noreferrer">Sujan Khadgi</a>.</p>
+          <p className="footer-text">PolyForm Shield License. Created by <a href="https://x.com/___sujan" className="footer-link" target="_blank" rel="noopener noreferrer">Sujan Khadgi</a>.</p>
         </footer>
       </main>
     </div>

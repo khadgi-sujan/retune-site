@@ -7,18 +7,24 @@ Retune is a browser overlay for developers that lets you visually edit any eleme
 ## How It Works
 
 1. Add `<Retune />` to your app (development only, hidden in production)
-2. Click any element to select it
-3. Tweak properties visually with instant live preview
-4. Your AI agent picks up structured diffs and applies them to source files
+2. Run `npx retune setup` to configure your AI tool (auto-detects Claude Code and Cursor, installs MCP server and skill)
+3. Click any element to select it
+4. Tweak properties visually with instant live preview
+5. Your AI agent picks up structured diffs and applies them to source files
 
 ## Key Features
 
 - Visual editing of CSS properties (spacing, colors, typography, layout, shadows, filters, gradients)
+- CSS variable detection: scans your stylesheets for custom properties and categorizes them by actual usage, not naming convention
+- Variable picker for applying, swapping, and unlinking design variables on any property
+- Target scoping: choose how broadly changes apply, from a base class (all buttons) to a compound selector (just ghost buttons) to a specific element
 - Smart element identification using CSS selectors, React component hierarchy, and source file locations
-- Styling approach detection (Tailwind, CSS Modules, plain CSS) by analyzing document.styleSheets — no build plugins needed
+- Styling approach detection (Tailwind, CSS Modules, plain CSS) by analyzing document.styleSheets
+- Gradient editor with per-stop change tracking and variable support
+- Font picker with project fonts, system fonts, and category filtering
 - Pseudo-state editing (:hover, :focus, :active)
 - Undo/redo with coalescing for scrub gestures
-- Live preview via Constructable Stylesheets (non-destructive)
+- Built-in skill (retune-visual-changes) that teaches AI agents how to resolve design tokens, utility classes, and CSS variables when applying changes
 - MCP server for AI tool integration, plus clipboard fallback
 
 ## Compatibility
@@ -31,6 +37,7 @@ Retune is a browser overlay for developers that lets you visually edit any eleme
 
 ```
 npm install retune
+npx retune setup
 ```
 
 ## Links
@@ -38,5 +45,5 @@ npm install retune
 - Website: https://retune.dev
 - GitHub: https://github.com/khadgi-sujan/retune
 - npm: https://www.npmjs.com/package/retune
-- License: MIT
+- License: PolyForm Shield 1.0.0
 - Author: Sujan Khadgi (@___sujan)

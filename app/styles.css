@@ -2898,6 +2898,7 @@ p { text-wrap: pretty; }
 
 .install-step-desc {
   font-size: 14px;
+  line-height: 22px;
   color: var(--color-text-secondary);
   margin: 8px 0 0;
 }
