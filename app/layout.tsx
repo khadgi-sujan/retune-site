@@ -88,7 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body style={{ margin: 0, fontFamily: "'Inter', sans-serif" }}>
+      <body style={{ margin: 0 }}>
         {children}
         <Analytics />
         <Retune force />

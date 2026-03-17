@@ -38,6 +38,19 @@
   display: none;
 }
 
+/* ── Font ── */
+
+:root {
+  font-family: Inter, sans-serif;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+}
+@supports (font-variation-settings: normal) {
+  :root {
+    font-family: InterVariable, sans-serif;
+    font-optical-sizing: auto;
+  }
+}
+
 /* ── Color Tokens ── */
 
 :root {
@@ -2939,8 +2952,9 @@ p { text-wrap: pretty; }
   padding: 16px 0;
   border: none;
   background: none;
+  font-family: inherit;
   font-size: 14px;
-  font-weight: 450;
+  font-weight: 400;
   color: var(--color-text-secondary);
   line-height: 22px;
   text-align: left;
