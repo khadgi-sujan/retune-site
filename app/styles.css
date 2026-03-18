@@ -1864,6 +1864,13 @@ p { text-wrap: pretty; }
   flex-wrap: wrap;
   flex: 1;
 }
+.mock-selector-divider {
+  width: 1px;
+  height: 12px;
+  background: var(--color-border);
+  align-self: center;
+  flex-shrink: 0;
+}
 .mock-selector-tag {
   display: inline-flex;
   align-items: center;

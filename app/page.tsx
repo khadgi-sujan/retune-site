@@ -361,15 +361,16 @@ export default function Home() {
                 <div className="mock-panel-header">
                   <div className="mock-el-tag">div</div>
                   <div className="mock-header-row">
-                    <span className="mock-row-label">State</span>
-                    <div className="mock-input mock-select mock-state-select"><span className="mock-input-value">default</span><svg className="mock-chevron" width="6" height="6" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M2.5 4L5 6.5L7.5 4"/></svg></div>
+                    <span className="mock-row-label">Target</span>
+                    <div className="mock-selector-field">
+                      <div className="mock-selector-tag active">mock-card<span className="mock-selector-count">4</span></div>
+                      <div className="mock-selector-divider" />
+                      <div className="mock-selector-tag">This element</div>
+                    </div>
                   </div>
                   <div className="mock-header-row">
-                    <span className="mock-row-label">Selector</span>
-                    <div className="mock-selector-field">
-                      <div className="mock-selector-tag">This element</div>
-                      <div className="mock-selector-tag active">mock-card<span className="mock-selector-count">4</span></div>
-                    </div>
+                    <span className="mock-row-label">State</span>
+                    <div className="mock-input mock-select mock-state-select"><span className="mock-input-value">default</span><svg className="mock-chevron" width="6" height="6" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M2.5 4L5 6.5L7.5 4"/></svg></div>
                   </div>
                 </div>
                   {/* Position — alignment + type */}
