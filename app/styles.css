@@ -1573,7 +1573,7 @@ p { text-wrap: pretty; }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1c1917;
+  color: var(--rt-text);
   flex-shrink: 0;
   animation: mock-collapse-shrink 10s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
@@ -2002,7 +2002,7 @@ p { text-wrap: pretty; }
 .mock-section-action {
   font-size: 10px;
   font-weight: 400;
-  color: rgba(0, 0, 0, 0.9);
+  color: var(--rt-text-secondary);
   width: 16px;
   height: 16px;
   display: flex;
