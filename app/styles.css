@@ -2184,7 +2184,7 @@ p { text-wrap: pretty; }
 }
 @keyframes mock-val-flash-1 {
   0%, 40% { background: transparent; }
-  42% { background: #dbeafe; border-radius: 3px; }
+  42% { background: var(--rt-selection); border-radius: 3px; }
   47% { background: transparent; }
   100% { background: transparent; }
 }
@@ -2196,7 +2196,7 @@ p { text-wrap: pretty; }
 }
 @keyframes mock-val-flash-2 {
   0%, 49% { background: transparent; }
-  50% { background: #dbeafe; border-radius: 3px; }
+  50% { background: var(--rt-selection); border-radius: 3px; }
   56% { background: transparent; }
   100% { background: transparent; }
 }
