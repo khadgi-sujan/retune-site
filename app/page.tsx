@@ -152,7 +152,12 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
-                    <div className="mock-selection-overlay" />
+                    <div className="mock-selection-overlay">
+                      <div className="mock-handle mock-handle-tl" />
+                      <div className="mock-handle mock-handle-tr" />
+                      <div className="mock-handle mock-handle-bl" />
+                      <div className="mock-handle mock-handle-br" />
+                    </div>
                     <div className="mock-selection-label">180 × 120</div>
                   </div>
                   <div className="mock-bento-card">
