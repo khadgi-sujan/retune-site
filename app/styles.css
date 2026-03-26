@@ -1458,8 +1458,8 @@ p { text-wrap: pretty; }
 .mock-selection-overlay {
   position: absolute;
   inset: 0;
-  border: 1px solid #3b82f6;
-  background: rgba(59, 130, 246, 0.04);
+  border: 1px solid #0D99FF;
+  background: none;
   border-radius: 0;
   pointer-events: none;
   z-index: 1;
@@ -1467,9 +1467,10 @@ p { text-wrap: pretty; }
 
 .mock-selection-label {
   position: absolute;
-  top: -11px;
-  left: 0;
-  background: #3b82f6;
+  bottom: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0D99FF;
   color: #fff;
   font-size: 5px;
   font-family: 'SF Mono', 'Fira Code', Menlo, monospace;

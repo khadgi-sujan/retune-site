@@ -153,7 +153,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="mock-selection-overlay" />
-                    <div className="mock-selection-label">div.card 180×120</div>
+                    <div className="mock-selection-label">180 × 120</div>
                   </div>
                   <div className="mock-bento-card">
                     <span className="mock-bento-title">Network</span>
@@ -327,21 +327,13 @@ export default function Home() {
                   <div className="mock-toolbar-btn enables-on-change">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15.25 8.75V4C15.25 3.30964 14.6904 2.75 14 2.75H4C3.30964 2.75 2.75 3.30964 2.75 4V14C2.75 14.6904 3.30964 15.25 4 15.25H8.75M10 8.75H20C20.6904 8.75 21.25 9.30964 21.25 10V20C21.25 20.6904 20.6904 21.25 20 21.25H10C9.30964 21.25 8.75 20.6904 8.75 20V10C8.75 9.30964 9.30964 8.75 10 8.75Z"/></svg>
                   </div>
-                  {/* Undo */}
-                  <div className="mock-toolbar-btn enables-on-change">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6.75 3.25L3.75 6.25L6.75 9.25"/><path d="M4.5 6.25H14.25C17.7018 6.25 20.5 9.04822 20.5 12.5C20.5 15.9518 17.7018 18.75 14.25 18.75H5.75"/></svg>
-                  </div>
-                  {/* Redo (always disabled) */}
-                  <div className="mock-toolbar-btn always-disabled">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{transform: "scaleX(-1)"}}><path d="M6.75 3.25L3.75 6.25L6.75 9.25"/><path d="M4.5 6.25H14.25C17.7018 6.25 20.5 9.04822 20.5 12.5C20.5 15.9518 17.7018 18.75 14.25 18.75H5.75"/></svg>
-                  </div>
                   {/* Broom / reset */}
                   <div className="mock-toolbar-btn enables-on-change">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="round"><path d="M11.3819 8.76362C10.4178 8.23201 9.20537 8.57956 8.66923 9.54116C8.4097 10.0066 8.15016 10.4721 7.89062 10.9376L18.1482 16.5903C18.405 16.1299 18.6618 15.6695 18.9184 15.2091C19.4571 14.2425 19.1063 13.0228 18.1372 12.4885L11.3819 8.76362Z"/><path d="M12.9883 9.00512L15.8934 3.92207C16.5242 2.81843 17.9311 2.42534 19.0478 3.04074C20.1729 3.66076 20.5795 5.07016 19.9558 6.18872L17.0911 11.3267"/><path d="M8.92867 11.8184C7.2347 13.8083 5.31367 14.409 2.75 13.8659C3.77941 20.6894 15.6222 25.1274 16.652 16.4253"/></svg>
                   </div>
-                  {/* Panel toggle */}
+                  {/* Settings */}
                   <div className="mock-toolbar-btn">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path d="M16.167 12.5a1.375 1.375 0 0 0 .275 1.517l.05.05a1.667 1.667 0 1 1-2.359 2.358l-.05-.05a1.375 1.375 0 0 0-1.516-.275 1.375 1.375 0 0 0-.834 1.258v.142a1.667 1.667 0 1 1-3.333 0v-.075a1.375 1.375 0 0 0-.9-1.258 1.375 1.375 0 0 0-1.517.275l-.05.05a1.667 1.667 0 1 1-2.358-2.359l.05-.05a1.375 1.375 0 0 0 .275-1.516 1.375 1.375 0 0 0-1.258-.834h-.142a1.667 1.667 0 0 1 0-3.333h.075a1.375 1.375 0 0 0 1.258-.9 1.375 1.375 0 0 0-.275-1.517l-.05-.05A1.667 1.667 0 1 1 5.867 3.558l.05.05a1.375 1.375 0 0 0 1.516.275h.067a1.375 1.375 0 0 0 .833-1.258v-.142a1.667 1.667 0 1 1 3.334 0v.075a1.375 1.375 0 0 0 .833 1.258 1.375 1.375 0 0 0 1.517-.275l.05-.05a1.667 1.667 0 1 1 2.358 2.359l-.05.05a1.375 1.375 0 0 0-.275 1.516v.067a1.375 1.375 0 0 0 1.258.833h.142a1.667 1.667 0 0 1 0 3.334h-.075a1.375 1.375 0 0 0-1.258.833Z"/></svg>
                   </div>
                   {/* Close */}
                   <div className="mock-toolbar-btn">
@@ -363,14 +355,13 @@ export default function Home() {
                   <div className="mock-header-row">
                     <span className="mock-row-label">Target</span>
                     <div className="mock-selector-field">
-                      <div className="mock-selector-tag active">mock-card<span className="mock-selector-count">4</span></div>
-                      <div className="mock-selector-divider" />
-                      <div className="mock-selector-tag">This element</div>
+                      <div className="mock-selector-tag active">All instances<span className="mock-selector-count">4</span></div>
+                      <div className="mock-selector-tag">This instance</div>
                     </div>
                   </div>
                   <div className="mock-header-row">
                     <span className="mock-row-label">State</span>
-                    <div className="mock-input mock-select mock-state-select"><span className="mock-input-value">default</span><svg className="mock-chevron" width="6" height="6" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M2.5 4L5 6.5L7.5 4"/></svg></div>
+                    <div className="mock-input mock-select mock-state-select"><span className="mock-input-value">None</span><svg className="mock-chevron" width="6" height="6" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M2.5 4L5 6.5L7.5 4"/></svg></div>
                   </div>
                 </div>
                   {/* Position — alignment + type */}
