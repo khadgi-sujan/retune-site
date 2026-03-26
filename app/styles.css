@@ -1552,15 +1552,15 @@ p { text-wrap: pretty; }
   right: 12px;
   display: flex;
   align-items: center;
-  background: #1a1918;
+  background: var(--rt-surface);
   border-radius: 999px;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3), inset 0 0.5px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.06);
+  box-shadow: var(--rt-shadow);
   height: 26px;
   min-width: 26px;
   z-index: 3;
   overflow: hidden;
   padding: 3px;
-  color: #fff;
+  color: var(--rt-text);
 }
 
 /* Collapse button: 26×26 circle with 12px icon
@@ -1601,7 +1601,7 @@ p { text-wrap: pretty; }
   100%    { max-width: 0; opacity: 0; gap: 0; }
 }
 
-/* Buttons: 20×20 (real: 32×32), color matches real #1c1917 */
+/* Buttons: 20×20 (real: 32×32) */
 .mock-toolbar-btn {
   width: 20px;
   height: 20px;
@@ -1609,10 +1609,11 @@ p { text-wrap: pretty; }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1c1917;
+  color: var(--rt-text);
   flex-shrink: 0;
   position: relative;
 }
+
 
 /* Staggered icon pop-in: scale(0.95)+blur(1px) → normal
    15ms stagger ≈ 0.15% of 10s, transition 0.1s ≈ 1% */
@@ -1789,32 +1790,42 @@ p { text-wrap: pretty; }
 }
 
 /* Panel appears after selection */
-/* Retune dark mode color overrides for mock panel */
-.mock-panel {
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255,255,255,0.7);
-  --color-text-tertiary: rgba(255,255,255,0.5);
-  --color-text-disabled: rgba(255,255,255,0.25);
-  --color-bg-input: rgba(255,255,255,0.05);
-  --color-bg-hover: rgba(255,255,255,0.05);
-  --color-border: rgba(255,255,255,0.1);
-  --color-border-subtle: rgba(255,255,255,0.05);
-  --color-border-faint: rgba(255,255,255,0.05);
-  --retune-blue: #0D99FF;
+/* Retune mock — light mode (default) */
+.mock-panel, .mock-toolbar {
+  --rt-surface: #ffffff;
+  --rt-text: #1c1917;
+  --rt-text-secondary: rgba(28,25,23,0.7);
+  --rt-text-tertiary: rgba(28,25,23,0.5);
+  --rt-input-bg: rgba(28,25,23,0.05);
+  --rt-border: rgba(28,25,23,0.1);
+  --rt-shadow: 0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+}
+/* Retune mock — dark mode */
+:root[data-theme="dark"] .mock-panel,
+:root[data-theme="dark"] .mock-toolbar {
+  --rt-surface: #1a1918;
+  --rt-text: #ffffff;
+  --rt-text-secondary: rgba(255,255,255,0.7);
+  --rt-text-tertiary: rgba(255,255,255,0.5);
+  --rt-input-bg: rgba(255,255,255,0.05);
+  --rt-border: rgba(255,255,255,0.1);
+  --rt-shadow: 0 2px 12px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.06);
+}
 
+.mock-panel {
   position: absolute;
   top: 8px;
   bottom: 46px;
   right: 8px;
   width: 180px;
-  background: #1a1918;
+  background: var(--rt-surface);
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3), inset 0 0.5px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.06);
+  box-shadow: var(--rt-shadow);
   overflow: hidden;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  color: #fff;
+  color: var(--rt-text);
   animation: mock-panel-toggle 10s cubic-bezier(0.23, 1, 0.32, 1) infinite;
 }
 
@@ -1835,7 +1846,7 @@ p { text-wrap: pretty; }
   position: relative;
   padding: 6px 10px;
   gap: 13px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid var(--rt-border);
 }
 .mock-panel-tab-pill {
   position: absolute;
@@ -1844,7 +1855,7 @@ p { text-wrap: pretty; }
   width: 40px;
   height: calc(100% - 12px);
   border-radius: 4px;
-  background: rgba(255,255,255,0.05);
+  background: var(--rt-input-bg);
 }
 .mock-panel-tab {
   flex: 0 0 auto;
@@ -1853,23 +1864,30 @@ p { text-wrap: pretty; }
   font-weight: 500;
   padding: 4px 0;
   border-radius: 6px;
-  color: var(--color-text-tertiary);
+  color: var(--rt-text-tertiary);
   position: relative;
   z-index: 1;
 }
 .mock-panel-tab.active {
-  color: var(--color-text-primary);
+  color: var(--rt-text);
+}
+.mock-panel-version {
+  margin-left: auto;
+  font-size: 6px;
+  font-weight: 400;
+  color: var(--rt-text-tertiary);
+  align-self: center;
 }
 
 /* Panel header — tag + component */
 .mock-panel-header {
   padding: 8px 10px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--rt-border);
 }
 .mock-el-tag {
   font-size: 8px;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--rt-text);
 }
 /* Header rows — State + Selector */
 .mock-header-row {
@@ -1881,7 +1899,7 @@ p { text-wrap: pretty; }
 .mock-row-label {
   font-size: 7px;
   font-weight: 450;
-  color: var(--color-text-tertiary);
+  color: var(--rt-text-tertiary);
 }
 .mock-input.mock-state-select {
   width: 100%;
@@ -1896,7 +1914,7 @@ p { text-wrap: pretty; }
 .mock-selector-divider {
   width: 1px;
   height: 12px;
-  background: var(--color-border);
+  background: var(--rt-border);
   align-self: center;
   flex-shrink: 0;
 }
@@ -1906,15 +1924,18 @@ p { text-wrap: pretty; }
   gap: 3px;
   padding: 0 6px;
   border-radius: 5px;
-  background: var(--color-bg-input);
+  background: var(--rt-input-bg);
   font-size: 7px;
   font-weight: 400;
-  color: var(--color-text-primary);
+  color: var(--rt-text);
   white-space: nowrap;
   height: 20px;
 }
 .mock-selector-tag.active {
-  background: color-mix(in srgb, #0768CF 50%, transparent);
+  background: color-mix(in srgb, #0D99FF 30%, transparent);
+  color: #0D99FF;
+}
+:root[data-theme="dark"] .mock-selector-tag.active {
   color: #fff;
 }
 .mock-selector-count {
@@ -1962,14 +1983,14 @@ p { text-wrap: pretty; }
 
 /* Sections */
 .mock-section {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--rt-border);
 }
 .mock-section:last-child { border-bottom: none; }
 
 .mock-section-header {
   font-size: 8px;
   font-weight: 500;
-  color: var(--color-text-primary);
+  color: var(--rt-text);
   padding: 0 5px 0 10px;
   height: 28px;
   display: flex;
@@ -2010,7 +2031,7 @@ p { text-wrap: pretty; }
 .mock-input {
   flex: 1;
   height: 20px;
-  background: var(--color-bg-input);
+  background: var(--rt-input-bg);
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -2026,7 +2047,7 @@ p { text-wrap: pretty; }
 .mock-input-label {
   font-size: 7px;
   font-weight: 450;
-  color: var(--color-text-secondary);
+  color: var(--rt-text-secondary);
   flex-shrink: 0;
   width: 14px;
   text-align: center;
@@ -2038,7 +2059,7 @@ p { text-wrap: pretty; }
 .mock-input-value {
   font-size: 7px;
   font-weight: 400;
-  color: var(--color-text-primary);
+  color: var(--rt-text);
 }
 
 /* Field with label above input */
@@ -2055,7 +2076,7 @@ p { text-wrap: pretty; }
 .mock-field-label {
   font-size: 7px;
   font-weight: 400;
-  color: var(--color-text-tertiary);
+  color: var(--rt-text-tertiary);
 }
 
 /* Split button (corner radius expand) */
@@ -2066,7 +2087,7 @@ p { text-wrap: pretty; }
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: rgba(0, 0, 0, 0.9);
+  color: var(--rt-text-secondary);
 }
 
 /* Select input with chevron */
@@ -2087,7 +2108,7 @@ p { text-wrap: pretty; }
 .mock-btn-group {
   flex: 1;
   display: flex;
-  background: var(--color-bg-input);
+  background: var(--rt-input-bg);
   border-radius: 5px;
   height: 20px;
   overflow: hidden;
@@ -2100,13 +2121,13 @@ p { text-wrap: pretty; }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1c1917;
+  color: var(--rt-text);
 }
 
 /* Segmented control */
 .mock-segmented {
   display: flex;
-  background: var(--color-bg-input);
+  background: var(--rt-input-bg);
   border-radius: 5px;
   height: 20px;
   overflow: hidden;
@@ -2118,12 +2139,12 @@ p { text-wrap: pretty; }
   justify-content: center;
   font-size: 6px;
   font-weight: 500;
-  color: var(--color-text-primary);
+  color: var(--rt-text);
 }
 .mock-seg-btn.active {
-  color: var(--color-text-primary);
-  background: rgba(255,255,255,0.1);
-  border: 0.5px solid rgba(255,255,255,0.1);
+  color: var(--rt-text);
+  background: var(--rt-input-bg);
+  border: 0.5px solid var(--rt-border);
   border-radius: 4px;
 }
 .mock-seg-btn.disabled {
@@ -2136,7 +2157,7 @@ p { text-wrap: pretty; }
   height: 14px;
   border-radius: 2px;
   background: #fff;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--rt-border);
   flex-shrink: 0;
   margin-right: 4px;
 }
@@ -2145,7 +2166,7 @@ p { text-wrap: pretty; }
 .mock-group-label {
   font-size: 7px;
   font-weight: 400;
-  color: var(--color-text-tertiary);
+  color: var(--rt-text-tertiary);
   padding-left: 0;
 }
 

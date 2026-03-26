@@ -352,6 +352,7 @@ export default function Home() {
                   <div className="mock-panel-tab-pill" />
                   <div className="mock-panel-tab">Elements</div>
                   <div className="mock-panel-tab active">Design</div>
+                  <span className="mock-panel-version">v{retuneVersion}</span>
                 </div>
                 <div className="mock-panel-scroll">
                 <div className="mock-panel-inner">
