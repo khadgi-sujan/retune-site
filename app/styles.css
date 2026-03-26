@@ -108,6 +108,9 @@
 .mock-dock ::selection {
   background: transparent;
 }
+.mock-panel ::selection {
+  background: var(--rt-selection);
+}
 
 * { box-sizing: border-box; }
 
@@ -1799,6 +1802,7 @@ p { text-wrap: pretty; }
   --rt-input-bg: rgba(28,25,23,0.05);
   --rt-border: rgba(28,25,23,0.1);
   --rt-shadow: 0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+  --rt-selection: color-mix(in srgb, #0D99FF 30%, transparent);
 }
 /* Retune mock — dark mode */
 :root[data-theme="dark"] .mock-panel,
@@ -1810,6 +1814,7 @@ p { text-wrap: pretty; }
   --rt-input-bg: rgba(255,255,255,0.05);
   --rt-border: rgba(255,255,255,0.1);
   --rt-shadow: 0 2px 12px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.06);
+  --rt-selection: color-mix(in srgb, #0D99FF 40%, transparent);
 }
 
 .mock-panel {
