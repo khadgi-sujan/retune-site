@@ -1814,7 +1814,7 @@ p { text-wrap: pretty; }
   --rt-input-bg: rgba(255,255,255,0.05);
   --rt-border: rgba(255,255,255,0.1);
   --rt-shadow: 0 2px 12px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.06);
-  --rt-selection: color-mix(in srgb, #0D99FF 40%, transparent);
+  --rt-selection: color-mix(in srgb, #0768CF 50%, transparent);
 }
 
 .mock-panel {
