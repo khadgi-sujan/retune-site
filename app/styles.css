@@ -820,10 +820,10 @@ p { text-wrap: pretty; }
   animation: mock-dock-spacer-toggle 10s ease infinite;
 }
 @keyframes mock-dock-spacer-toggle {
-  0%, 58% { width: 26px; height: 18px; }
-  60% { width: 0; height: 0; }
-  93% { width: 0; height: 0; }
-  95% { width: 26px; height: 18px; }
+  0%, 54% { width: 26px; height: 18px; }
+  57% { width: 0; height: 0; }
+  89% { width: 0; height: 0; }
+  92.1% { width: 26px; height: 18px; }
   100% { width: 26px; height: 18px; }
 }
 
