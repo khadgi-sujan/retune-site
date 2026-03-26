@@ -108,8 +108,10 @@
 .mock-dock ::selection {
   background: transparent;
 }
-.mock-panel ::selection {
+.mock-panel ::selection,
+[data-theme="dark"] .mock-panel ::selection {
   background: var(--rt-selection);
+  color: #fff;
 }
 
 * { box-sizing: border-box; }
