@@ -2465,20 +2465,10 @@ p { text-wrap: pretty; }
   animation: cursor-icon-crosshair 10s ease infinite;
 }
 @keyframes cursor-icon-pointer {
-  0%, 14% { opacity: 1; }
-  15.5% { opacity: 0; }
-  /* Switch back to pointer when cursor enters panel */
-  35% { opacity: 0; }
-  36% { opacity: 1; }
-  100% { opacity: 1; }
+  0%, 100% { opacity: 1; }
 }
 @keyframes cursor-icon-crosshair {
-  0%, 14% { opacity: 0; }
-  15.5% { opacity: 1; }
-  /* Switch to pointer when cursor enters panel */
-  35% { opacity: 1; }
-  36% { opacity: 0; }
-  100% { opacity: 0; }
+  0%, 100% { opacity: 0; }
 }
 
 @keyframes mock-cursor-move {
