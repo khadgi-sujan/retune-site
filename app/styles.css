@@ -1687,7 +1687,9 @@ p { text-wrap: pretty; }
   15.7%     { transform: scale(1); filter: blur(0); opacity: 0.2; }
   41%       { opacity: 0.2; }
   43%       { opacity: 1; }
-  95.5%     { opacity: 1; transform: scale(1); filter: blur(0); }
+  72%       { opacity: 1; }
+  75%       { opacity: 0.2; }
+  95.5%     { opacity: 0.2; transform: scale(1); filter: blur(0); }
   97%       { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
   100%      { opacity: 0.2; transform: scale(0.95); filter: blur(1px); }
 }
